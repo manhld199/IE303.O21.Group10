@@ -1,95 +1,184 @@
+//import libs
+import Link from "next/link";
 import Image from "next/image";
-import styles from "./page.module.css";
+import type { Metadata } from "next";
 
-export default function Home() {
+// import global components
+import { CustomerCarouselSlider } from "@/components";
+import { CustomerProductCard } from "@/components";
+import { CustomerSlider } from "@/components";
+import { CustomerCategories } from "@/components";
+import { CustomerHeader, CustomerFooter, CustomerAppBar } from "@/partials";
+import { BACKEND_URL } from "@/utils/commonConst";
+
+// use css
+import "./page.css";
+
+export const metadata: Metadata = {
+  title: "ForCat - Everything For Your Cat",
+  description:
+    "Chào mừng bạn đến với ForCat Shop - nơi mang lại những trải nghiệm tuyệt vời cho bạn và thú cưng của bạn. Tại đây, chúng tôi cam kết cung cấp những sản phẩm chất lượng và dịch vụ tận tâm nhất để giúp bạn chăm sóc và yêu thương thú cưng của mình. Khám phá ngay bộ sưu tập sản phẩm đa dạng và đăng ký tài khoản để nhận ưu đãi đặc biệt. Hãy bắt đầu hành trình mua sắm và chăm sóc thú cưng của bạn tại ForCat Shop ngay hôm nay!",
+};
+
+const fetchNewestProducts = async () => {
+  try {
+    const response = await fetch(
+      `${BACKEND_URL}/productList/getNewestProducts`,
+      {
+        next: { revalidate: 60 },
+      }
+    );
+
+    // if (!response.ok) {
+    //   throw new Error("Failed to fetch newest products");
+    // }
+
+    const data = await response.json();
+    return data.data; // Return the entire data object
+  } catch (error) {
+    // console.error("Error fetching newest products:", error);
+    // throw error;
+  }
+};
+
+const fetchDiscountProducts = async () => {
+  try {
+    const response = await fetch(
+      `${BACKEND_URL}/productList/getDiscountProducts`,
+      {
+        next: { revalidate: 60 },
+      }
+    );
+
+    // if (!response.ok) {
+    //   throw new Error("Failed to fetch discount products");
+    // }
+
+    const data = await response.json();
+    return data.data; // Return the entire data object
+  } catch (error) {
+    // console.error("Error fetching discount products:", error);
+    // throw error;
+  }
+};
+
+export default async function Home() {
+  let newestProducts = await fetchNewestProducts();
+  let discountProducts = await fetchDiscountProducts();
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      <CustomerHeader />
+      <main className="main-container">
+        <CustomerSlider />
+        <div className="content-container">
+          <h1 className="tip-products__label">
+            <Link href="/search-result" className="tip-products__title">
+              Danh mục
+            </Link>
+            <span className="tip-products__title-after"></span>
+          </h1>
+          <CustomerCategories></CustomerCategories>
         </div>
-      </div>
+        <div className="wrapper color">
+          <div className="content-container">
+            <h1 className="tip-products__label">
+              <Link href="/search-result" className="tip-products__title">
+                Gợi ý hôm nay
+              </Link>
+              <span className="tip-products__title-after"></span>
+            </h1>
+            <CustomerCarouselSlider></CustomerCarouselSlider>
+          </div>
+        </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+        <section className="content-container tip-products-wrapper wrapper--white">
+          <div className="tip-products">
+            <h1 className="tip-products__label">
+              <Link href="/search-result" className="tip-products__title">
+                Hàng mới về
+              </Link>
+              <span className="tip-products__title-after"></span>
+            </h1>
+            <div className="tip-products__content">
+              {/* {newestProducts &&
+                newestProducts.length &&
+                newestProducts.map((product) => (
+                  <CustomerProductCard
+                    key={product.product_id}
+                    product={product}
+                  />
+                ))} */}
+            </div>
+          </div>
+          <div className="banner-wrapper">
+            <Link className="banner-img--half" href="#">
+              <Image
+                className="banner-img"
+                fill={true}
+                src="/imgs/home-page/banner-small-4.webp"
+                alt="banner-info"
+              />
+            </Link>
+            <Link className="banner-img--half" href="#">
+              <Image
+                className="banner-img"
+                fill={true}
+                src="/imgs/home-page/banner-small-1.webp"
+                alt="banner-info"
+              />
+            </Link>
+          </div>
+          <div className="banner-wrapper">
+            <Link className="banner-img--half" href="#">
+              <Image
+                className="banner-img"
+                fill={true}
+                src="/imgs/home-page/banner-small-3.webp"
+                alt="banner-info"
+              />
+            </Link>
+            <Link className="banner-img--half" href="#">
+              <Image
+                className="banner-img"
+                fill={true}
+                src="/imgs/home-page/banner-small-2.webp"
+                alt="banner-info"
+              />
+            </Link>
+          </div>
+          <div className="banner-wrapper">
+            <Link className="banner-img--full" href="#">
+              <Image
+                className="banner-img"
+                fill={true}
+                src="/imgs/home-page/banner-1.webp"
+                alt="banner-info"
+              />
+            </Link>
+          </div>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+          <div className="tip-products">
+            <h1 className="tip-products__label">
+              <Link href="#" className="tip-products__title">
+                Khuyến mãi hấp dẫn
+              </Link>
+              <span className="tip-products__title-after"></span>
+            </h1>
+            <div className="tip-products__content">
+              {/* {discountProducts &&
+                discountProducts.length &&
+                discountProducts.map((product) => (
+                  <CustomerProductCard
+                    key={product.product_id}
+                    product={product}
+                  />
+                ))} */}
+            </div>
+          </div>
+        </section>
+      </main>
+      <CustomerFooter />
+      <CustomerAppBar />
+    </>
   );
 }

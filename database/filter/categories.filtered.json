@@ -1,0 +1,171 @@
+[
+    {
+        "_id": "660c19756c72246fb20f3e9a",
+        "category_name": "Hạt dinh dưỡng",
+        "category_slug": "hat-dinh-duong",
+        "category_img": {
+            "url": "SEO_Images/Categories/Hạt-cho-mèo",
+            "alt": "Hạt dinh dưỡng"
+        },
+        "category_short_description": "Cung cấp đa dạng các loại hạt cho mèo với nhiều thương hiệu uy tín, phù hợp với mọi lứa tuổi và nhu cầu dinh dưỡng. Miễn phí vận chuyển cho đơn hàng trên 200 000. Cam kết hàng chính hãng, giá cả cạnh tranh.",
+        "created_at": "2024-05-06T11:25:33.980Z",
+        "updated_at": "2024-05-06T11:25:33.980Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3e9d",
+        "category_name": "Cát vệ sinh",
+        "category_slug": "cat-ve-sinh",
+        "category_img": {
+            "url": "SEO_Images/Categories/Cát-vệ-sinh-cho-mèo",
+            "alt": "Cát vệ sinh"
+        },
+        "category_short_description": "Cát vệ sinh cho mèo đa dạng, phù hợp với mọi nhu cầu. Cát khử mùi tốt, vón cục nhanh, tiết kiệm. Giá cả cạnh tranh, nhiều ưu đãi.",
+        "created_at": "2024-05-06T11:25:33.981Z",
+        "updated_at": "2024-05-06T11:25:33.981Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3e9e",
+        "category_name": "Nhà vệ sinh",
+        "category_slug": "nha-ve-sinh",
+        "category_img": {
+            "url": "SEO_Images/Categories/Nhà-vệ-sinh-cho-mèo",
+            "alt": "Nhà vệ sinh"
+        },
+        "category_short_description": "Nhà vệ sinh cho mèo thiết kế đẹp mắt, tiện lợi, giúp mèo cưng thoải mái khi đi vệ sinh. Nhiều kích thước, mẫu mã phù hợp với mọi không gian. Giá cả hợp lý, nhiều ưu đãi hấp dẫn.",
+        "created_at": "2024-05-06T11:25:33.981Z",
+        "updated_at": "2024-05-06T11:25:33.981Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3e9f",
+        "category_name": "Nệm, ổ, thảm",
+        "category_slug": "nem-o-tham",
+        "category_img": {
+            "url": "SEO_Images/Categories/Ổ-nệm-cho-mèo",
+            "alt": "Nệm, ổ, thảm"
+        },
+        "category_short_description": "Nệm, ổ, thảm cho mèo êm ái, ấm áp, giúp mèo cưng ngủ ngon hơn. Nhiều mẫu mã, màu sắc đa dạng, phù hợp với mọi sở thích. Giá cả hợp lý, chất lượng cao.",
+        "created_at": "2024-05-06T11:25:33.981Z",
+        "updated_at": "2024-05-06T11:25:33.981Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3ea0",
+        "category_name": "Bàn cào móng",
+        "category_slug": "ban-cao-mong",
+        "category_img": {
+            "url": "SEO_Images/Categories/Bàn-cào-móng-cho-mèo",
+            "alt": "Bàn cào móng"
+        },
+        "category_short_description": "Bàn cào móng cho mèo giúp bảo vệ đồ đạc trong nhà và giúp mèo cưng mài móng.  Nhiều chất liệu, kiểu dáng đa dạng. Giá cả hợp lý, chất lượng cao.",
+        "created_at": "2024-05-06T11:25:33.981Z",
+        "updated_at": "2024-05-06T11:25:33.981Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3ea1",
+        "category_name": "Nhà cây",
+        "category_slug": "nha-cay",
+        "category_img": {
+            "url": "SEO_Images/Categories/Nhà-cây-cho-mèo",
+            "alt": "Nhà cây"
+        },
+        "category_short_description": "Mua nhà cây cho mèo để cung cấp cho mèo của bạn không gian vui chơi và nghỉ ngơi an toàn và thoải mái. Nhà cây cho mèo giúp mèo cưng vui chơi, tập luyện và giải trí. Thiết kế đa dạng, phù hợp với mọi không gian.",
+        "created_at": "2024-05-06T11:25:33.981Z",
+        "updated_at": "2024-05-06T11:25:33.981Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3e9b",
+        "category_name": "Pate",
+        "category_slug": "pate",
+        "category_img": {
+            "url": "SEO_Images/Categories/Pate-cho-mèo",
+            "alt": "Pate"
+        },
+        "category_short_description": "Pate cho mèo với nhiều hương vị thơm ngon, bổ dưỡng, giúp mèo cưng của bạn ăn ngon miệng hơn. Giá cả hợp lý, phù hợp với mọi nhu cầu. Giao hàng nhanh chóng, tận nơi.",
+        "created_at": "2024-05-06T11:25:33.981Z",
+        "updated_at": "2024-05-06T11:25:33.981Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3ea3",
+        "category_name": "Vòng cổ, dây dắt",
+        "category_slug": "vong-co-day-dat",
+        "category_img": {
+            "url": "SEO_Images/Categories/Vòng-cổ-dây-dắt-mèo",
+            "alt": "Vòng cổ, dây dắt"
+        },
+        "category_short_description": "Khám phá các phụ kiện vòng cổ và dây dắt an toàn và thời trang để đi dạo cùng mèo. Nhiều mẫu mã, màu sắc đa dạng. Chất liệu bền đẹp, an toàn cho mèo cưng.",
+        "created_at": "2024-05-06T11:25:33.981Z",
+        "updated_at": "2024-05-06T11:25:33.981Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3e9c",
+        "category_name": "Cỏ mèo",
+        "category_slug": "co-meo",
+        "category_img": {
+            "url": "SEO_Images/Categories/Cỏ-mèo",
+            "alt": "Cỏ mèo"
+        },
+        "category_short_description": "Cung cấp cỏ mèo tự nhiên và an toàn. Cỏ mèo giúp mèo cưng giải tỏa stress, hỗ trợ tiêu hóa và loại bỏ búi lông. Cỏ mèo tươi xanh, chất lượng cao. Giá cả hợp lý, nhiều ưu đãi hấp dẫn.",
+        "created_at": "2024-05-06T11:25:33.982Z",
+        "updated_at": "2024-05-06T11:25:33.982Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3ea5",
+        "category_name": "Đồ chơi",
+        "category_slug": "do-choi",
+        "category_img": {
+            "url": "SEO_Images/Categories/Đồ-chơi-cho-mèo",
+            "alt": "Đồ chơi"
+        },
+        "category_short_description": "Đồ chơi dành cho mèo của bạn. Đồ chơi cho mèo giúp mèo cưng giải trí, thư giãn và vận động. Nhiều loại đồ chơi đa dạng, phù hợp với mọi lứa tuổi và sở thích của mèo. Đặt hàng ngay để những phút giây vui chơi với mèo của bạn.",
+        "created_at": "2024-05-06T11:25:33.982Z",
+        "updated_at": "2024-05-06T11:25:33.982Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3ea6",
+        "category_name": "Đồ vệ sinh",
+        "category_slug": "do-ve-sinh",
+        "category_img": {
+            "url": "SEO_Images/Categories/Đồ-vệ-sinh-cho-mèo",
+            "alt": "Đồ vệ sinh"
+        },
+        "category_short_description": "Các dụng cụ cần thiết cho mèo của bạn. Sản phẩm chất lượng từ các thương hiệu uy tín. Dụng cụ cho mèo như xẻng, bát ăn, lược giúp bạn chăm sóc mèo cưng dễ dàng hơn. Nhiều chất liệu, kiểu dáng đa dạng. Giá cả hợp lý, chất lượng tốt.",
+        "created_at": "2024-05-06T11:25:33.982Z",
+        "updated_at": "2024-05-06T11:25:33.982Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3ea2",
+        "category_name": "Quần áo",
+        "category_slug": "quan-ao",
+        "category_img": {
+            "url": "SEO_Images/Categories/Quần-áo-cho-mèo",
+            "alt": "Quần áo"
+        },
+        "category_short_description": "Mua ngay quần áo thời trang cho mèo của bạn với các mẫu thiết kế đa dạng và chất liệu thoải mái. Quần áo cho mèo thời trang, dễ thương, giúp mèo cưng thêm xinh xắn. Nhiều kích cỡ, mẫu mã phù hợp với mọi giống mèo.",
+        "created_at": "2024-05-06T11:25:33.982Z",
+        "updated_at": "2024-05-06T11:25:33.982Z",
+        "__v": 0
+    },
+    {
+        "_id": "660c19756c72246fb20f3ea4",
+        "category_name": "Balo, Lồng",
+        "category_slug": "balo-long",
+        "category_img": {
+            "url": "SEO_Images/Categories/Balo-đựng-mèo",
+            "alt": "Balo, Lồng"
+        },
+        "category_short_description": "Chọn mua balo và lồng chất lượng cao để di chuyển an toàn và thoải mái cho mèo của bạn. Nhiều kích cỡ từ nhỏ tới lớn, mẫu mã phù hợp với mọi giống mèo. Chất liệu bền đẹp, thiết kế tiện lợi.",
+        "created_at": "2024-05-06T11:25:33.982Z",
+        "updated_at": "2024-05-06T11:25:33.982Z",
+        "__v": 0
+    }
+]

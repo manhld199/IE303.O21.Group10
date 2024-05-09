@@ -1,4 +1,5 @@
 package com.forcat.app.model.Product;
+
 import lombok.Data;
 
 @Data
@@ -10,5 +11,6 @@ public class ProductVariant {
     private String discount_id;
     private int in_stock;
 
-    public ProductVariant() {}
+    public ProductVariant() {
+    }
 }

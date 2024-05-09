@@ -1,13 +1,14 @@
 package com.forcat.app.model.Order;
 
-import org.bson.types.ObjectId;
 import java.util.Date;
+
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
 
-@Document(collection = "orders")
 @Data
+@Document(collection = "orders")
 public class Order {
 	@Id
 	private ObjectId orderId;
@@ -19,8 +20,8 @@ public class Order {
 	private double orderTotalCost;
 	private String orderProcessInfo;
 	private Date created_at;
-    private Date updated_at; 
+	private Date updated_at;
 
-	public Order() {}
+	public Order() {
+	}
 }
-

@@ -7,6 +7,7 @@ public class OrderDetail {
     private String order_name;
     private int quantity;
     private double unit_price;
-    
-    public OrderDetail() {}
+
+    public OrderDetail() {
+    }
 }

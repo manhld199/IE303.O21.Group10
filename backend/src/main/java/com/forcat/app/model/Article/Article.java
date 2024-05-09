@@ -1,8 +1,9 @@
 package com.forcat.app.model.Article;
 
-import org.bson.types.ObjectId;
 import java.util.Date;
 import lombok.Data;
+
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,6 +22,7 @@ public class Article {
     private Date article_published_date;
     private Date created_at;
     private Date updated_at;
-    
-    public Article() {}
+
+    public Article() {
+    }
 }

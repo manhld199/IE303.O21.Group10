@@ -18,6 +18,7 @@ public class Discount {
     private DiscountProducts discount_products;
     private Date created_at;
     private Date updated_at;
-    
-    public Discount() {}
+
+    public Discount() {
+    }
 }

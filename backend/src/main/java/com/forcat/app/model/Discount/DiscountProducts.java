@@ -1,4 +1,5 @@
 package com.forcat.app.model.Discount;
+
 import lombok.Data;
 
 @Data

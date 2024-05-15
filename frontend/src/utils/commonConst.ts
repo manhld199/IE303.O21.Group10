@@ -1,7 +1,6 @@
 // File: utils/common.ts
 
-// export const BACKEND_URL: string = "https://forcat-website-back-end.onrender.com/api";
-// export const BACKEND_URL: string = process.env.BACKEND_URL; // K xài dc trên use client
+// export const BACKEND_URL: string = "https://api.forcatshop.com/api";
 export const BACKEND_URL: string = "http://localhost:8080/api";
 export const BACKEND_URL_ORDERS: string = BACKEND_URL + "/orders";
 export const ORDER_STATUS_LIST: string[] = [
@@ -12,6 +11,9 @@ export const ORDER_STATUS_LIST: string[] = [
   "cancel",
 ];
 export const BACKEND_URL_REVIEWS: string = BACKEND_URL + "/reviews";
+export const BACKEND_URL_NOTIFICATIONS: string = BACKEND_URL + "/notifications";
+export const NOTIFICATION_STATUS_LIST: string[] = ["all", "order", "promotion"];
+export const BACKEND_URL_NEWS: string = BACKEND_URL + "/articles";
 
 export const CLOUDINARY_URL: string =
   "https://res.cloudinary.com/dmjwq3ebx/image/upload/v1712151655";

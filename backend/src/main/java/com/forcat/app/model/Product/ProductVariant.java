@@ -22,9 +22,9 @@ public class ProductVariant {
     @JsonProperty("variant_img")
     private ProductImg variantImg;
 
-    @Field(name = "discount_id")
-    @JsonProperty("discount_id")
-    private String discountId;
+    @Field(name = "variant_discount")
+    @JsonProperty("variant_discount")
+    private ProductVariantDiscount variantDiscount;
 
     @Field(name = "in_stock")
     @JsonProperty("in_stock")

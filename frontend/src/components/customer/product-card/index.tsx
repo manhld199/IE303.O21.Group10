@@ -8,9 +8,6 @@ import { CldImage } from "next-cloudinary";
 // import utils
 import { convertNumberToMoney } from "@/utils";
 
-// import components
-import { CustomerStarRating } from "@/components";
-
 // import css
 import styles from "./style.module.css";
 
@@ -21,7 +18,7 @@ export default function CustomerProductCard({ product }) {
   return (
     <div className={cx("product-card")}>
       <Link
-        href={`/${product.product_slug}?pid=${product.product_id}`}
+        href={`/${product.product_slug}/${product.variant_slug}?pid=${product.product_id_hashed}`}
         className={cx("product__card-main")}>
         {product.highest_discount ? (
           <div className={cx("product__card--badge")}>
@@ -40,10 +37,7 @@ export default function CustomerProductCard({ product }) {
             <span className={cx("product-category")}>
               {product.category_name ? product.category_name : "FORCAT"}
             </span>
-            <div className={cx("product-rate")}>
-              <CustomerStarRating rating={product.product_avg_rating} />
-            </div>
-            <h4 title={product.product_name}>{product.product_name}</h4>
+            <h3 title={product.product_name}>{product.product_name}</h3>
           </div>
         </div>
         <div className={cx("product-bottom-details")}>
@@ -51,11 +45,11 @@ export default function CustomerProductCard({ product }) {
             <h3>
               {product.highest_discount && product.lowest_price ? (
                 <>
-                  {convertNumberToMoney(product.lowest_price)}đ
-                  <small>{convertNumberToMoney(product.product_price)}đ</small>
+                  {convertNumberToMoney(product.lowest_price)}
+                  <small>{convertNumberToMoney(product.product_price)}</small>
                 </>
               ) : (
-                <>{convertNumberToMoney(product.product_price)}đ</>
+                <>{convertNumberToMoney(product.product_price)}</>
               )}
             </h3>
           </div>

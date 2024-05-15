@@ -13,15 +13,14 @@ const cx = classNames.bind(styles);
 import { CustomerProductCard, CustomerPagination } from "@/components";
 
 // import css
-import "./search-result.css";
+// import "./search-result.css";
 
-export default function SearchResultPage({ searchKey, searchResults }) {
+export default function SearchResultPage({ iteamFind, searchResults }) {
   const totalResults = searchResults.totalResults;
   const totalPage = searchResults.totalPages;
   const currentPage = searchResults.currentPage;
 
   let searchResultsProducts;
-  // console.log("Từ khóa tìm kiếm", searchKey);
 
   if (searchResults) {
     searchResultsProducts = searchResults.searchProducts;
@@ -433,13 +432,21 @@ export default function SearchResultPage({ searchKey, searchResults }) {
         </h1>
         <div className="search-result__main__heading">
           <p className="search-result__main__count">
-            Tìm thấy
-            <span className="search-result__highlight">
-              {" "}
-              {totalResults}{" "}
-            </span>{" "}
-            kết quả cho từ khóa &quot;
-            <span className="search-result__key">{searchKey} </span>&quot;
+            Tìm thấy{" "}
+            <span className="search-result__highlight">{totalResults}</span>{" "}
+            {iteamFind === "discountTrue" ? (
+              "sản phẩm khuyến mãi"
+            ) : iteamFind === "topRateTrue" ? (
+              "sản phẩm Hot"
+            ): iteamFind === "newTrue" ? (
+              "sản phẩm mới"
+            ) : (
+              <>
+                kết quả cho từ khóa &quot;
+                <span className="search-result__key">{iteamFind}</span>
+                &quot;
+              </>
+            )}
           </p>
           {/* <SearchResultSort /> */}
           <div
@@ -513,20 +520,18 @@ export default function SearchResultPage({ searchKey, searchResults }) {
         <div className="search-result__main-card">
           {searchResultsProducts &&
             searchResultsProducts.length >= 0 &&
-            searchResultsProducts.map((product) => (
+            (searchResultsProducts ?? []).map((product) => (
               <>
                 <CustomerProductCard
-                  key={product.product_id}
+                  key={product.product_id_hashed}
                   product={product}
                 />
               </>
             ))}
         </div>
-        {totalPage > 1 && (
-          <div className="pagination">
-            <CustomerPagination maxPage={totalPage} currentPage={currentPage} />
-          </div>
-        )}
+        <div className="pagination">
+          <CustomerPagination maxPage={totalPage} />
+        </div>
       </section>
     </main>
   );

@@ -1,4 +1,5 @@
 .product {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -6,15 +7,23 @@
 
 .product__name {
     padding-right: 10.5%;
+    margin: 0;
 }
 
 .rating {
     display: flex;
+    align-items: center;
     gap: 8px;
 }
 
 .rating__average {
+    font-size: 1.2rem;
     font-weight: 500;
+}
+
+.product__star-group {
+    display: flex;
+    align-items: center;
 }
 
 .rating__stars {
@@ -32,8 +41,9 @@
 }
 
 .product__unit-price {
-    font-size: 1.5rem;
+    font-size: 2.0rem;
     font-weight: 600;
+    color: var(--dollar-red)
 }
 
 .product__discount-amount {
@@ -51,9 +61,17 @@
 }
 
 .variants__group {
+    /* width: 90%; */
     display: grid;
-    grid-template-columns: repeat(4, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 12px;
+}
+
+.product__variants h3,
+.product__quantity h3,
+.product__total-price-div h3 {
+    color: var(--dark10);
+    font-size: 1.2rem;
 }
 
 .product__quantity,
@@ -65,7 +83,6 @@
 }
 
 .product__is-stock {
-    margin-left: 8px;
     color: var(--dark11);
 }
 
@@ -107,6 +124,7 @@
 
 .cart-modal {
     width: 100vw;
+    min-width: 300px;
     height: 100vh;
     z-index: 10000;
     position: fixed;
@@ -127,6 +145,7 @@
 
 .cart-modal__content {
     width: 40%;
+    min-width: 250px;
     height: 40%;
     border-radius: 0.5rem;
     display: flex;
@@ -146,6 +165,10 @@
     position: relative;
 }
 
+.cart-modal__text {
+    text-align: center;
+}
+
 .cart-modal-close {
     cursor: pointer;
     position: absolute;
@@ -159,11 +182,37 @@
 }
 
 .buy-now-btn {
-    background-color: var(--dollar-red2);
+    background-color: var(--dollar-red);
+    /* background-color: #ef2e31; */
 }
 
-@media only screen and (max-width: 1024px) {
-    .variants__group {
-        grid-template-columns: repeat(2, 1fr);
+@media only screen and (max-width: 431px) {
+    .product__star-group span {
+        font-size: 1.75rem;
+    }
+
+    .rating__average {
+        font-size: 1.5rem;
+    }
+
+    .product__is-stock-responsive {
+        display: none;
+    }
+
+    .product__unit-price,
+    .product__total-price {
+        font-size: 1.75rem;
+    }
+
+    .buy-btn {
+        height: 40px;
+        width: 50%;
+        border-radius: 6px;
+    }
+}
+
+@media only screen and (max-width: 321px) {
+    .product__quantity {
+        gap: 0.5rem;
     }
 }

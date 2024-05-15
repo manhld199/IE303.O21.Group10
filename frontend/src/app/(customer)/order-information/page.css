@@ -264,11 +264,11 @@ input::-webkit-calendar-picker-indicator {
 
 .order-pay__submit button {
   cursor: pointer;
-  width: 27%;
+  width: 100%;
   padding: 12px;
   font-size: 1.125rem;
   font-weight: 600;
-  background-color: brown;
+  background-color: var(--primary-mau3-1);
   color: var(--white);
   border-radius: 8px;
 }
@@ -282,12 +282,12 @@ input::-webkit-calendar-picker-indicator {
   color: var(--primary-color-2);
 }
 
+.order__product--mobile {
+  display: none;
+}
+
 /* 1024px - Mini PC */
 @media screen and (max-width: 1024px) {
-  .order-pay__submit button {
-    width: 31%;
-  }
-
   #order-form {
     width: 90%;
   }
@@ -330,7 +330,7 @@ input::-webkit-calendar-picker-indicator {
   }
 
   .order-pay__submit button {
-    width: 36%;
+    /* width: 36%; */
     font-size: 1rem;
   }
 
@@ -349,7 +349,7 @@ input::-webkit-calendar-picker-indicator {
 }
 
 /* 416px - Mobile */
-@media screen and (max-width: 416px) {
+@media screen and (max-width: 431px) {
   h2 {
     font-size: 1rem;
   }
@@ -364,9 +364,18 @@ input::-webkit-calendar-picker-indicator {
     font-size: 0.8125rem;
   }
 
-  .order-sidebar {
-    display: none;
+  .order-container {
+    flex-direction: column;
+    margin: 0;
   }
+
+  #order-form {
+    width: 100%;
+  }
+
+  /* .order-sidebar {
+    display: none;
+  } */
 
   .location__input-group input,
   .order-detail__input input,
@@ -385,7 +394,7 @@ input::-webkit-calendar-picker-indicator {
   .order-product,
   .order-detail,
   .order-pay {
-    padding: 12px 24px;
+    padding: 12px 12px;
   }
 
   .order-product__col {
@@ -398,18 +407,31 @@ input::-webkit-calendar-picker-indicator {
 
   .order-pay__submit p {
     font-size: 0.75rem;
-    width: 50%;
+    text-align: center;
+    /* width: 70%; */
   }
 
   .order-pay__price-container {
-    width: 70%;
+    /* width: 70%; */
     gap: 8px;
   }
 
+  .order-pay__submit {
+    flex-direction: column-reverse;
+  }
+
   .order-pay__submit button {
-    width: 40%;
+    /* width: 70%; */
     height: 40px;
     font-size: 1rem;
+  }
+
+  .order-sidebar__product {
+    display: none;
+  }
+
+  .order__product--mobile {
+    display: block;
   }
 
   /* body {

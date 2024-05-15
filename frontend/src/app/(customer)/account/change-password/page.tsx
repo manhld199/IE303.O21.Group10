@@ -3,6 +3,8 @@
 // import libs
 import React, { useEffect, useState, useRef } from "react";
 
+import { BACKEND_URL } from "@/utils/commonConst";
+
 // import css
 import "./page.css";
 
@@ -10,6 +12,7 @@ export default function ChangePasswordPage() {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [isOldPasswordVisible, setOldPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [isSuccess, setSuccess] = useState(false);
 
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
@@ -82,45 +85,47 @@ export default function ChangePasswordPage() {
 
     if (isAllValid) {
       const reset = {
-        user_old_password: oldPassword,
-        user_new_password: password,
+        oldPassword: oldPassword,
+        newPassword: password,
       };
+      console.log("Preparing to call API");
       //  API call here
+      try {
+        const response = await fetch(`${BACKEND_URL}/user/change-password`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reset),
+          credentials: "include",
+        });
 
-      //   await fetch("/auth/changePass", {
-      //     method: "POST",
-      //     body: JSON.stringify(reset),
-      //     headers: {
-      //         "Content-Type": "application/json",
-      //     },
-      // })
-      //     .then((res) => res.json())
-      //     .then((back) => {
-      //         if (back.status == "notMatchOldPassword") {
-      //             setError(oldPassword, back.message)
-      //         } else {
-      //             const successModal = document.querySelector('.success-modal')
-      //             successModal.style.display = 'flex'
-      //             setTimeout(() => {
-      //                 successModal.style.display = 'none'
-      //             }, 1000)
+        const data = await response.json();
 
-      //             location.reload()
-      //         }
-      //     })
+        if (data.status !== 200) {
+          newErrors.oldPassword = "Mật khẩu sai!";
+          setErrors(newErrors);
+        }
+
+        if (data.status == 200) {
+          setSuccess(true)
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+
     }
   };
 
   return (
-    <main className="account-information__main">
-      <section className="change-pass__main" id="info">
+    <section className="account-information__main">
+      <div className="change-pass__main" id="info">
         <div className="change-pass-item">
           <div className="change-pass-item--top">
             <div className="change-pass-item__info">
-              <h4>Đổi mật khẩu</h4>
+              <h2>Đổi mật khẩu</h2>
             </div>
           </div>
-          <hr />
 
           <form
             id="form-change-pass"
@@ -231,8 +236,11 @@ export default function ChangePasswordPage() {
                     <div className="error">{errors.confirmPassword}</div>
                   )}
                 </div>
-                <div className="popup__button">
-                  <button className="btn btn--filled pri save" type="submit">
+                {isSuccess && (
+                    <div className="success">Đổi mật khẩu thành công</div>
+                  )}
+                <div className="button_wrapper">
+                  <button className="save" type="submit">
                     Xác nhận
                   </button>
                 </div>
@@ -240,7 +248,7 @@ export default function ChangePasswordPage() {
             </div>
           </form>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
   );
 }

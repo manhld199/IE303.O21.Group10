@@ -6,7 +6,7 @@
 
 .pagination-container>* {
   width: 3rem;
-  aspect-ratio: 1/1;
+  height: 3rem;
 
   display: flex;
   justify-content: center;
@@ -24,9 +24,19 @@
   background: transparent;
 }
 
+.pagination-container button:hover,
+.pagination-container a:hover {
+  border: 2px solid var(--primary-mau0-2);
+  color: var(--primary-mau0-2);
+  cursor: pointer;
+  /* Specify cursor type, e.g., pointer */
+  font-weight: bold;
+}
+
 .pagination-container button:disabled {
-  background: var(--white-o2);
-  color: var(--black-o8);
+  background: transparent;
+  border: none;
+  color: rgba(0, 0, 0, 0.2);
   cursor: not-allowed;
 }
 
@@ -36,7 +46,3 @@
 
   font-weight: bold;
 }
-
-/* .pagination-container:has(button, Link):hover {
-  box-shadow: 0 0 1rem black;
-} */

@@ -1,11 +1,9 @@
 "use client";
 
 // import libs
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-import { Provider } from "react-redux";
-import { store } from "@/redux/store";
 import axios from "axios";
 
 // import components
@@ -13,24 +11,52 @@ import { OrderProduct } from "./components";
 
 // import utils
 import { convertNumberToMoney } from "@/utils";
+import { BACKEND_URL, ORDER_STATUS_LIST } from "@/utils/commonConst";
 
 // import css
 import "./page.css";
 
-const buyInfo = store.getState().cart.buyItems;
-const totalWithDiscount = buyInfo.reduce((result, item) => {
-  return (
-    result +
-    item.unit_price * ((100 - item.discount_amount) / 100) * item.quantity
-  );
-}, 0);
-const totalWithoutDiscount = buyInfo.reduce((result, item) => {
-  return result + item.unit_price * item.quantity;
-}, 0);
+// handle change page
+const handleOrderChangPage = () => {
+  localStorage.removeItem("buyItems");
+};
+
+let buyInfo = [],
+  totalWithDiscount,
+  totalWithoutDiscount;
 
 export default function SearchResultPage() {
+  const router = useRouter();
   useEffect(() => {
-    if (buyInfo.length == 0) return notFound();
+    const buyItems = JSON.parse(localStorage.getItem("buyItems"));
+    if (buyItems) {
+      buyInfo = buyItems.payload;
+      totalWithDiscount = buyInfo.reduce(
+        (result, item) =>
+          result
+          + item.unit_price
+          * ((100 - item.discount_amount) / 100)
+          * item.quantity,
+        0
+      );
+      totalWithoutDiscount = buyInfo.reduce(
+        (result, item) => result + item.unit_price * item.quantity,
+        0
+      );
+    } else {
+      return notFound();
+    }
+
+    const links = document.querySelectorAll("a");
+    links.forEach((link) => {
+      link.addEventListener("click", handleOrderChangPage);
+    });
+
+    return () => {
+      links.forEach((link) => {
+        link.removeEventListener("click", handleOrderChangPage);
+      });
+    };
   }, []);
 
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
@@ -38,6 +64,13 @@ export default function SearchResultPage() {
   const [cities, setCities] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any[]>([]);
   const [wards, setWards] = useState<any[]>([]);
+  const [userName, setUserName] = useState<string>("");
+  const [userPhone, setUserPhone] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [district, setDistrict] = useState<string>("");
+  const [ward, setWard] = useState<string>("");
+  const [street, setStreet] = useState<string>("");
+  const [note, setNote] = useState<string>("");
 
   // Kiểm tra định dạng họ và tên
   function validateName(event: React.ChangeEvent<HTMLInputElement>) {
@@ -60,6 +93,8 @@ export default function SearchResultPage() {
       errorSpan.textContent = "Vui lòng điền họ và tên người nhận hàng!";
       errorSpan.style.display = "block";
     }
+
+    setUserName(nameInput.value);
   }
 
   // Kiểm tra định dạng số điện thoại Việt Nam
@@ -82,6 +117,8 @@ export default function SearchResultPage() {
       errorSpan.style.display = "block";
       errorSpan.textContent = "Vui lòng điền số điện thoại người nhận hàng!";
     }
+
+    setUserPhone(phoneNumberInput.value);
   }
 
   useEffect(() => {
@@ -101,6 +138,7 @@ export default function SearchResultPage() {
   function handleCityChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const selectedCityId = event.target.value;
     const selectedCity = cities.find((city) => city.Id === selectedCityId);
+    setCity(selectedCity.Name);
 
     if (selectedCity) {
       setDistricts(selectedCity.Districts);
@@ -116,6 +154,7 @@ export default function SearchResultPage() {
     const selectedDistrict = districts.find(
       (district) => district.Id === selectedDistrictId
     );
+    setDistrict(selectedDistrict.Name);
 
     if (selectedDistrict) {
       setWards(selectedDistrict.Wards);
@@ -124,10 +163,130 @@ export default function SearchResultPage() {
     }
   }
 
+  function handleWardChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    const selectedWardId = event.target.value;
+    const selectedWard = wards.find(
+      (ward) => ward.Id === selectedWardId
+    );
+    setWard(selectedWard.Name);
+  }
+
+  const [paymentMethod, setPaymentMethod] = useState("");
+
+  const handlePaymentMethodChange = (event) => {
+    setPaymentMethod(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (paymentMethod === '1') {
+      try {
+        const response = await fetch(`${BACKEND_URL}/orders/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            order_buyer: {
+              order_name: userName,
+              order_phone: userPhone,
+            },
+            order_address: {
+              street: street,
+              ward: ward,
+              district: district,
+              province: city,
+            },
+            order_payment: "cod",
+            order_note: note,
+            order_total_cost: parseInt(totalWithDiscount),
+            order_details: buyInfo.map((product) => ({
+              product_id_hashed: product.product_id,
+              variant_id: product.variant_id,
+              quantity: product.quantity,
+              unit_price: product.unit_price,
+            })),
+          }),
+          credentials: "include",
+        });
+
+        const data = await response.json();
+
+        if (!data?.success)
+          return;
+
+        router.push("/account/purchase-history?type=unpaid");
+      } catch (error) {
+
+      }
+    }
+
+    if (paymentMethod === '3') {
+      try {
+        const resBE = await await fetch(`${BACKEND_URL}/orders/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({
+            order_buyer: {
+              order_name: userName,
+              order_phone: userPhone,
+            },
+            order_address: {
+              street: street,
+              ward: ward,
+              district: district,
+              province: city,
+            },
+            order_payment: "internet_banking",
+            order_note: note,
+            order_total_cost: parseInt(totalWithDiscount),
+            order_details: buyInfo.map((product) => ({
+              product_id_hashed: product.product_id,
+              variant_id: product.variant_id,
+              quantity: product.quantity,
+              unit_price: product.unit_price,
+            })),
+          }),
+          credentials: "include",
+        });
+
+        const jsonBE = await resBE.json();
+        if (!jsonBE.success)
+          throw jsonBE;
+
+        const { orderCode } = jsonBE.data;
+
+        const resPayment = await fetch(`${BACKEND_URL}/payment/create-payment-link`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ amount: parseInt(totalWithDiscount), orderCode, }),
+          credentials: "include",
+        });
+
+        const jsonPayment = await resPayment.json();
+        if (!jsonPayment.success)
+          throw jsonPayment;
+
+        const { checkoutUrl: url } = jsonPayment.data;
+
+        router.push(url);
+      } catch (error) {
+        console.error("Error in handleSubmit:", error);
+      }
+    }
+  };
+
   return (
     // <main className="order-container">
-    <Provider store={store}>
-      <form id="order-form">
+    <>
+      {/* <div></div> */}
+      <div className="order__product--mobile">
+        {(buyInfo ?? []).map((item, index) => {
+          return <OrderProduct buyInfo={item} key={index} />;
+        })}
+      </div>
+      <form id="order-form" onSubmit={handleSubmit}>
         {/* onSubmit={submitOrderForm} */}
         <section className="order-detail">
           <div className="order-detail__customer">
@@ -136,7 +295,7 @@ export default function SearchResultPage() {
               <div className="order-detail__input">
                 <input
                   name="buyerName"
-                  // value="Họ và tên mặc định"
+                  value={userName}
                   onChange={validateName}
                   type="text"
                   placeholder="Họ và tên"
@@ -147,7 +306,7 @@ export default function SearchResultPage() {
               <div className="order-detail__input">
                 <input
                   name="buyerPhone"
-                  // value="Số điện thoại mặc định"
+                  value={userPhone}
                   onChange={validatePhoneNumber}
                   type="text"
                   placeholder="Số điện thoại"
@@ -169,7 +328,7 @@ export default function SearchResultPage() {
                 <option value="" selected>
                   Chọn Tỉnh/Thành phố
                 </option>
-                {cities.map((city) => (
+                {(cities ?? []).map((city) => (
                   <option key={city.Id} value={city.Id}>
                     {city.Name}
                   </option>
@@ -184,18 +343,22 @@ export default function SearchResultPage() {
                 <option value="" selected>
                   Chọn Quận/Huyện
                 </option>
-                {districts.map((district) => (
+                {(districts ?? []).map((district) => (
                   <option key={district.Id} value={district.Id}>
                     {district.Name}
                   </option>
                 ))}
               </select>
 
-              <select className="location__select" id="ward" required>
+              <select
+                className="location__select"
+                id="ward"
+                required
+                onChange={handleWardChange}>
                 <option value="" selected>
                   Chọn Phường/Xã
                 </option>
-                {wards.map((ward) => (
+                {(wards ?? []).map((ward) => (
                   <option key={ward.Id} value={ward.Id}>
                     {ward.Name}
                   </option>
@@ -206,6 +369,8 @@ export default function SearchResultPage() {
                 name="address"
                 type="text"
                 placeholder="Số nhà, tên đường..."
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
                 required
               />
             </div>
@@ -216,7 +381,9 @@ export default function SearchResultPage() {
             <textarea
               className="note__text-area"
               name="note"
-              placeholder="Hãy nhập yêu cầu kèm theo (tùy chọn)..."></textarea>
+              placeholder="Hãy nhập yêu cầu kèm theo (tùy chọn)..."
+              onChange={(e) => setNote(e.target.value)}
+              value={note}></textarea>
           </div>
 
           <div className="order-detail__pay-method pay-method">
@@ -229,21 +396,23 @@ export default function SearchResultPage() {
                   name="pay-method"
                   value="1"
                   required
+                  onChange={handlePaymentMethodChange}
                 />
                 <label htmlFor="radio1">
                   Thanh toán trực tiếp khi nhận hàng
                 </label>
               </div>
-              <div>
+              {/* <div>
                 <input
                   type="radio"
                   id="radio2"
                   name="pay-method"
                   value="2"
                   required
+                  onChange={handlePaymentMethodChange}
                 />
                 <label htmlFor="radio2">Thanh toán qua MOMO</label>
-              </div>
+              </div> */}
               <div>
                 <input
                   type="radio"
@@ -251,6 +420,7 @@ export default function SearchResultPage() {
                   name="pay-method"
                   value="3"
                   required
+                  onChange={handlePaymentMethodChange}
                 />
                 <label htmlFor="radio3">Thanh toán qua Internet Banking</label>
               </div>
@@ -261,7 +431,7 @@ export default function SearchResultPage() {
 
       <section className="order-sidebar">
         <div className="order-sidebar__product">
-          {buyInfo.map((item, index) => {
+          {(buyInfo ?? []).map((item, index) => {
             return <OrderProduct buyInfo={item} key={index} />;
           })}
         </div>
@@ -308,7 +478,7 @@ export default function SearchResultPage() {
           </div>
         </div>
       </section>
-    </Provider>
+    </>
     // </main>
   );
 }

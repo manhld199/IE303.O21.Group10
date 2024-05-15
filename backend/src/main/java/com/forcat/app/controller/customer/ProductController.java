@@ -1,6 +1,7 @@
 package com.forcat.app.controller.customer;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.forcat.app.dto.Product.ProductShortenDto;
 import com.forcat.app.model.Product.Product;
 import com.forcat.app.service.ProductService;
 
@@ -33,9 +35,15 @@ public class ProductController {
 
         Product product = productService.getProduct(productObjectId).getBody();
 
-        List<ObjectId> categories = product.getCategories();
+        List<ObjectId> categories = product.getCategories().stream()
+                .map(category -> category.getCategoryId())
+                .collect(Collectors.toList());
 
         return productService.getProductsByCategory(categories);
     }
 
+    @GetMapping("/getRecommendProducts")
+    public ResponseEntity<List<ProductShortenDto>> getRecommendProducts() {
+        return productService.getRandom10Products();
+    }
 }

@@ -45,7 +45,7 @@ const linkToSocialMedias: IFooterLinkProps[] = [
 ];
 
 const email: string = "forcatshop.contact@gmail.com";
-const locationURL: string = "https://maps.app.goo.gl/GbwxfoKVzvYoN1hn9";
+const locationURL: string = "https://maps.app.goo.gl/cfvEL5VyP3TfBLGTA";
 
 export default function Footer() {
   return (
@@ -55,17 +55,19 @@ export default function Footer() {
           <CustomerLogo className={cx("footer__logo")} white />
           <span>Cửa hàng đồ dùng cho mèo Forcat</span>
           <div className={cx("footer__list-social-media")}>
-            {linkToSocialMedias.map((link: IFooterLinkProps, index: number) => (
-              <Link key={index} href={link.href} target="_blank">
-                <span className={cx("footer__social-media-container")}>
-                  <Image
-                    src={link.image.src}
-                    fill
-                    alt={`Icon mạng xã hội ${link.image.alt}`}
-                  />
-                </span>
-              </Link>
-            ))}
+            {(linkToSocialMedias ?? []).map(
+              (link: IFooterLinkProps, index: number) => (
+                <Link key={index} href={link.href} target="_blank">
+                  <span className={cx("footer__social-media-container")}>
+                    <Image
+                      src={link.image.src}
+                      fill
+                      alt={`Icon mạng xã hội ${link.image.alt}`}
+                    />
+                  </span>
+                </Link>
+              )
+            )}
           </div>
         </div>
         <div className={cx("footer__about")}>
@@ -117,7 +119,7 @@ export default function Footer() {
             <div className={cx("footer__list-item")}>
               <span className="material-icons-outlined">call</span>
               <span className={cx("footer__list-item", "phone")}>
-                1900 123 789
+                0559 695 594
               </span>
             </div>
             <div className={cx("footer__list-item")}>

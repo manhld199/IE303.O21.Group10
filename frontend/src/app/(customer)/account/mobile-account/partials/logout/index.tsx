@@ -4,6 +4,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import classNames from "classnames/bind";
+import Cookies from "js-cookie";
+
+import { BACKEND_URL } from "@/utils/commonConst";
 
 // import css
 import styles from "./logout.module.css";
@@ -19,6 +22,31 @@ export default function MobileLogout() {
 
   const handleCloseModal = () => {
     setIsModalVisible(false);
+  };
+  const handleLogout = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/auth/logout`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        console.error("Logout failed:", await res.text());
+        return;
+      }
+
+      localStorage.removeItem("currentUser");
+      Cookies.remove("currentUser");
+      window.location.reload();
+      return;
+    } catch (error) {
+      // console.error("Logout error:", error);
+    }
   };
   return (
     <div>
@@ -53,7 +81,10 @@ export default function MobileLogout() {
                     onClick={handleCloseModal}>
                     Hủy
                   </button>
-                  <Link href="/" className={cx("btn-logout")}>
+                  <Link
+                    href="/"
+                    className={cx("btn-logout")}
+                    onClick={handleLogout}>
                     Đăng xuất
                   </Link>
                 </div>

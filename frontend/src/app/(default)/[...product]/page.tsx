@@ -9,9 +9,9 @@ import {
   ProductBuyForm,
   ProductDescription,
   ProductSpecification,
-  ProductReview,
 } from "./partials";
 
+import { CustomerCarouselSlider } from "@/components";
 // import utils
 import { BACKEND_URL } from "@/utils/commonConst";
 
@@ -25,7 +25,7 @@ import "./page.css";
 async function getProduct(slug, pid) {
   try {
     const res = await fetch(
-      `${BACKEND_URL}/product/${encodeURIComponent(pid)}`,
+      `${BACKEND_URL}/product/${encodeURIComponent(pid.replaceAll(" ", "+"))}`,
       {
         next: { revalidate: 60 },
       }
@@ -35,6 +35,25 @@ async function getProduct(slug, pid) {
     return res.json();
   } catch {
     return notFound();
+  }
+}
+
+// fetch data
+async function getRelatedProducts(slug, pid) {
+  try {
+    const res = await fetch(
+      `${BACKEND_URL}/product/getRecommend/${encodeURIComponent(
+        pid.replaceAll(" ", "+")
+      )}`,
+      {
+        next: { revalidate: 60 },
+      }
+    );
+    // if (!res.ok || slug[2]) return notFound();
+    const data = await res.json();
+    return data.data;
+  } catch {
+    // return notFound();
   }
 }
 
@@ -68,8 +87,13 @@ export default async function ProductPage({
   const slug = params.product;
   const { pid } = searchParams;
   const res = await getProduct(slug, pid);
+  const relatedProducts = await getRelatedProducts(slug, pid);
   const productInfo: IBuyForm = {
-    product_id: res.data.product._id,
+    product_id: decodeURIComponent(res.data.product.product_id_hashed).replace(
+      " ",
+      "+"
+    ),
+    // product_id_hashed: res.data.product.product_id_hashed,s
     product_name: res.data.product.product_name,
     product_slug: res.data.product.product_slug,
     product_avg_rating: res.data.product.product_avg_rating,
@@ -98,25 +122,29 @@ export default async function ProductPage({
         <div className="product-content--left product-content-left">
           <ProductSlider
             productImgs={productImgs}
-            mobileOnly="mobile-hidden"
-            desktopOnly="desktop-hidden"></ProductSlider>
+            desktopOnly="desktop-hidden tablet-display"
+            tabletOnly="tablet-hidden"></ProductSlider>
           <ProductBuyForm
             pid={pid}
             productInfo={productInfo}
             currentVariantSlug={slug[1] ?? ""}
-            mobileOnly="desktop-hidden"></ProductBuyForm>
+            desktopOnly="desktop-hidden"
+            mobileOnly="mobile-display"></ProductBuyForm>
           <ProductSpecification
             productDetails={productDetails}></ProductSpecification>
           <ProductDescription
             productDescription={productDescription}
-            mobileOnly="desktop-hidden"></ProductDescription>
+            desktopOnly="desktop-hidden mobile-display"></ProductDescription>
         </div>
 
         <div className="product-content--right product-content-right mobile-hidden">
-          <div className="decoration__bow">
+          <div className="decoration-div">
             <Image
-              src="/imgs/product-page/bow.webp"
-              alt="This is a bow"
+              className="decoration-img"
+              src={`/imgs/product-page/decoration-${Math.floor(
+                Math.random() * 5
+              )}.webp`}
+              alt="Trang trí"
               fill={true}
             />
           </div>
@@ -128,10 +156,10 @@ export default async function ProductPage({
             productDescription={productDescription}></ProductDescription>
         </div>
       </div>
-      <ProductReview
-        reviewOverview={reviewOverview}
-        productReviews={productReviews}
-        productId={productId}></ProductReview>
+      <div className="related-container">
+        <h2 className="tip-products__label">Xem các sản phẩm gợi ý khác</h2>
+        <CustomerCarouselSlider productList={relatedProducts} />
+      </div>
     </main>
   );
 }

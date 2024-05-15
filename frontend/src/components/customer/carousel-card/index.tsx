@@ -6,9 +6,6 @@ import { CldImage } from "next-cloudinary";
 // import utils
 import { convertNumberToMoney } from "@/utils";
 
-// import components
-import { CustomerStarRating } from "@/components";
-
 // import css
 import styles from "./carousel.module.css";
 
@@ -17,19 +14,19 @@ const cx = classNames.bind(styles);
 export default function CustomerCarouselCard({ product }) {
   return (
     <>
-      <div key={product.product_id} className={cx("carousel__card")}>
+      <div className={cx("carousel__card")}>
         <Link
           className={cx("carousel__card-main")}
-          href={`/${product.product_slug}?pid=${product.product_id}`}>
-          {product.highest_discount ? (
+          href={`/${product.product_slug}/${product.variant_slug}?pid=${product.product_id}`}>
+          {product.variant_discount_amount ? (
             <div className={cx("carousel__card--badge")}>
-              - {product.highest_discount} %
+              - {product.variant_discount_amount} %
             </div>
           ) : null}
           <div className={cx("carousel__card--top")}>
             <div className={cx("carousel__card--img")}>
               <CldImage
-                src={product.product_img.link}
+                src={product.product_img.url}
                 alt={product.product_img.alt}
                 fill={true}
                 draggable="false"
@@ -39,26 +36,26 @@ export default function CustomerCarouselCard({ product }) {
               <span className={cx("carousel__card-category")}>
                 {product.category_name ? product.category_name : "FORCAT"}
               </span>
-              <div className={cx("carousel__card-rate")}>
-                <CustomerStarRating rating={product.product_avg_rating} />
-              </div>
-              <h4 title={product.product_name}>{product.product_name}</h4>
+              <h3 title={product.product_name}>{product.product_name}</h3>
               <p> Hàng cực hot </p>
             </div>
           </div>
           <div className={cx("carousel__card-bottom-details")}>
             <div className={cx("carousel__card-price")}>
-              {product.highest_discount ? (
-                <>
-                  <h2>{convertNumberToMoney(product.lowest_price)}đ</h2>
-                  <small>{convertNumberToMoney(product.product_price)}đ</small>
-                </>
-              ) : (
-                <>
-                  <h2>{convertNumberToMoney(product.product_price)}đ</h2>
-                  <small className={cx("display-none")}> alo</small>
-                </>
-              )}
+              <h3>
+                {product.variant_discount_amount == 0 ? (
+                  <>{convertNumberToMoney(product.variant_price)}</>
+                ) : (
+                  <>
+                    {convertNumberToMoney(
+                      (product.variant_price *
+                        (100 - product.variant_discount_amount)) /
+                        100
+                    )}
+                    <small>{convertNumberToMoney(product.variant_price)}</small>
+                  </>
+                )}
+              </h3>
             </div>
           </div>
         </Link>

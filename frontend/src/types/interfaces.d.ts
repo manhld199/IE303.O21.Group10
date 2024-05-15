@@ -48,12 +48,10 @@ interface ISubCategoryProps {
   products: IProductProps[];
 }
 
-interface ICategoryProps {
+interface ICategoryTypeProps {
   // id: string;
   category_type: string;
-  iconData?: string;
-  url?: string;
-  subCategories?: ISubCategoryProps[];
+  subCategories: ISubCategoryProps[];
 }
 
 interface IHeaderLinkProps {
@@ -65,7 +63,7 @@ interface IHeaderLinkProps {
 }
 
 interface IHeaderMenuProps {
-  categories: ICategoryProps[];
+  categoryTypes: ICategoryTypeProps[];
   links: IHeaderLinkProps[];
 }
 
@@ -80,7 +78,7 @@ interface IHeaderMenuProductItemProps {
   };
   lowest_price?: number;
   product_price: number;
-  price__discount?: number;
+  highest_discount?: number;
   category_name: string;
 }
 
@@ -125,21 +123,21 @@ interface IArticleDescriptionMediaPRops {
   caption: string;
 }
 
-interface IArticleProps {
-  article_id: string;
+interface INewsItemProps {
+  article_id_hashed: string;
   article_name: string;
+  article_avt?: {
+    link: string;
+    alt: string;
+  };
+  article_slug: string;
   article_type: string;
   article_short_description: string;
-  article_description?: (
-    | IArticleDescriptionContentPRops
-    | IArticleDescriptionMediaPRops
-  )[];
   article_info: {
     author: string;
     published_date: string;
   };
   article_date: string;
-  article_slug?: string[];
 }
 
 interface IProductItemInOrderItemProps {
@@ -165,17 +163,17 @@ interface IOrderItemProps {
   mutate?: () => void;
 }
 
-interface INotiProps {
+interface INotiItemProps {
   _id: string;
-  user_id: string;
   notification_name: string;
   notification_slug: string;
   notification_type: string;
   notification_description: string;
-  notification_url_img: string;
   updatedAt: string;
-  is_read: boolean;
-  allRead: boolean;
+  is_unread: boolean;
+  readAll?: boolean;
+  mutate?: any;
+  fetcherSetRead?: (url: string) => void;
 }
 
 interface IResponseJSON {
@@ -183,11 +181,6 @@ interface IResponseJSON {
   success: boolean;
   message?: string;
   data?: Object;
-}
-
-interface ResponseOrderHistory {
-  orders: IOrderItemProps[];
-  maxPage: number;
 }
 
 interface IReviewItem {
@@ -204,4 +197,13 @@ interface IReviewItem {
   review_rating: number;
   review_context: string;
   order_id?: string;
+}
+
+interface IUserLocal {
+  user_name: string;
+  user_avt_img: string;
+  recent_notification: {
+    _id: string;
+  }[];
+  cart: (any)[];
 }

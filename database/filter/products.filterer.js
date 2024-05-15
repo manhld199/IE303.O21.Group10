@@ -24,7 +24,12 @@ const productSchema = new mongoose.Schema(
     _id: { type: mongoose.Schema.Types.ObjectId },
     product_name: { type: String },
     product_slug: { type: String },
-    categories: [{ type: mongoose.Schema.Types.ObjectId }],
+    categories: [
+      {
+        category_id: { type: mongoose.Schema.Types.ObjectId },
+        category_name: { type: String },
+      },
+    ],
     product_imgs: [
       {
         url: { type: String },
@@ -38,15 +43,18 @@ const productSchema = new mongoose.Schema(
       {
         variant_name: { type: String },
         variant_slug: { type: String },
-        price: { type: Number },
+        variant_price: { type: Number },
         // check
         variant_img: {
           url: { type: String },
           alt: { type: String },
         },
         // check
-        discount_id: { type: mongoose.Schema.Types.ObjectId },
-        in_stock: { type: Number },
+        variant_discount: {
+          discount_id: { type: mongoose.Schema.Types.ObjectId },
+          discount_amount: { type: Number },
+        },
+        variant_in_stock: { type: Number },
       },
     ],
     product_supp_price: { type: Number },
@@ -70,9 +78,10 @@ const filteredProducts = rawProducts.map((product) => ({
   _id: new mongoose.Types.ObjectId(product._id["$oid"]),
   product_name: product.product_name,
   product_slug: product.product_slug,
-  categories: product.categories.map(
-    (category) => new mongoose.Types.ObjectId(category["$oid"])
-  ),
+  categories: product.categories.map((category, index) => ({
+    category_id: new mongoose.Types.ObjectId(category["$oid"]),
+    category_name: product.category_names[index],
+  })),
   product_imgs: product.product_imgs.map((img) => ({
     url: img.link,
     alt: img.alt,
@@ -83,15 +92,18 @@ const filteredProducts = rawProducts.map((product) => ({
   product_variants: product.product_variants.map((variant) => ({
     variant_name: variant.variant_name,
     variant_slug: variant.variant_slug,
-    price: variant.price,
+    variant_price: variant.price,
     variant_img: {
       url: variant.variant_imgs[0].link,
       alt: variant.variant_imgs[0].alt,
     },
-    discount_id: new mongoose.Types.ObjectId(
-      variant.discount_id?.["$oid"] ?? null
-    ),
-    in_stock: variant.in_stock,
+    variant_discount: {
+      discount_id: new mongoose.Types.ObjectId(
+        variant.discount_id?.["$oid"] ?? null
+      ),
+      discount_amount: variant.discount_amount,
+    },
+    variant_in_stock: variant.in_stock,
   })),
   product_supp_price: product.product_supp_price,
 }));

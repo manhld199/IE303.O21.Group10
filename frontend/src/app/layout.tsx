@@ -5,6 +5,7 @@ import { Quicksand } from "next/font/google";
 // use styles
 import "./global.css";
 
+// import components
 import { Scrollup, ContactAside } from "@/components";
 
 const quicksand = Quicksand({
@@ -16,14 +17,55 @@ export const metadata: Metadata = {
   applicationName: "ForCat",
   referrer: "origin-when-cross-origin",
   keywords: [
-    "cửa hàng, phụ kiện, thú cưng, ForCat, ForCatShop, FORCAT, FORCATSHOP, forcat, forcatshop,forCat, Forcat,forcatShop,forCatShop, thu cung, thú cung, phụ kien, phụ kiện mèo, phu kien meo, FORcat, forCAT",
+    "cửa hàng",
+    "phụ kiện",
+    "thú cưng",
+    "ForCat",
+    "ForCatShop",
+    "FORCAT",
+    "FORCATSHOP",
+    "forcat",
+    "forcatshop",
+    "forCat",
+    "Forcat",
+    "forcatShop",
+    "forCatShop",
+    "thu cung",
+    "thú cung",
+    "phụ kien",
+    "phụ kiện mèo",
+    " phu kien meo",
+    "FORcat",
+    "forCAT",
+    "ForCat Shop - Cửa hàng phụ kiện thú cưng",
+    "forcat shop",
+    "ForCat Shop",
+    "FORCAT SHOP",
+    "Forcat Shop",
+    "Forcat shop",
+    "forcat shop - cửa hàng phụ kiện thú cưng",
+    "For cat shop",
+    "for cat shop",
+    "for cat",
+    "For cat",
+    "Shop for cat",
+    "Shop For Cat",
+    "For cat Shop",
+    "SHOP FOR CAT",
+    "FORCAT SHOP",
+    "đồ cho mèo",
+    "phụ kiện cho mèo",
+    "phụ kiện mèo",
+    "đồ mèo",
+    "phu kien meo",
+    "do cho meo",
   ],
   title: {
     template: "ForCat | %s ",
     default: "ForCat",
   },
   description:
-    "ForCat tự hào là cửa hàng uy tín hàng đầu, chuyên cung cấp các sản phẩm và phụ kiện dành cho thú cưng. Khám phá bộ sưu tập đa dạng của chúng tôi bao gồm đồ chơi, thức ăn, đồ dùng vệ sinh và nhiều hơn nữa để chăm sóc và làm hài lòng thú cưng của bạn.",
+    "ForCat Shop tự hào là cửa hàng uy tín hàng đầu, chuyên cung cấp các sản phẩm và phụ kiện dành cho thú cưng. Khám phá bộ sưu tập đa dạng của chúng tôi bao gồm đồ chơi, thức ăn, đồ dùng vệ sinh và nhiều hơn nữa để chăm sóc và làm hài lòng thú cưng của bạn.",
   openGraph: {
     images: [
       {
@@ -46,8 +88,8 @@ export default function CustomerLayout({
     <html lang="vi" className={quicksand.className}>
       <body>
         {children}
-        <ContactAside></ContactAside>
-        <Scrollup></Scrollup>
+        <Scrollup />
+        <ContactAside />
       </body>
     </html>
   );

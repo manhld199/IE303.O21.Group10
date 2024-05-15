@@ -41,7 +41,7 @@ function convertOrderStatusToStr(order_status: string): string {
       return "Đã hủy";
   }
 
-  console.log("Unexpected Order Status: ", order_status);
+  // console.log("Unexpected Order Status: ", order_status);
   return "Unexpected Order Status";
 }
 
@@ -115,10 +115,12 @@ function convertNumberToMoney(number: number): string {
   // Format the number as currency using toLocaleString
   const currency = number
     .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
-    .replace(/₫/g, "");
+    .replace(/₫/g, "")
+    .trim();
 
   // Return the formatted currency string
-  return currency;
+  // console.log(currency);
+  return currency + "đ";
 }
 
 function convertDateToHourDayMonthYear(dateString: string): string {

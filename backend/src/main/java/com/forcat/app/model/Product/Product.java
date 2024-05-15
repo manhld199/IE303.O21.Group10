@@ -30,7 +30,7 @@ public class Product {
 
     @Field(name = "categories")
     @JsonProperty("categories")
-    private List<ObjectId> categories;
+    private List<ProductCategory> categories;
 
     @Field(name = "product_imgs")
     @JsonProperty("product_imgs")

@@ -13,16 +13,24 @@ import styles from "./product-variant.module.css";
 // use css
 const cx = classNames.bind(styles);
 
+let isActive;
 export default function ProductVariant({
   pid,
   variant,
+  firstActive,
   ...props
 }: {
   pid: any;
   variant: IVariant;
+  firstActive?: any;
 }) {
   const pathname = decodeURIComponent(usePathname());
-  const isActive = pathname == variant.url ? "variant__active" : "";
+
+  if (firstActive) {
+    isActive = "variant__active";
+  } else {
+    isActive = pathname == variant.url ? "variant__active" : "";
+  }
 
   return (
     <Link
@@ -46,7 +54,7 @@ export default function ProductVariant({
           fill={true}
         />
       </div>
-      <span className={cx("variant__name")}>{variant.name}</span>
+      <div className={cx("variant__name")}>{variant.name}</div>
     </Link>
   );
 }

@@ -42,15 +42,17 @@ export default function ProductSpecification({
           "specifications__table",
           isSeeMoreActive ? "full-height" : ""
         )}>
-        {Object.keys(productDetails).map((key, index) => {
+        {(Object.keys(productDetails) ?? []).map((key, index) => {
           return (
             <div className={cx("specifications__item")} key={index}>
               <div className={cx("specifications__type")}>
                 {productDetails[key].name}
               </div>
-              <div className={cx("specifications__info")}>
-                {productDetails[key].value}
-              </div>
+              <div
+                className={cx("specifications__info")}
+                dangerouslySetInnerHTML={{
+                  __html: productDetails[key].value,
+                }}></div>
             </div>
           );
         })}
@@ -59,9 +61,12 @@ export default function ProductSpecification({
         {!isSeeMoreActive && (
           <div className={cx("see-more-btn__gradient")}></div>
         )}
-        <div className={cx("see-more-btn__text")} onClick={handleSeeMore}>
+        <button
+          className={cx("see-more-btn__text")}
+          onClick={handleSeeMore}
+          type="button">
           {isSeeMoreActive ? "Thu gọn" : "Xem thêm"}
-        </div>
+        </button>
       </div>
     </section>
   );

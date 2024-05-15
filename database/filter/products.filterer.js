@@ -33,7 +33,7 @@ const productSchema = new mongoose.Schema(
     ],
     product_short_description: { type: String },
     product_description: { type: String },
-    product_detail: { type: Object },
+    product_details: { type: Object },
     product_variants: [
       {
         variant_name: { type: String },
@@ -79,7 +79,7 @@ const filteredProducts = rawProducts.map((product) => ({
   })),
   product_short_description: product.product_short_description,
   product_description: product.product_description,
-  product_detail: product.product_detail,
+  product_details: product.product_detail,
   product_variants: product.product_variants.map((variant) => ({
     variant_name: variant.variant_name,
     variant_slug: variant.variant_slug,

@@ -1,9 +1,19 @@
 package com.forcat.app.model.Discount;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.mongodb.core.mapping.Field;
 import lombok.Data;
 
 @Data
 public class DiscountProducts {
-    private boolean is_all;
-    private String product_id[];
+    @Field(name = "is_all")
+    @JsonProperty("is_all")
+    private boolean isAll;
+
+    @Field(name = "product_id")
+    @JsonProperty("product_id")
+    private String[] productId;
+
+    public DiscountProducts() {
+    }
 }

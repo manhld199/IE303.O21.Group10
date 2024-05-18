@@ -42,8 +42,13 @@ public class ProductController {
         return productService.getProductsByCategory(categories);
     }
 
-    @GetMapping("/getRecommendProducts")
-    public ResponseEntity<List<ProductShortenDto>> getRecommendProducts() {
+    @GetMapping("/getRecommendedProducts")
+    public ResponseEntity<List<ProductShortenDto>> getRecommendedProducts() {
         return productService.getRandom10Products();
+    }
+
+    @GetMapping("/getDiscountedProducts")
+    public ResponseEntity<List<ProductShortenDto>> getDiscountProducts() {
+        return productService.get10DiscountedProducts();
     }
 }

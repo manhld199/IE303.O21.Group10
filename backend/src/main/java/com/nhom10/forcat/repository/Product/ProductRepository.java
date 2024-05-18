@@ -1,4 +1,4 @@
-package com.nhom10.forcat.repository;
+package com.nhom10.forcat.repository.Product;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.nhom10.forcat.model.Product.Product;
 
 @Repository
-public interface ProductRepository extends MongoRepository<Product, ObjectId> {
+public interface ProductRepository extends MongoRepository<Product, ObjectId>, CustomProductRepository {
 
     @Query("{ 'categories.category_id' : { $in: ?0 } }")
     List<Product> findProductsByCategories(List<ObjectId> categories);

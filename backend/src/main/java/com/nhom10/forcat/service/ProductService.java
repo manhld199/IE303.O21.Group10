@@ -2,7 +2,6 @@ package com.nhom10.forcat.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.nhom10.forcat.dto.Product.ProductShortenDto;
 import com.nhom10.forcat.model.Product.Product;
-import com.nhom10.forcat.repository.ProductRepository;
+import com.nhom10.forcat.repository.Product.ProductRepository;
 
 @Service
 public class ProductService {
@@ -53,31 +52,33 @@ public class ProductService {
 
     public ResponseEntity<List<ProductShortenDto>> getRandom10Products() {
         try {
-            List<Product> products = productRepository.findAll();
+            List<Product> products = productRepository.findRandomProducts(10);
 
             if (products.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-            List<Product> randomProducts = null;
-            if (products.size() > 10) {
-                Random random = new Random();
-                randomProducts = random.ints(0, products.size())
-                        .distinct()
-                        .limit(10)
-                        .mapToObj(products::get)
-                        .collect(Collectors.toList());
-            }
-
-            products = randomProducts;
 
             List<ProductShortenDto> shortenProducts = products.stream().map(product -> new ProductShortenDto(product))
                     .collect(Collectors.toList());
 
             return new ResponseEntity<>(shortenProducts, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
-        } catch (
+    public ResponseEntity<List<ProductShortenDto>> get10DiscountedProducts() {
+        try {
+            List<Product> products = productRepository.findRandomDiscountedProducts(10);
 
-        Exception e) {
+            if (products.isEmpty())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            List<ProductShortenDto> shortenProducts = products.stream().map(product -> new ProductShortenDto(product))
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(shortenProducts, HttpStatus.OK);
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

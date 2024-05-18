@@ -61,9 +61,16 @@ Category.create(filteredCategories)
   .then((data) => {
     console.log("Success! Categories added to mongodb", data);
     // save to json file
-    fs.writeFileSync(
-      path.join(__dirname, "categories.filtered.json"),
-      JSON.stringify(data)
+    fs.writeFile(
+      path.join(__dirname, "..", "filtered", "categories.filtered.json"),
+      JSON.stringify(data),
+      (error) => {
+        if (error) {
+          console.error("Lỗi khi lưu tệp JSON:", error);
+        } else {
+          console.log("Kết quả đã được lưu vào tệp categories.filtered.json");
+        }
+      }
     );
   })
   .catch((err) => {

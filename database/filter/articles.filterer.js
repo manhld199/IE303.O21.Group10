@@ -68,9 +68,16 @@ Article.create(filteredArticles)
   .then((data) => {
     console.log("Success! Articles added to mongodb", data);
     // save to json file
-    fs.writeFileSync(
-      path.join(__dirname, "articles.filtered.json"),
-      JSON.stringify(data)
+    fs.writeFile(
+      path.join(__dirname, "..", "filtered", "articles.filtered.json"),
+      JSON.stringify(data),
+      (error) => {
+        if (error) {
+          console.error("Lỗi khi lưu tệp JSON:", error);
+        } else {
+          console.log("Kết quả đã được lưu vào tệp articles.filtered.json");
+        }
+      }
     );
   })
   .catch((err) => {

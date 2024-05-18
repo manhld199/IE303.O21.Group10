@@ -98,9 +98,9 @@ const filteredProducts = rawProducts.map((product) => ({
       alt: variant.variant_imgs[0].alt,
     },
     variant_discount: {
-      discount_id: new mongoose.Types.ObjectId(
-        variant.discount_id?.["$oid"] ?? null
-      ),
+      discount_id: variant.discount_id?.["$oid"]
+        ? new mongoose.Types.ObjectId(variant.discount_id?.["$oid"])
+        : null,
       discount_amount: variant.discount_amount,
     },
     variant_in_stock: variant.in_stock,
@@ -113,9 +113,16 @@ Product.create(filteredProducts)
   .then((data) => {
     console.log("Success! Products added to mongodb", data);
     // save to json file
-    fs.writeFileSync(
-      path.join(__dirname, "products.filtered.json"),
-      JSON.stringify(data)
+    fs.writeFile(
+      path.join(__dirname, "..", "filtered", "products.filtered.json"),
+      JSON.stringify(data),
+      (error) => {
+        if (error) {
+          console.error("Lỗi khi lưu tệp JSON:", error);
+        } else {
+          console.log("Kết quả đã được lưu vào tệp products.filtered.json");
+        }
+      }
     );
   })
   .catch((err) => {

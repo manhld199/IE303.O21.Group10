@@ -51,4 +51,9 @@ public class ProductController {
     public ResponseEntity<List<ProductShortenDto>> getDiscountProducts() {
         return productService.get10DiscountedProducts();
     }
+
+    @GetMapping("/getNewestProducts")
+    public ResponseEntity<List<ProductShortenDto>> getNewestProducts() {
+        return productService.get10NewestProducts();
+    }
 }

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     "Chào mừng bạn đến với ForCatShop - nơi mang lại những trải nghiệm tuyệt vời cho bạn và thú cưng của bạn. Tại đây, ForCat Shop cam kết cung cấp những sản phẩm chất lượng và dịch vụ tận tâm nhất để giúp bạn chăm sóc và yêu thương thú cưng của mình. Khám phá ngay bộ sưu tập sản phẩm đa dạng và đăng ký tài khoản để nhận ưu đãi đặc biệt. Hãy bắt đầu hành trình mua sắm và chăm sóc thú cưng của bạn tại ForCat Shop ngay hôm nay!",
 };
 
-const getRecommendProducts = async () => {
+const getRecommendedProducts = async () => {
   try {
     const response = await fetch(
       `${BACKEND_URL}/products/getRecommendProducts`,
@@ -35,49 +35,37 @@ const getRecommendProducts = async () => {
     return data;
   } catch (error) {
     console.error("Error fetching recommend products:", error);
-    // throw error;
   }
 };
 
-const fetchNewestProducts = async () => {
+const getNewestProducts = async () => {
+  try {
+    const response = await fetch(`${BACKEND_URL}/products/getNewestProducts`, {
+      next: { revalidate: 60 },
+    });
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching newest products:", error);
+  }
+};
+
+const getDiscountedProducts = async () => {
   try {
     const response = await fetch(
-      `${BACKEND_URL}/productList/getNewestProducts`,
+      `${BACKEND_URL}/products/getDiscountedProducts`,
       {
         next: { revalidate: 60 },
       }
     );
 
-    // if (!response.ok) {
-    //   throw new Error("Failed to fetch newest products");
-    // }
-
     const data = await response.json();
-    return data.data; // Return the entire data object
+
+    return data;
   } catch (error) {
-    // console.error("Error fetching newest products:", error);
-    // throw error;
-  }
-};
-
-const fetchDiscountProducts = async () => {
-  try {
-    const response = await fetch(
-      `${BACKEND_URL}/productList/getDiscountProducts`,
-      {
-        next: { revalidate: 60 },
-      }
-    );
-
-    // if (!response.ok) {
-    //   throw new Error("Failed to fetch discount products");
-    // }
-
-    const data = await response.json();
-    return data.data; // Return the entire data object
-  } catch (error) {
-    // console.error("Error fetching discount products:", error);
-    // throw error;
+    console.error("Error fetching discount products:", error);
   }
 };
 
@@ -99,10 +87,14 @@ const fetchArticles = async () => {
 };
 
 export default async function Home() {
-  let recommendProducts = await getRecommendProducts();
+  let recommendedProducts = await getRecommendedProducts();
   // console.log(recommendProducts);
-  let newestProducts = await fetchNewestProducts();
-  let discountProducts = await fetchDiscountProducts();
+  let newestProducts = await getNewestProducts();
+  // console.log(newestProducts);
+
+  let discountedProducts = await getDiscountedProducts();
+  // console.log(discountedProducts);
+
   // let articles = await fetchArticles();
 
   return (
@@ -129,7 +121,7 @@ export default async function Home() {
               </Link>
               <span className="tip-products__title-after"></span>
             </h2>
-            <CustomerCarouselSlider productList={recommendProducts} />
+            <CustomerCarouselSlider productList={recommendedProducts} />
           </div>
         </div>
 
@@ -144,16 +136,16 @@ export default async function Home() {
               </Link>
               <span className="tip-products__title-after"></span>
             </h2>
-            {/* <div className="tip-products__content">
+            <div className="tip-products__content">
               {newestProducts &&
                 newestProducts.length &&
                 (newestProducts ?? []).map((product) => (
                   <CustomerProductCard
-                    key={product.product_id_hashed}
+                    key={product.product_id}
                     product={product}
                   />
                 ))}
-            </div> */}
+            </div>
           </div>
           <div className="banner-wrapper">
             <Link
@@ -220,16 +212,16 @@ export default async function Home() {
               </Link>
               <span className="tip-products__title-after"></span>
             </h2>
-            {/* <div className="tip-products__content">
-              {discountProducts &&
-                discountProducts.length &&
-                (discountProducts ?? []).map((product) => (
+            <div className="tip-products__content">
+              {discountedProducts &&
+                discountedProducts.length &&
+                (discountedProducts ?? []).map((product) => (
                   <CustomerProductCard
-                    key={product.product_id_hashed}
+                    key={product.product_id}
                     product={product}
                   />
                 ))}
-            </div> */}
+            </div>
           </div>
         </section>
         {/* <div className="wrapper color padding-bottom">

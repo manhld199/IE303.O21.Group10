@@ -18,17 +18,17 @@ export default function CustomerProductCard({ product }) {
   return (
     <div className={cx("product-card")}>
       <Link
-        href={`/${product.product_slug}/${product.variant_slug}?pid=${product.product_id_hashed}`}
+        href={`/${product.product_slug}/${product.variant_slug}?pid=${product.product_id}`}
         className={cx("product__card-main")}>
-        {product.highest_discount ? (
+        {product.variant_discount_amount ? (
           <div className={cx("product__card--badge")}>
-            - {product.highest_discount} %
+            - {product.variant_discount_amount} %
           </div>
         ) : null}
         <div className={cx("product__card--top")}>
           <div className={cx("product-tumb")}>
             <CldImage
-              src={product.product_img.link}
+              src={product.product_img.url}
               alt={product.product_img.alt}
               fill={true}
             />
@@ -43,13 +43,17 @@ export default function CustomerProductCard({ product }) {
         <div className={cx("product-bottom-details")}>
           <div className={cx("product-price")}>
             <h3>
-              {product.highest_discount && product.lowest_price ? (
-                <>
-                  {convertNumberToMoney(product.lowest_price)}
-                  <small>{convertNumberToMoney(product.product_price)}</small>
-                </>
+              {product.variant_discount_amount == 0 ? (
+                <>{convertNumberToMoney(product.variant_price)}</>
               ) : (
-                <>{convertNumberToMoney(product.product_price)}</>
+                <>
+                  {convertNumberToMoney(
+                    (product.variant_price *
+                      (100 - product.variant_discount_amount)) /
+                      100
+                  )}
+                  <small>{convertNumberToMoney(product.variant_price)}</small>
+                </>
               )}
             </h3>
           </div>

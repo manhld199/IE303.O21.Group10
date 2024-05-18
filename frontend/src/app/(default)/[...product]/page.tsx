@@ -24,16 +24,17 @@ import "./page.css";
 // fetch data
 async function getProduct(slug, pid) {
   try {
-    const res = await fetch(
-      `${BACKEND_URL}/product/${encodeURIComponent(pid.replaceAll(" ", "+"))}`,
-      {
-        next: { revalidate: 60 },
-      }
-    );
+    const res = await fetch(`${BACKEND_URL}/products/${pid}`, {
+      next: { revalidate: 60 },
+    });
+
     if (!res.ok || slug[2]) return notFound();
 
-    return res.json();
-  } catch {
+    const data = res.json();
+
+    return data;
+  } catch (err) {
+    console.log(err);
     return notFound();
   }
 }
@@ -42,18 +43,17 @@ async function getProduct(slug, pid) {
 async function getRelatedProducts(slug, pid) {
   try {
     const res = await fetch(
-      `${BACKEND_URL}/product/getRecommend/${encodeURIComponent(
-        pid.replaceAll(" ", "+")
-      )}`,
+      `${BACKEND_URL}/products/getRelatedProducts/${pid}`,
       {
         next: { revalidate: 60 },
       }
     );
-    // if (!res.ok || slug[2]) return notFound();
+
     const data = await res.json();
-    return data.data;
-  } catch {
-    // return notFound();
+
+    return data;
+  } catch (err) {
+    console.log(err);
   }
 }
 
@@ -72,8 +72,8 @@ export async function generateMetadata(
   const res = await getProduct(slug, pid);
 
   return {
-    title: res.data.product.product_name,
-    description: res.data.product.product_short_description,
+    title: res.product_name,
+    description: res.product_short_description,
   };
 }
 
@@ -86,35 +86,23 @@ export default async function ProductPage({
 }) {
   const slug = params.product;
   const { pid } = searchParams;
-  const res = await getProduct(slug, pid);
+
+  const product = await getProduct(slug, pid);
+  // console.log(product);
+
   const relatedProducts = await getRelatedProducts(slug, pid);
+  // console.log(relatedProducts);
+
   const productInfo: IBuyForm = {
-    product_id: decodeURIComponent(res.data.product.product_id_hashed).replace(
-      " ",
-      "+"
-    ),
-    // product_id_hashed: res.data.product.product_id_hashed,s
-    product_name: res.data.product.product_name,
-    product_slug: res.data.product.product_slug,
-    product_avg_rating: res.data.product.product_avg_rating,
-    product_variants: res.data.product.product_variants,
+    product_id: product.product_id,
+    product_name: product.product_name,
+    product_slug: product.product_slug,
+    product_variants: product.product_variants,
   };
 
-  const productImgs = res.data.product.product_imgs;
-  const productDetails = res.data.product.product_detail;
-  const productDescription = res.data.product.product_description;
-  const productReviews = res.data.product.recent_reviews;
-  const productId = res.data.product._id;
-  const reviewOverview = {
-    total_review: res.data.product.review_count.reduce(
-      (total, current) => total + current,
-      0
-    ),
-    avg_rating: res.data.product.product_avg_rating,
-    review_count: res.data.product.review_count,
-    recent_images: res.data.product.recent_images,
-    recent_videos: res.data.product.recent_videos,
-  };
+  const productImgs = product.product_imgs;
+  const productDetails = product.product_details;
+  const productDescription = product.product_description;
 
   return (
     <main className="product">

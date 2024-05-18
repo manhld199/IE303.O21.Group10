@@ -89,6 +89,7 @@ const fetchArticles = async () => {
 export default async function Home() {
   let recommendedProducts = await getRecommendedProducts();
   // console.log(recommendProducts);
+
   let newestProducts = await getNewestProducts();
   // console.log(newestProducts);
 

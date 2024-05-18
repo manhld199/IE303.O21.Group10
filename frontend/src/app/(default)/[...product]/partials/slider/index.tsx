@@ -34,14 +34,14 @@ export default function CustomerProductSlider({
   };
 
   // change main image src when hovered
-  const [mainImageSrc, setMainImageSrc] = useState(productImgs[0].link);
+  const [mainImageSrc, setMainImageSrc] = useState(productImgs[0].url);
   const [mainImageAlt, setMainImageAlt] = useState(
     productImgs[productImgs.length - 1].alt
   );
 
   const handleMouseOver = (index: number) => {
     setHoveredIndex(index);
-    setMainImageSrc(productImgs[index].link);
+    setMainImageSrc(productImgs[index].url);
     setMainImageAlt(productImgs[index].alt);
   };
 
@@ -90,7 +90,7 @@ export default function CustomerProductSlider({
     }
 
     setCurrentIndex(newIndex);
-    setMainImageSrc(productImgs[newIndex].link);
+    setMainImageSrc(productImgs[newIndex].url);
     setMainImageAlt(productImgs[newIndex].alt);
     handleMouseOver(newIndex); // Update hovered state and potentially class
 
@@ -108,7 +108,7 @@ export default function CustomerProductSlider({
     }
 
     setCurrentIndex(newIndex);
-    setMainImageSrc(productImgs[newIndex].link);
+    setMainImageSrc(productImgs[newIndex].url);
     setMainImageAlt(productImgs[newIndex].alt);
     handleMouseOver(newIndex); // Update hovered state and potentially class
 
@@ -165,7 +165,7 @@ export default function CustomerProductSlider({
                     isHovered(index, hoveredIndex)
                   )}
                   onMouseOver={() => handleMouseOver(index)}
-                  src={img.link}
+                  src={img.url}
                   alt={img.alt}
                   fill={true}
                 />

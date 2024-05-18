@@ -6,6 +6,10 @@ import lombok.Data;
 
 @Data
 public class ProductVariant {
+    @Field(name = "_id")
+    @JsonProperty("variant_id")
+    private String variantId;
+
     @Field(name = "variant_name")
     @JsonProperty("variant_name")
     private String variantName;
@@ -26,9 +30,9 @@ public class ProductVariant {
     @JsonProperty("variant_discount")
     private ProductVariantDiscount variantDiscount;
 
-    @Field(name = "in_stock")
-    @JsonProperty("in_stock")
-    private int inStock;
+    @Field(name = "variant_in_stock")
+    @JsonProperty("variant_in_stock")
+    private int variantInStock;
 
     public ProductVariant() {
     }

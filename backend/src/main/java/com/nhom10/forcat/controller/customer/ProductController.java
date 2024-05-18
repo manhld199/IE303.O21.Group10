@@ -30,7 +30,7 @@ public class ProductController {
     }
 
     @GetMapping("/getRelatedProducts/{productId}")
-    public ResponseEntity<List<Product>> getRelatedProducts(@PathVariable String productId) {
+    public ResponseEntity<List<ProductShortenDto>> getRelatedProducts(@PathVariable String productId) {
         ObjectId productObjectId = new ObjectId(productId);
 
         Product product = productService.getProduct(productObjectId).getBody();

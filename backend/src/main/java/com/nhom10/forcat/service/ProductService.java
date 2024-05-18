@@ -37,15 +37,17 @@ public class ProductService {
         }
     }
 
-    public ResponseEntity<List<Product>> getProductsByCategory(List<ObjectId> categories) {
+    public ResponseEntity<List<ProductShortenDto>> getProductsByCategory(List<ObjectId> categories) {
         try {
             List<Product> products = productRepository.findProductsByCategories(categories);
 
-            if (products.isEmpty()) {
+            if (products.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(products, HttpStatus.OK);
-            }
+
+            List<ProductShortenDto> shortenProducts = products.stream().map(product -> new ProductShortenDto(product))
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(shortenProducts, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

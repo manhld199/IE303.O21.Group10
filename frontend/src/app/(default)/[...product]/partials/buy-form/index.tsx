@@ -98,7 +98,7 @@ export default function ProductBuyForm({
             variant_image_alt: variantImageAlt,
             quantity: quantity,
             unit_price: unitPrice,
-            discount_amount: currentVariant.discount_amount,
+            discount_amount: currentVariant.variant_discount.discount_amount,
           },
         ],
       })
@@ -196,9 +196,9 @@ export default function ProductBuyForm({
         <p className={cx("product__unit-price")} ref={unitPriceRef}>
           {convertNumberToMoney(currentVariant?.variant_price ?? 0)}
         </p>
-        {currentVariant?.discount_amount > 0 && (
+        {currentVariant?.variant_discount.discount_amount > 0 && (
           <p className={cx("product__discount-amount")}>
-            -{currentVariant?.discount_amount}%
+            -{currentVariant?.variant_discount.discount_amount}%
           </p>
         )}
       </div>

@@ -12,7 +12,6 @@ import { BACKEND_URL } from "@/utils/commonConst";
 
 // import css
 import "./page.css";
-import { decryptData } from "@/utils/security";
 
 const fetcher = (url: string) =>
   fetch(url, { method: "GET", credentials: "include" }).then((res) =>
@@ -196,8 +195,7 @@ export default function CartPage() {
     // Check if the item already exists in the array
     let duplicatedIndex = -1;
     duplicatedIndex = cartItems.findIndex(
-      (item) =>
-        item.product === decryptData(productId) && item.variant_id == variantId
+      (item) => item.product === productId && item.variant_id == variantId
     );
 
     const updateDeleteCartItems =
@@ -580,7 +578,7 @@ export default function CartPage() {
                     //       ? "nowrap"
                     //       : "wrap",
                     // }}
-                    >
+                  >
                     {cartItem.product.product_name}
                   </h4>
                 </Link>

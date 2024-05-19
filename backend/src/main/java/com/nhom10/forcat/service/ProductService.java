@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.nhom10.forcat.dto.Product.ProductCartDto;
 import com.nhom10.forcat.dto.Product.ProductShortenDto;
 import com.nhom10.forcat.model.Product.Product;
 import com.nhom10.forcat.repository.Product.ProductRepository;
@@ -22,22 +23,38 @@ public class ProductService {
     @Autowired
     ProductRepository productRepository;
 
-    public ResponseEntity<Product> getProduct(ObjectId productId) {
+    public ResponseEntity<Product> getProductByProductId(ObjectId productId) {
         try {
             Optional<Product> productOptional = productRepository.findById(productId);
 
-            if (productOptional.isPresent()) {
-                return new ResponseEntity<>(productOptional.get(), HttpStatus.OK);
-            } else {
+            if (!productOptional.isPresent())
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+
+            return new ResponseEntity<>(productOptional.get(), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public ResponseEntity<List<ProductShortenDto>> getProductsByCategory(List<ObjectId> categories) {
+    public ResponseEntity<List<ProductCartDto>> getProductsByIds(List<ObjectId> productIds) {
+        try {
+            List<Product> products = productRepository.findProductsByIds(productIds);
+
+            if (products.isEmpty())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            List<ProductCartDto> cartProducts = products.stream().map(product -> new ProductCartDto(product))
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(cartProducts, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<List<ProductShortenDto>> getProductsByCategories(List<ObjectId> categories) {
         try {
             List<Product> products = productRepository.findProductsByCategories(categories);
 

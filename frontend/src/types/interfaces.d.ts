@@ -198,12 +198,3 @@ interface IReviewItem {
   review_context: string;
   order_id?: string;
 }
-
-interface IUserLocal {
-  user_name: string;
-  user_avt_img: string;
-  recent_notification: {
-    _id: string;
-  }[];
-  cart: (any)[];
-}

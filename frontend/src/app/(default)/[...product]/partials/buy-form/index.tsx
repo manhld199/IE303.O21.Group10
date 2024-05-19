@@ -114,45 +114,55 @@ export default function ProductBuyForm({
   };
 
   // handle change header cart quantity
-  const handleChangeHeaderCartQuantity = (
+  const handleChangeCart = (
     productId: string,
     variantId: string,
     quantity: number
   ) => {
-    // // Add header cart when add cart
-    // const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    // const cartItems = currentUser.cart ?? [];
-    // // console.log("ccurrrrr", cartItems);
-    // // Check if the item already exists in the array
-    // let duplicatedIndex = -1;
-    // duplicatedIndex = cartItems.findIndex(
-    //   (item) => item.product === productId && item.variant_id == variantId
-    // );
-    // const updateAddCartItems =
-    //   duplicatedIndex !== -1
-    //     ? [
-    //         ...cartItems.slice(0, duplicatedIndex),
-    //         {
-    //           product: productId,
-    //           variant_id: variantId,
-    //           quantity: quantity,
-    //         },
-    //         ...cartItems.slice(duplicatedIndex + 1),
-    //       ]
-    //     : [
-    //         ...cartItems,
-    //         {
-    //           product: productId,
-    //           variant_id: variantId,
-    //           quantity: quantity,
-    //         },
-    //       ];
-    // currentUser.cart = updateAddCartItems;
-    // localStorage.removeItem("currentUser");
-    // localStorage.setItem("currentUser", JSON.stringify(currentUser));
-    // const headerCartQuantity = document.querySelector(".header-cart-quantity");
-    // if (headerCartQuantity)
-    //   headerCartQuantity.innerHTML = currentUser?.cart?.length ?? 0;
+    // Add header cart when add cart
+    const cartItemsStorage = JSON.parse(localStorage.getItem("cartItems"));
+    const cartItems = cartItemsStorage?.payload ?? [];
+    // console.log("ccurrrrr", cartItems);
+
+    // Check if the item already exists in the array
+    let duplicatedIndex = -1;
+    duplicatedIndex = cartItems.findIndex(
+      (item) => item.product_id == productId && item.variant_id == variantId
+    );
+
+    const addCartItems =
+      duplicatedIndex !== -1
+        ? [
+            ...cartItems.slice(0, duplicatedIndex),
+            {
+              product_id: productId,
+              variant_id: variantId,
+              quantity: quantity,
+            },
+            ...cartItems.slice(duplicatedIndex + 1),
+          ]
+        : [
+            ...cartItems,
+            {
+              product_id: productId,
+              variant_id: variantId,
+              quantity: quantity,
+            },
+          ];
+
+    localStorage.removeItem("cartItems");
+    localStorage.setItem(
+      "cartItems",
+      JSON.stringify({
+        type: "cartItems",
+        payload: addCartItems,
+      })
+    );
+
+    // change cart in header
+    const headerCartQuantity = document.querySelector(".header-cart-quantity");
+    if (headerCartQuantity)
+      headerCartQuantity.innerHTML = String(cartItems?.length ?? 0);
   };
 
   // handle add cart
@@ -163,25 +173,11 @@ export default function ProductBuyForm({
       buyFormRef.current.querySelector(".quantity-input-group__input").value
     );
 
-    localStorage.removeItem("addCartItem");
-    localStorage.setItem(
-      "addCartItem",
-      JSON.stringify({
-        type: "addCartItem",
-        payload: {
-          product_id: productId,
-          variant_id: variantId,
-          quantity: quantity,
-        },
-      })
-    );
-
-    // console.log("local", JSON.parse(localStorage.getItem("addCartItem")));
+    handleChangeCart(productId, variantId, quantity);
+    // console.log(JSON.parse(localStorage.getItem("cartItems")));
 
     const cartModal = cartModalRef.current;
     cartModal.classList.remove("hidden");
-
-    handleChangeHeaderCartQuantity(productId, variantId, quantity);
 
     // auto close modal after 1s
     setTimeout(handleCloseModal, 1000);

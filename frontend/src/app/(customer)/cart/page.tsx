@@ -13,88 +13,89 @@ import { BACKEND_URL } from "@/utils/commonConst";
 // import css
 import "./page.css";
 
-const fetcher = (url: string) =>
-  fetch(url, { method: "GET", credentials: "include" }).then((res) =>
-    res.json()
-  );
-let checkboxes, cartItem;
+const getCartProducts = async (cartItems: any) => {
+  try {
+    const response = await fetch(
+      `${BACKEND_URL}/products/getCartProducts?pid=${cartItems
+        .map((item) => item.product_id)
+        .join(",")}`
+    );
 
-// handle change page
-const handleCartChangePage = (event) => {
-  const changeItems = JSON.parse(localStorage.getItem("changeItems")) ?? {
-    payload: [],
-  };
-  const deleteItems = JSON.parse(localStorage.getItem("deleteItems")) ?? {
-    payload: [],
-  };
+    const data = await response.json();
 
-  // console.log("local get change items", changeItems);
-  // console.log("local get delete items", deleteItems);
-
-  fetch(`${BACKEND_URL}/cart/updateCart`, {
-    body: JSON.stringify({
-      changedItems: changeItems.payload,
-      deletedItems: deleteItems.payload,
-    }),
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-
-  localStorage.removeItem("changeItems");
-  localStorage.removeItem("deleteItems");
-
-  // console.log("local get change items", changeItems);
-  // console.log("local get delete items", deleteItems);
+    return data;
+  } catch (error) {
+    console.error("Error fetching recommend products:", error);
+  }
 };
 
+// let checkboxes, cartItems;
 export default function CartPage() {
-  const { data, error, isLoading } = useSWR(`${BACKEND_URL}/cart`, fetcher);
-  const cart = data?.data?.cartInfo;
-
-  // console.log(
-  //   "decode",
-  //   decodeURIComponent(
-  //     "eAYgSn8i55jGQlsSPMrGqdB47rBPOhfpspc%2F%2F8lz8Fv74lelwNiOOA%3D%3D"
-  //   )
-  // );
-  // console.log(
-  //   "json",
-  //   JSON.stringify(
-  //     decodeURIComponent(
-  //       "eAYgSn8i55jGQlsSPMrGqdB47rBPOhfpspc%2F%2F8lz8Fv74lelwNiOOA%3D%3D"
-  //     )
-  //   )
-  // );
+  const [cart, setCart] = useState(null);
+  const [checkboxes, setChecboxes] = useState(null);
+  const [cartItems, setCartItems] = useState(null);
 
   useEffect(() => {
-    window.addEventListener("beforeunload", handleCartChangePage);
-    const links = document.querySelectorAll("a");
-    links.forEach((link) => {
-      link.addEventListener("click", handleCartChangePage);
-    });
+    const cartStorageItems = JSON.parse(
+      localStorage.getItem("cartItems")
+    )?.payload;
 
-    return () => {
-      window.removeEventListener("beforeunload", handleCartChangePage);
-      links.forEach((link) => {
-        link.removeEventListener("click", handleCartChangePage);
-      });
-    };
+    if (cartStorageItems?.length) {
+      const fetchData = async () => {
+        try {
+          const data = await getCartProducts(cartStorageItems);
+
+          const cartInfo = [];
+          cartStorageItems.forEach((cartStorageItem, index) => {
+            const dataIndex = data.findIndex(
+              (item) => item.product_id == cartStorageItem.product_id
+            );
+            const cartItem = {
+              product_id: data[dataIndex].product_id,
+              product_name: data[dataIndex].product_name,
+              product_slug: data[dataIndex].product_slug,
+              product_variants: data[dataIndex].product_variants.map(
+                (productVariant) => ({
+                  cart_quantity: -1,
+                  variant_id: productVariant.variant_id,
+                  variant_name: productVariant.variant_name,
+                  variant_slug: productVariant.variant_slug,
+                  variant_price: productVariant.variant_price,
+                  variant_img: productVariant.variant_img,
+                  variant_discount: productVariant.variant_discount,
+                  variant_in_stock: productVariant.variant_in_stock,
+                })
+              ),
+            };
+            // console.log(index, "cart", data[dataIndex]);
+            cartInfo.push(cartItem);
+
+            const variantIndex = cartInfo[index].product_variants.findIndex(
+              (variant) => variant.variant_id == cartStorageItem.variant_id
+            );
+            cartInfo[index].product_variants[variantIndex].cart_quantity =
+              cartStorageItem.quantity;
+          });
+
+          setCart(cartInfo);
+
+          setChecboxes(
+            Array.from(window.document.querySelectorAll(".cart-checkbox"))
+          );
+          setCartItems(
+            Array.from(window.document.querySelectorAll(".cart-item")).slice(1)
+          );
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      fetchData();
+    }
   }, []);
 
   // handle checkbox
   const checkAll = useRef(null);
-
-  useEffect(() => {
-    checkboxes = Array.from(
-      window?.document.querySelectorAll(".cart-checkbox")
-    );
-    cartItem = Array.from(window.document.querySelectorAll(".cart-item")).slice(
-      1
-    );
-  }, [data]);
 
   // handle prices
   const [originalPrice, setOriginalPrice] = useState("0đ");
@@ -106,8 +107,8 @@ export default function CartPage() {
   const [allItem, setAllItem] = useState(0);
 
   useEffect(() => {
-    if (cartItem) setAllItem(cartItem.length);
-  }, [cartItem]);
+    if (cartItems) setAllItem(cartItems.length);
+  }, [cartItems]);
 
   // calc prices
   const calcPrices = () => {
@@ -115,7 +116,7 @@ export default function CartPage() {
     let total = 0;
     let discounted = 0;
 
-    cartItem?.forEach((item: any) => {
+    cartItems?.forEach((item: any) => {
       if ((item.querySelector(".cart-checkbox") as HTMLInputElement).checked) {
         const unit = item.querySelector(
           ".cart-item__unit-price-after-discount"
@@ -177,43 +178,10 @@ export default function CartPage() {
 
   // count item
   const countSelectedItem = () => {
-    const selected = cartItem.filter(
+    const selected = cartItems.filter(
       (item: any) => item.querySelector(".cart-checkbox").checked
     );
     setSelectedItem(selected.length);
-  };
-
-  // handle change header cart quantity
-  const handleChangeHeaderCartQuantity = (
-    productId: string,
-    variantId: string
-  ) => {
-    // Add header cart when add cart
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    const cartItems = currentUser.cart ?? [];
-
-    // Check if the item already exists in the array
-    let duplicatedIndex = -1;
-    duplicatedIndex = cartItems.findIndex(
-      (item) => item.product === productId && item.variant_id == variantId
-    );
-
-    const updateDeleteCartItems =
-      duplicatedIndex !== -1
-        ? [
-            ...cartItems.slice(0, duplicatedIndex),
-            ...cartItems.slice(duplicatedIndex + 1),
-          ]
-        : [...cartItems];
-
-    currentUser.cart = updateDeleteCartItems;
-
-    localStorage.removeItem("currentUser");
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
-
-    const headerCartQuantity = document.querySelector(".header-cart-quantity");
-    if (headerCartQuantity)
-      headerCartQuantity.innerHTML = currentUser?.cart?.length ?? 0;
   };
 
   // delete cart item
@@ -226,13 +194,6 @@ export default function CartPage() {
 
     setAllItem(allItem - 1);
     calcPrices();
-
-    // handle header cart
-    const productId = cartItem.querySelector("input[name='product_id']").value;
-    const variantId = cartItem.querySelector(
-      ".cart-item__variant-select"
-    ).value;
-    handleChangeHeaderCartQuantity(productId, variantId);
   };
 
   // Quantity input group
@@ -288,17 +249,17 @@ export default function CartPage() {
     const variantId = cartItem.querySelector(
       ".cart-item__variant-select"
     ).value;
-    const quantity = cartItem.querySelector(
-      ".quantity-input-group__input"
-    ).value;
+    const quantity = Number(
+      cartItem.querySelector(".quantity-input-group__input").value
+    );
 
-    const changeItems = JSON.parse(localStorage.getItem("changeItems")) ?? {
+    const cartItems = JSON.parse(localStorage.getItem("cartItems")) ?? {
       payload: [],
     };
 
     // Check if the item already exists in the array
     let duplicatedIndex = -1;
-    duplicatedIndex = changeItems.payload.findIndex(
+    duplicatedIndex = cartItems.payload.findIndex(
       (item) => item.product_id === productId
     );
 
@@ -306,16 +267,16 @@ export default function CartPage() {
     const updateChangeItems =
       duplicatedIndex !== -1
         ? [
-            ...changeItems.payload.slice(0, duplicatedIndex),
+            ...cartItems.payload.slice(0, duplicatedIndex),
             {
               product_id: productId,
               variant_id: variantId,
               quantity: quantity,
             },
-            ...changeItems.payload.slice(duplicatedIndex + 1),
+            ...cartItems.payload.slice(duplicatedIndex + 1),
           ]
         : [
-            ...changeItems.payload,
+            ...cartItems.payload,
             {
               product_id: productId,
               variant_id: variantId,
@@ -324,18 +285,18 @@ export default function CartPage() {
           ];
     // console.log("up", updateChangeItems);
 
-    localStorage.removeItem("changeItems");
+    localStorage.removeItem("cartItems");
     localStorage.setItem(
-      "changeItems",
+      "cartItems",
       JSON.stringify({
-        type: "changeItems",
+        type: "cartItems",
         payload: updateChangeItems,
       })
     );
 
     // console.log(
     //   "local get change items",
-    //   JSON.parse(localStorage.getItem("changeItems"))
+    //   JSON.parse(localStorage.getItem("cartItems"))
     // );
   };
 
@@ -346,32 +307,29 @@ export default function CartPage() {
     ).value;
 
     let duplicatedIndex = -1;
-    const deleteItems = JSON.parse(localStorage.getItem("deleteItems")) ?? {
+    const cartItems = JSON.parse(localStorage.getItem("cartItems")) ?? {
       payload: [],
     };
 
     // Check if the item already exists in the array
-    duplicatedIndex = deleteItems.payload.findIndex(
+    duplicatedIndex = cartItems.payload.findIndex(
       (item) => item.variant_id === variantId
     );
 
-    // If the item already exists, do nothing, otherwise add it to the array
+    // If the item already exists, delete it, otherwise do nothing
     const updateDeleteItems =
       duplicatedIndex !== -1
-        ? deleteItems.payload
-        : [
-            ...deleteItems.payload,
-            {
-              product_id: productId,
-              variant_id: variantId,
-            },
-          ];
+        ? [
+            ...cartItems.payload.slice(0, duplicatedIndex),
+            ...cartItems.payload.slice(duplicatedIndex + 1),
+          ]
+        : [...cartItems.payload];
 
-    localStorage.removeItem("deleteItems");
+    localStorage.removeItem("cartItems");
     localStorage.setItem(
-      "deleteItems",
+      "cartItems",
       JSON.stringify({
-        type: "deleteItems",
+        type: "cartItems",
         payload: updateDeleteItems,
       })
     );
@@ -380,6 +338,11 @@ export default function CartPage() {
     //   "local get delte items",
     //   JSON.parse(localStorage.getItem("deleteItems"))
     // );
+
+    // change cart in header
+    const headerCartQuantity = document.querySelector(".header-cart-quantity");
+    if (headerCartQuantity)
+      headerCartQuantity.innerHTML = cartItems.length ?? 0;
   };
 
   const handleDeleteMultiple = () => {
@@ -389,19 +352,10 @@ export default function CartPage() {
 
     cartItems.forEach((item) => {
       const cartItem = item.parentElement.parentElement;
-      const productId = (
-        cartItem.querySelector("input[name='product_id']") as HTMLInputElement
-      ).value;
-      const variantId = (
-        cartItem.querySelector(".cart-item__variant-select") as HTMLInputElement
-      ).value;
 
       // handle delete cart
       handleUpdateDeletedItem(cartItem);
       cartItem.remove();
-
-      // handle header cart
-      handleChangeHeaderCartQuantity(productId, variantId);
     });
   };
 
@@ -442,7 +396,7 @@ export default function CartPage() {
   const handleBuyItem = (event) => {
     // event.preventDefault();
 
-    const selectedItems = cartItem.filter(
+    const selectedItems = cartItems.filter(
       (item) => item.querySelector(".cart-checkbox").checked
     );
     const buyList = [];
@@ -533,22 +487,21 @@ export default function CartPage() {
             Xóa
           </button>
         </div>
+
         {(cart ?? []).map((cartItem, itemIndex) => {
-          let currentVariantIndex = cartItem.product.product_variants.findIndex(
-            (item) => item._id == cartItem.variant_id
+          let currentVariantIndex = cartItem.product_variants.findIndex(
+            (item) => item.cart_quantity != -1
           );
           currentVariantIndex =
             currentVariantIndex == -1 ? 0 : currentVariantIndex;
+
           return (
             <div className="cart-item" key={itemIndex}>
               <div className="cart-item__first-div">
                 <input
                   type="hidden"
                   name="product_id"
-                  value={decodeURIComponent(cartItem.product._id).replace(
-                    " ",
-                    "+"
-                  )}
+                  value={cartItem.product_id}
                 />
                 <input
                   type="checkbox"
@@ -556,63 +509,74 @@ export default function CartPage() {
                   onChange={handleCheckOne}
                 />
                 <Link
-                  href={`/${cartItem.product.product_slug}?pid=${cartItem.product._id}`}
+                  href={`/${cartItem.product_slug}?pid=${cartItem.product_id}`}
                   className="cart-item__image-div cart-item__link">
                   <CldImage
                     className="cart-item__image"
-                    src={cartItem.product.product_imgs[0].link}
-                    alt={cartItem.product.product_imgs[0].alt}
+                    src={
+                      cartItem.product_variants[currentVariantIndex].variant_img
+                        .url
+                    }
+                    alt={
+                      cartItem.product_variants[currentVariantIndex].variant_img
+                        .alt
+                    }
                     fill={true}
                   />
                 </Link>
               </div>
               <div className="cart-item__info-div cart-item-col">
                 <Link
-                  href={`/${cartItem.product.product_slug}?pid=${cartItem.product._id}`}
+                  href={`/${cartItem.product_slug}?pid=${cartItem.product_id}`}
                   className="cart-item__link">
                   <h4
                     className="cart-item__text-info-name"
-                    // style={{
-                    //   whiteSpace:
-                    //     (cartItem.product.product_variants ?? []).length != 0
-                    //       ? "nowrap"
-                    //       : "wrap",
-                    // }}
-                  >
-                    {cartItem.product.product_name}
+                    style={{
+                      whiteSpace:
+                        (cartItem.product_variants ?? []).length != 0
+                          ? "nowrap"
+                          : "wrap",
+                    }}>
+                    {cartItem.product_name}
                   </h4>
                 </Link>
-                {(cartItem.product.product_variants ?? []).length != 0 && (
+                {(cartItem.product_variants ?? []).length != 0 && (
                   <div className="cart-item__variant">
                     <input
                       type="hidden"
                       value={
-                        cartItem.product.product_variants[currentVariantIndex]
-                          ._id
+                        cartItem.product_variants[currentVariantIndex]
+                          .variant_id
                       }
                     />
+
                     <select
                       className="cart-item__variant-select"
                       onChange={handleVariantChange}>
                       <option
                         className="cart-item__variant-name"
                         value={
-                          cartItem.product.product_variants[currentVariantIndex]
-                            ._id
+                          cartItem.product_variants[currentVariantIndex]
+                            .variant_id
                         }
                         key={0}>
                         {
-                          cartItem.product.product_variants[currentVariantIndex]
+                          cartItem.product_variants[currentVariantIndex]
                             .variant_name
                         }
                       </option>
-                      {(cartItem.product.product_variants ?? []).map(
+
+                      {(cartItem.product_variants ?? []).map(
                         (variant, variantIndex) => {
-                          if (variant._id !== cartItem.variant_id)
+                          if (
+                            variant.variant_id !=
+                            cartItem.product_variants[currentVariantIndex]
+                              .variant_id
+                          )
                             return (
                               <option
                                 className="cart-item__variant-name"
-                                value={variant._id}
+                                value={variant.variant_id}
                                 key={variantIndex}>
                                 {variant.variant_name}
                               </option>
@@ -631,27 +595,27 @@ export default function CartPage() {
                   type="hidden"
                   name="discount_amount"
                   value={
-                    cartItem.product.product_variants[currentVariantIndex]
-                      .discount_amount
+                    cartItem.product_variants[currentVariantIndex]
+                      .variant_discount.discount_amount
                   }
                 />
                 <div className="cart-item__unit-price-after-discount">
                   {convertNumberToMoney(
-                    (cartItem.product.product_variants[currentVariantIndex]
-                      .price *
+                    (cartItem.product_variants[currentVariantIndex]
+                      .variant_price *
                       (100 -
-                        cartItem.product.product_variants[currentVariantIndex]
-                          .discount_amount)) /
+                        cartItem.product_variants[currentVariantIndex]
+                          .variant_discount.discount_amount)) /
                       100
                   )}
                 </div>
-                {cartItem.product.product_variants[currentVariantIndex]
+                {cartItem.product_variants[currentVariantIndex].variant_discount
                   .discount_amount != 0 && (
                   <div className="cart-item__unit-price-before-discount">
                     <del>
                       {convertNumberToMoney(
-                        cartItem.product.product_variants[currentVariantIndex]
-                          .price
+                        cartItem.product_variants[currentVariantIndex]
+                          .variant_price
                       )}
                     </del>
                   </div>
@@ -672,7 +636,10 @@ export default function CartPage() {
                     onChange={handleChangeQuantity}
                     min={1}
                     max={100}
-                    placeholder={cartItem.quantity}
+                    placeholder={
+                      cartItem.product_variants[currentVariantIndex]
+                        .cart_quantity
+                    }
                   />
                   <button
                     className="quantity-input-group__btn-add btn-quantity"
@@ -685,13 +652,13 @@ export default function CartPage() {
               </div>
               <div className="cart-item__price cart-item-col mobile-hidden">
                 {convertNumberToMoney(
-                  ((cartItem.product.product_variants[currentVariantIndex]
-                    .price *
+                  ((cartItem.product_variants[currentVariantIndex]
+                    .variant_price *
                     (100 -
-                      cartItem.product.product_variants[currentVariantIndex]
-                        .discount_amount)) /
+                      cartItem.product_variants[currentVariantIndex]
+                        .variant_discount.discount_amount)) /
                     100) *
-                    cartItem.quantity
+                    cartItem.product_variants[currentVariantIndex].cart_quantity
                 )}
               </div>
               <div

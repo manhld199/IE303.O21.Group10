@@ -509,7 +509,7 @@ export default function CartPage() {
                   onChange={handleCheckOne}
                 />
                 <Link
-                  href={`/${cartItem.product_slug}?pid=${cartItem.product_id}`}
+                  href={`/${cartItem.product_slug}/${cartItem.product_variants[currentVariantIndex].variant_slug}?pid=${cartItem.product_id}`}
                   className="cart-item__image-div cart-item__link">
                   <CldImage
                     className="cart-item__image"
@@ -527,7 +527,7 @@ export default function CartPage() {
               </div>
               <div className="cart-item__info-div cart-item-col">
                 <Link
-                  href={`/${cartItem.product_slug}?pid=${cartItem.product_id}`}
+                  href={`/${cartItem.product_slug}/${cartItem.product_variants[currentVariantIndex].variant_slug}?pid=${cartItem.product_id}`}
                   className="cart-item__link">
                   <h4
                     className="cart-item__text-info-name"

@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema(
     product_slug: { type: String },
     categories: [
       {
-        category_id: { type: mongoose.Schema.Types.ObjectId },
+        _id: { type: mongoose.Schema.Types.ObjectId },
         category_name: { type: String },
       },
     ],
@@ -51,7 +51,7 @@ const productSchema = new mongoose.Schema(
         },
         // check
         variant_discount: {
-          discount_id: { type: mongoose.Schema.Types.ObjectId },
+          _id: { type: mongoose.Schema.Types.ObjectId },
           discount_amount: { type: Number },
         },
         variant_in_stock: { type: Number },
@@ -79,7 +79,7 @@ const filteredProducts = rawProducts.map((product) => ({
   product_name: product.product_name,
   product_slug: product.product_slug,
   categories: product.categories.map((category, index) => ({
-    category_id: new mongoose.Types.ObjectId(category["$oid"]),
+    _id: new mongoose.Types.ObjectId(category["$oid"]),
     category_name: product.category_names[index],
   })),
   product_imgs: product.product_imgs.map((img) => ({
@@ -98,7 +98,7 @@ const filteredProducts = rawProducts.map((product) => ({
       alt: variant.variant_imgs[0].alt,
     },
     variant_discount: {
-      discount_id: variant.discount_id?.["$oid"]
+      _id: variant.discount_id?.["$oid"]
         ? new mongoose.Types.ObjectId(variant.discount_id?.["$oid"])
         : null,
       discount_amount: variant.discount_amount,

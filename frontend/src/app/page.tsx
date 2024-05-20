@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 const getRecommendedProducts = async () => {
   try {
     const response = await fetch(
-      `${BACKEND_URL}/products/getRecommendProducts`,
+      `${BACKEND_URL}/products/getRecommendedProducts`,
       {
         next: { revalidate: 3600 },
       }
@@ -88,7 +88,7 @@ const fetchArticles = async () => {
 
 export default async function Home() {
   let recommendedProducts = await getRecommendedProducts();
-  // console.log(recommendProducts);
+  // console.log(recommendedProducts);
 
   let newestProducts = await getNewestProducts();
   // console.log(newestProducts);
@@ -140,9 +140,9 @@ export default async function Home() {
             <div className="tip-products__content">
               {newestProducts &&
                 newestProducts.length &&
-                (newestProducts ?? []).map((product) => (
+                (newestProducts ?? []).map((product, index) => (
                   <CustomerProductCard
-                    key={product.product_id}
+                    key={"newestProducts" + index}
                     product={product}
                   />
                 ))}
@@ -216,9 +216,9 @@ export default async function Home() {
             <div className="tip-products__content">
               {discountedProducts &&
                 discountedProducts.length &&
-                (discountedProducts ?? []).map((product) => (
+                (discountedProducts ?? []).map((product, index) => (
                   <CustomerProductCard
-                    key={product.product_id}
+                    key={"discountedProducts" + index}
                     product={product}
                   />
                 ))}

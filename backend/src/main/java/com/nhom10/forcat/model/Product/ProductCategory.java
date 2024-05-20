@@ -3,12 +3,14 @@ package com.nhom10.forcat.model.Product;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 import lombok.Data;
 
 @Data
 public class ProductCategory {
-    @Field(name = "category_id")
+    @Id
+    @Field(name = "_id")
     @JsonProperty("category_id")
     private ObjectId categoryId;
 

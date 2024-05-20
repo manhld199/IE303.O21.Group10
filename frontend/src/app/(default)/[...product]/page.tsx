@@ -24,7 +24,7 @@ import "./page.css";
 // fetch data
 async function getProduct(slug, pid) {
   try {
-    const res = await fetch(`${BACKEND_URL}/products/${pid}`, {
+    const res = await fetch(`${BACKEND_URL}/products/getProduct/${pid}`, {
       next: { revalidate: 60 },
     });
 

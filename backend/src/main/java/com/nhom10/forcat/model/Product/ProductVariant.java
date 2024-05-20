@@ -1,11 +1,14 @@
 package com.nhom10.forcat.model.Product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 import lombok.Data;
 
 @Data
 public class ProductVariant {
+    @Id
     @Field(name = "_id")
     @JsonProperty("variant_id")
     private String variantId;

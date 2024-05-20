@@ -26,7 +26,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-    @GetMapping("/{productId}")
+    @GetMapping("/getProduct/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable String productId) {
         ObjectId productObjectId = new ObjectId(productId);
 

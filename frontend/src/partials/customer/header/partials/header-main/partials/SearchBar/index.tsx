@@ -17,7 +17,7 @@ const cx = classNames.bind(styles);
 
 export default function SearchBar() {
   const searchParams = useSearchParams();
-  const searchKey = searchParams.get("searchKey");
+  const searchKey = searchParams.get("q");
 
   const [showSmartSearch, setShowSmartSearch] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
@@ -57,7 +57,7 @@ export default function SearchBar() {
   const fetchSearchResults = async (inputValue: string) => {
     try {
       const response = await fetch(
-        `${BACKEND_URL}/productList/searchRecommended?searchKey=${inputValue}`
+        `${BACKEND_URL}/products/searchRecommended?searchKey=${inputValue}`
       );
 
       const data = await response.json();

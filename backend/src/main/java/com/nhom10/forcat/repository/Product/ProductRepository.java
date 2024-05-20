@@ -14,7 +14,7 @@ import com.nhom10.forcat.model.Product.Product;
 @Repository
 public interface ProductRepository extends MongoRepository<Product, ObjectId>, CustomProductRepository {
 
-    @Query("{ 'categories.category_id' : { $in: ?0 } }")
+    @Query("{ 'categories._id' : { $in: ?0 } }")
     List<Product> findProductsByCategories(List<ObjectId> categories);
 
     @Query("{ '_id' : { $in: ?0 } }")

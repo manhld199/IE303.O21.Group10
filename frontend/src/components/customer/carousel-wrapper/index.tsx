@@ -54,8 +54,8 @@ export default function CustomerCarouselSlider({ productList }) {
             loop={true}
             modules={[Autoplay, Pagination, Navigation]}>
             {products &&
-              (products ?? []).map((product) => (
-                <SwiperSlide key={product.product_id}>
+              (products ?? []).map((product, index) => (
+                <SwiperSlide key={index}>
                   <CustomerCarouselCard product={product} />
                 </SwiperSlide>
               ))}

@@ -10,4 +10,6 @@ public interface CustomProductRepository {
 
     List<Product> findRandomProducts(int limit);
 
+    List<Product> searchProducts(String query, String category, String discount);
+
 }

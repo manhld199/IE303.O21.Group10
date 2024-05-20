@@ -20,7 +20,7 @@ export const sliderImgs = [
     description: "FORCATSHOP-Mua đồ ăn cho mèo ở forcatshop",
   },
   {
-    id: 4,
+    id: 5,
     imageurl: "/imgs/slider/forcatshop-cat-fashion-model.png",
     description: "FORCATSHOP-Thời trang sành điệu cho mèo cưng",
   },

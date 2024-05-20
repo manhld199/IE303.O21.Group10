@@ -19,7 +19,7 @@ const cx = classNames.bind(styles);
 
 export default function CustomerSlider() {
   const SLIDER_CARD = (sliderImgs ?? []).map((item) => (
-    <SwiperSlide className="custom-slide" key={item.id}>
+    <SwiperSlide className="custom-slide" key={"slider" + item.id}>
       <CustomerSliderCard
         initValue={{
           url: item.imageurl,

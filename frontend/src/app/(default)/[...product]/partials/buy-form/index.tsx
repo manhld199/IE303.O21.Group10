@@ -142,12 +142,12 @@ export default function ProductBuyForm({
             ...cartItems.slice(duplicatedIndex + 1),
           ]
         : [
-            ...cartItems,
             {
               product_id: productId,
               variant_id: variantId,
               quantity: quantity,
             },
+            ...cartItems,
           ];
 
     localStorage.removeItem("cartItems");
@@ -162,7 +162,7 @@ export default function ProductBuyForm({
     // change cart in header
     const headerCartQuantity = document.querySelector(".header-cart-quantity");
     if (headerCartQuantity)
-      headerCartQuantity.innerHTML = String(cartItems?.length ?? 0);
+      headerCartQuantity.innerHTML = String(addCartItems?.length ?? 0);
   };
 
   // handle add cart

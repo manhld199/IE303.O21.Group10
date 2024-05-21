@@ -4,7 +4,6 @@
 import Link from "next/link";
 import { CldImage } from "next-cloudinary";
 import { useState, useRef, useEffect } from "react";
-import useSWR from "swr";
 
 // import utils
 import { convertMoneyToNumber, convertNumberToMoney } from "@/utils";
@@ -70,11 +69,13 @@ export default function CartPage() {
             // console.log(index, "cart", data[dataIndex]);
             cartInfo.push(cartItem);
 
-            const variantIndex = cartInfo[index].product_variants.findIndex(
+            let variantIndex = cartInfo[index].product_variants.findIndex(
               (variant) => variant.variant_id == cartStorageItem.variant_id
             );
-            cartInfo[index].product_variants[variantIndex].cart_quantity =
-              cartStorageItem.quantity;
+
+            if (variantIndex != -1)
+              cartInfo[index].product_variants[variantIndex].cart_quantity =
+                cartStorageItem.quantity;
           });
 
           setCart(cartInfo);

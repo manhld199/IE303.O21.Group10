@@ -23,18 +23,18 @@ async function getSearchProduct(searchParams) {
   try {
     // Khởi tạo mảng rỗng để chứa các thành phần của query string
     const queryParams = [];
-    if (searchParams.searchKey) {
-      queryParams.push(`searchKey=${searchParams.searchKey}`);
+    if (searchParams.q) {
+      queryParams.push(`q=${searchParams.searchKey}`);
     }
-    if (searchParams.category) {
-      queryParams.push(`category=${searchParams.category}`);
+    if (searchParams.c) {
+      queryParams.push(`c=${searchParams.category}`);
     }
-    if (searchParams.discount) {
-      queryParams.push(`discount=${searchParams.discount}`);
+    if (searchParams.d) {
+      queryParams.push(`d=${searchParams.discount}`);
     }
-    if (searchParams.topRate) {
-      queryParams.push(`sortBy=hot`);
-    }
+    // if (searchParams.topRate) {
+    //   queryParams.push(`sortBy=hot`);
+    // }
 
     // Thêm page vào queryParams
     queryParams.push(`page=${searchParams.page}`);
@@ -66,8 +66,8 @@ export default async function SearchResultPage({
 }) {
   // console.log("Lấy từ url", searchKey);
   let iteamFind;
-  if (searchParams.searchKey) {
-    iteamFind = searchParams.searchKey;
+  if (searchParams.q) {
+    iteamFind = searchParams.q;
   } else if (searchParams.category) {
     iteamFind = searchParams.category;
   } else if (searchParams.discount) {
@@ -81,7 +81,7 @@ export default async function SearchResultPage({
   const searchResults = await getSearchProduct(searchParams);
   return (
     <SearchResultContainer
-    iteamFind={iteamFind}
+      iteamFind={iteamFind}
       searchResults={searchResults}
     />
   );

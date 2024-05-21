@@ -23,13 +23,13 @@ public class SearchService {
         try {
             List<Product> products = productRepository.searchProducts(query, category, discount);
 
-            if (products.isEmpty())
+            if (products.isEmpty() && (!category.isEmpty() || !discount.isEmpty()))
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
             List<Product> returnedProducts = new ArrayList<Product>();
             returnedProducts.addAll(products);
 
-            if (discount.isEmpty() && category.isEmpty() && products.size() < 20) {
+            if (products.size() < 20 && discount.isEmpty() && category.isEmpty()) {
                 List<Product> randomProducts = productRepository
                         .findRandomProducts(20 - products.size());
                 returnedProducts.addAll(randomProducts);

@@ -57,14 +57,14 @@ export default function SearchBar() {
   const fetchSearchResults = async (inputValue: string) => {
     try {
       const response = await fetch(
-        `${BACKEND_URL}/products/searchRecommended?searchKey=${inputValue}`
+        `${BACKEND_URL}/search/products?q=${inputValue}&c=&d=&s=10`
       );
 
       const data = await response.json();
-      if (data.data.searchKey === inputValue) {
-        console.log("Trả về cho data", data.data.searchKey);
-        setSearchResults(data.data.recommendedProducts);
-        setTotalSearchResults(data.data.totalProducts);
+
+      if (Array.isArray(data)) {
+        setSearchResults(data.slice(0, 9));
+        setTotalSearchResults(data.length);
         setShowSmartSearch(true);
       }
     } catch (error) {
@@ -80,6 +80,11 @@ export default function SearchBar() {
     }
   };
 
+  const handleClickSearch = (event) => {
+    const inputValue = event.target.value;
+    if (inputValue != "") setShowSmartSearch(true);
+  };
+
   return (
     <div className={cx("header__search-bar-wrapper")}>
       <form
@@ -91,9 +96,10 @@ export default function SearchBar() {
             className={cx("header__search-input")}
             id="header__search-input"
             type="search"
-            name="searchKey"
+            name="q"
             placeholder={searchKey ?? "Bạn tìm gì..."}
             onChange={handleInputChange}
+            onClick={handleClickSearch}
           />
           <button className={cx("header__search-btn")} type="submit">
             <span className="material-icons-outlined">search</span>
@@ -109,18 +115,15 @@ export default function SearchBar() {
         style={{ display: showSmartSearch ? "block" : "none" }}>
         <div className={cx("header__suggest-results-content")}>
           {showSmartSearch &&
-            (searchResults ?? []).map((product) => (
-              <CustomerHeaderItemUlt
-                key={product.product_id_hashed}
-                product={product}
-              />
+            (searchResults ?? []).map((product, index) => (
+              <CustomerHeaderItemUlt key={"search" + index} product={product} />
             ))}
         </div>
         <div className={cx("header__suggest-results-more")}>
           <Link
             className={cx("header__suggest-results-more-link")}
             href={`/search-result?searchKey=${inputValue}`}>
-            Xem thêm{" "}
+            Xem tất cả{" "}
             <span className={cx("highlight")}>{totalSearchResults}</span> sản
             phẩm
           </Link>

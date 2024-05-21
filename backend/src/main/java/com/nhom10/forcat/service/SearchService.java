@@ -1,15 +1,17 @@
 package com.nhom10.forcat.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.nhom10.forcat.dto.Product.ProductShortenDto;
+import com.nhom10.forcat.dto.Product.ProductShortenPageDto;
 import com.nhom10.forcat.model.Product.Product;
 import com.nhom10.forcat.repository.Product.ProductRepository;
 
@@ -19,27 +21,24 @@ public class SearchService {
     @Autowired
     ProductRepository productRepository;
 
-    public ResponseEntity<List<ProductShortenDto>> getSearchProducts(String query, String category, String discount) {
+    public ResponseEntity<ProductShortenPageDto> getSearchProducts(String query, String category, String discount,
+            int p, int n) {
         try {
-            List<Product> products = productRepository.searchProducts(query, category, discount);
+            PageRequest pageable = PageRequest.of(p, n);
+            Page<Product> page = productRepository.searchProducts(query, category, discount, pageable);
+            List<Product> products = page.getContent();
+            int totalPages = page.getTotalPages();
 
             if (products.isEmpty() && (!category.isEmpty() || !discount.isEmpty()))
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-            List<Product> returnedProducts = new ArrayList<Product>();
-            returnedProducts.addAll(products);
-
-            if (products.size() < 20 && discount.isEmpty() && category.isEmpty()) {
-                List<Product> randomProducts = productRepository
-                        .findRandomProducts(20 - products.size());
-                returnedProducts.addAll(randomProducts);
-            }
-
-            List<ProductShortenDto> shortenProducts = returnedProducts.stream()
+            List<ProductShortenDto> shortenProducts = products.stream()
                     .map(product -> new ProductShortenDto(product))
                     .collect(Collectors.toList());
 
-            return new ResponseEntity<>(shortenProducts, HttpStatus.OK);
+            ProductShortenPageDto returnedProducts = new ProductShortenPageDto(shortenProducts, totalPages);
+
+            return new ResponseEntity<>(returnedProducts, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -43,8 +43,8 @@ async function getSearchProduct(searchParams) {
       queryParams = [`n=${searchParams.n}`];
     }
 
-    // // Thêm page vào queryParams
-    // queryParams.push(`page=${searchParams.page}`);
+    // Thêm page vào queryParams
+    queryParams.push(`p=${searchParams.p ?? 0}`);
 
     // Tạo chuỗi query bằng cách nối các thành phần trong queryParams bằng "&"
     const queryString = queryParams.join("&");

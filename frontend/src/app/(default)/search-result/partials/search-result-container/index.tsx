@@ -22,6 +22,8 @@ export default function SearchResultPage({ itemFind, searchResults }) {
 
   // console.log("Từ khóa tìm kiếm", searchResultsProducts);
 
+  const products = searchResults.products;
+
   const [selectedFilterItem, setSelectedFilterItem] =
     useState<HTMLDivElement | null>(null);
 
@@ -426,9 +428,7 @@ export default function SearchResultPage({ itemFind, searchResults }) {
         <div className="search-result__main__heading">
           <p className="search-result__main__count">
             Tìm thấy{" "}
-            <span className="search-result__highlight">
-              {searchResults.length}
-            </span>{" "}
+            <span className="search-result__highlight">{products.length}</span>{" "}
             {itemFind === "discountTrue" ? (
               "sản phẩm khuyến mãi"
             ) : itemFind === "recommendTrue" ? (
@@ -513,18 +513,18 @@ export default function SearchResultPage({ itemFind, searchResults }) {
         </div>
 
         <div className="search-result__main-card">
-          {searchResults &&
-            searchResults.length >= 0 &&
-            searchResults.map((product, index) => (
+          {products &&
+            products.length >= 0 &&
+            products.map((product, index) => (
               <CustomerProductCard
                 key={"search product" + index}
                 product={product}
               />
             ))}
         </div>
-        {/* <div className="pagination">
-          <CustomerPagination maxPage={totalPage} />
-        </div> */}
+        <div className="pagination">
+          <CustomerPagination maxPage={searchResults.totalPages} />
+        </div>
       </section>
     </main>
   );

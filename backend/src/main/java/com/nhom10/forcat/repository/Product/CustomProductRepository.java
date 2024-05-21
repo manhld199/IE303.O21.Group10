@@ -1,15 +1,16 @@
 package com.nhom10.forcat.repository.Product;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.nhom10.forcat.model.Product.Product;
 
 public interface CustomProductRepository {
 
-    List<Product> findRandomDiscountedProducts(int limit);
+    Page<Product> findRandomDiscountedProducts(Pageable pageable);
 
-    List<Product> findRandomProducts(int limit);
+    Page<Product> findRandomProducts(Pageable pageable);
 
-    List<Product> searchProducts(String query, String category, String discount);
+    Page<Product> searchProducts(String query, String category, String discount, Pageable pageable);
 
 }

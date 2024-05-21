@@ -57,14 +57,14 @@ export default function SearchBar() {
   const fetchSearchResults = async (inputValue: string) => {
     try {
       const response = await fetch(
-        `${BACKEND_URL}/search/products?q=${inputValue}&c=&d=`
+        `${BACKEND_URL}/search/products?q=${inputValue}&p=0`
       );
 
       const data = await response.json();
 
-      if (Array.isArray(data)) {
-        setSearchResults(data.slice(0, 9));
-        setTotalSearchResults(data.length);
+      if (Array.isArray(data.products)) {
+        setSearchResults(data.products.slice(0, 9));
+        setTotalSearchResults(data.products.length);
         setShowSmartSearch(true);
       }
     } catch (error) {

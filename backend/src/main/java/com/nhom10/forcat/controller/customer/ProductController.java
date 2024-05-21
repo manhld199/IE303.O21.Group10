@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nhom10.forcat.dto.Product.ProductCartDto;
 import com.nhom10.forcat.dto.Product.ProductShortenDto;
+import com.nhom10.forcat.dto.Product.ProductShortenPageDto;
 import com.nhom10.forcat.model.Product.Product;
 import com.nhom10.forcat.service.ProductService;
 
@@ -57,17 +58,17 @@ public class ProductController {
     }
 
     @GetMapping("/getRecommendedProducts")
-    public ResponseEntity<List<ProductShortenDto>> getRecommendedProducts() {
-        return productService.getNRandomProducts(10);
+    public ResponseEntity<ProductShortenPageDto> getRecommendedProducts() {
+        return productService.getNRandomProducts(0, 10);
     }
 
     @GetMapping("/getDiscountedProducts")
-    public ResponseEntity<List<ProductShortenDto>> getDiscountProducts() {
-        return productService.getNDiscountedProducts(10);
+    public ResponseEntity<ProductShortenPageDto> getDiscountProducts() {
+        return productService.getNDiscountedProducts(0, 10);
     }
 
     @GetMapping("/getNewestProducts")
-    public ResponseEntity<List<ProductShortenDto>> getNewestProducts() {
-        return productService.getNNewestProducts(10);
+    public ResponseEntity<ProductShortenPageDto> getNewestProducts() {
+        return productService.getNNewestProducts(0, 10);
     }
 }

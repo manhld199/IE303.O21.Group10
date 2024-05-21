@@ -32,7 +32,7 @@ const getRecommendedProducts = async () => {
 
     const data = await response.json();
 
-    return data;
+    return data.products;
   } catch (error) {
     console.error("Error fetching recommend products:", error);
   }
@@ -46,7 +46,7 @@ const getNewestProducts = async () => {
 
     const data = await response.json();
 
-    return data;
+    return data.products;
   } catch (error) {
     console.error("Error fetching newest products:", error);
   }
@@ -63,7 +63,7 @@ const getDiscountedProducts = async () => {
 
     const data = await response.json();
 
-    return data;
+    return data.products;
   } catch (error) {
     console.error("Error fetching discount products:", error);
   }

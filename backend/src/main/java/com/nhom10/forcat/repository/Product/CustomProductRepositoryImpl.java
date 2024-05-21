@@ -5,13 +5,19 @@ import java.util.List;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.LimitOperation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.SampleOperation;
+import org.springframework.data.mongodb.core.aggregation.SkipOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.nhom10.forcat.model.Product.Product;
@@ -23,30 +29,46 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
   private MongoTemplate mongoTemplate;
 
   @Override
-  public List<Product> findRandomDiscountedProducts(int limit) {
+  public Page<Product> findRandomDiscountedProducts(Pageable pageable) {
     MatchOperation match = Aggregation.match(Criteria.where("product_variants.variant_discount.discount_amount").ne(0));
-    SampleOperation sample = Aggregation.sample(limit);
 
-    Aggregation aggregation = Aggregation.newAggregation(match, sample);
+    long skipCount = pageable.getPageNumber() * pageable.getPageSize();
+    SkipOperation skip = Aggregation.skip(skipCount);
 
-    AggregationResults<Product> results = mongoTemplate.aggregate(aggregation, "products", Product.class);
+    SampleOperation sample = Aggregation.sample(pageable.getPageSize());
 
-    return results.getMappedResults();
-  }
-
-  @Override
-  public List<Product> findRandomProducts(int limit) {
-    SampleOperation sample = Aggregation.sample(limit);
-
-    Aggregation aggregation = Aggregation.newAggregation(sample);
+    Aggregation aggregation = Aggregation.newAggregation(match, skip, sample);
 
     AggregationResults<Product> results = mongoTemplate.aggregate(aggregation, "products", Product.class);
 
-    return results.getMappedResults();
+    List<Product> products = results.getMappedResults();
+
+    long total = mongoTemplate.count(Query.query(Criteria.where(
+        "product_variants.variant_discount.discount_amount").ne(0)), Product.class);
+
+    return new PageImpl<>(products, pageable, total);
   }
 
   @Override
-  public List<Product> searchProducts(String query, String category, String discount) {
+  public Page<Product> findRandomProducts(Pageable pageable) {
+    long skipCount = pageable.getPageNumber() * pageable.getPageSize();
+    SkipOperation skip = Aggregation.skip(skipCount);
+
+    SampleOperation sample = Aggregation.sample(pageable.getPageSize());
+
+    Aggregation aggregation = Aggregation.newAggregation(skip, sample);
+
+    AggregationResults<Product> results = mongoTemplate.aggregate(aggregation, "products", Product.class);
+
+    List<Product> products = results.getMappedResults();
+
+    long total = mongoTemplate.count(Query.query(new Criteria()), Product.class);
+
+    return new PageImpl<>(products, pageable, total);
+  }
+
+  @Override
+  public Page<Product> searchProducts(String query, String category, String discount, Pageable pageable) {
 
     // if query is empty, search products by category
     String q = query.isEmpty() ? category : query;
@@ -71,22 +93,41 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
     if (!discount.isEmpty())
       discountMatch = Aggregation.match(Criteria.where("product_variants.variant_discount.discount_amount").ne(0));
 
+    long skipCount = pageable.getPageNumber() * pageable.getPageSize();
+    SkipOperation skipOperation = Aggregation.skip(skipCount);
+
+    LimitOperation limitOperation = Aggregation.limit(pageable.getPageSize());
+
     Aggregation aggregation = null;
+    Aggregation countAggregation = null;
     if (categoryMatch == null) {
-      if (discountMatch != null)
-        aggregation = Aggregation.newAggregation(searchOperation, discountMatch);
-      else
-        aggregation = Aggregation.newAggregation(searchOperation);
+      if (discountMatch != null) {
+        aggregation = Aggregation.newAggregation(searchOperation, discountMatch, skipOperation, limitOperation);
+        countAggregation = Aggregation.newAggregation(searchOperation, discountMatch, Aggregation.count().as("count"));
+      } else {
+        aggregation = Aggregation.newAggregation(searchOperation, skipOperation, limitOperation);
+        countAggregation = Aggregation.newAggregation(searchOperation, Aggregation.count().as("count"));
+      }
     } else {
-      if (discountMatch != null)
-        aggregation = Aggregation.newAggregation(searchOperation, categoryMatch, discountMatch);
-      else
-        aggregation = Aggregation.newAggregation(searchOperation, categoryMatch);
+      if (discountMatch != null) {
+        aggregation = Aggregation.newAggregation(searchOperation, categoryMatch,
+            discountMatch, skipOperation, limitOperation);
+        countAggregation = Aggregation.newAggregation(searchOperation, categoryMatch,
+            discountMatch, Aggregation.count().as("count"));
+      } else {
+        aggregation = Aggregation.newAggregation(searchOperation, categoryMatch, skipOperation, limitOperation);
+        countAggregation = Aggregation.newAggregation(searchOperation, categoryMatch, Aggregation.count().as("count"));
+      }
     }
 
     AggregationResults<Product> results = mongoTemplate.aggregate(aggregation, "products", Product.class);
 
-    return results.getMappedResults();
+    List<Product> products = results.getMappedResults();
+
+    AggregationResults<Document> count = mongoTemplate.aggregate(countAggregation, "products", Document.class);
+    int total = count.getUniqueMappedResult() != null ? count.getUniqueMappedResult().getInteger("count") : 0;
+
+    return new PageImpl<>(products, pageable, total);
   }
 
 }

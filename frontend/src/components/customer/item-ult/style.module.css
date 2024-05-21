@@ -1,4 +1,5 @@
 .header__item-ult {
+    text-decoration: none;
     display: flex;
     justify-content: space-between;
     padding: 10px;
@@ -7,6 +8,7 @@
     width: 100%;
     float: left;
     z-index: 999999;
+    color: var(--black);
 }
 
 .header__item-ult:hover {
@@ -29,7 +31,6 @@
 }
 
 .header__item-ult__thumbs__link {
-    text-decoration: none;
     color: black;
     outline: none;
     display: block;
@@ -72,6 +73,7 @@
     font-weight: 500;
     float: left;
     margin: 0;
+    color: var(--primary-mau0-2);
 }
 
 .header__item-ult__title__price small {

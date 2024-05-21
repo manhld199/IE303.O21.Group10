@@ -71,9 +71,9 @@ public class ProductService {
         }
     }
 
-    public ResponseEntity<List<ProductShortenDto>> getRandom10Products() {
+    public ResponseEntity<List<ProductShortenDto>> getNRandomProducts(int n) {
         try {
-            List<Product> products = productRepository.findRandomProducts(10);
+            List<Product> products = productRepository.findRandomProducts(n);
 
             if (products.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -88,9 +88,9 @@ public class ProductService {
         }
     }
 
-    public ResponseEntity<List<ProductShortenDto>> get10DiscountedProducts() {
+    public ResponseEntity<List<ProductShortenDto>> getNDiscountedProducts(int n) {
         try {
-            List<Product> products = productRepository.findRandomDiscountedProducts(10);
+            List<Product> products = productRepository.findRandomDiscountedProducts(n);
 
             if (products.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -105,9 +105,9 @@ public class ProductService {
         }
     }
 
-    public ResponseEntity<List<ProductShortenDto>> get10NewestProducts() {
+    public ResponseEntity<List<ProductShortenDto>> getNNewestProducts(int n) {
         try {
-            Pageable pageable = PageRequest.of(0, 10);
+            Pageable pageable = PageRequest.of(0, n);
             List<Product> products = productRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
 
             if (products.isEmpty())

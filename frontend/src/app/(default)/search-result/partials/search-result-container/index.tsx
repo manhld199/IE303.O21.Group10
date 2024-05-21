@@ -15,18 +15,11 @@ import { CustomerProductCard, CustomerPagination } from "@/components";
 // import css
 // import "./search-result.css";
 
-export default function SearchResultPage({ iteamFind, searchResults }) {
-  const totalResults = searchResults.totalResults;
-  const totalPage = searchResults.totalPages;
-  const currentPage = searchResults.currentPage;
+export default function SearchResultPage({ itemFind, searchResults }) {
+  // const totalResults = searchResults;
+  // const totalPage = searchResults.totalPages;
+  // const currentPage = searchResults.currentPage;
 
-  let searchResultsProducts;
-
-  if (searchResults) {
-    searchResultsProducts = searchResults.searchProducts;
-  } else {
-    searchResultsProducts = [];
-  }
   // console.log("Từ khóa tìm kiếm", searchResultsProducts);
 
   const [selectedFilterItem, setSelectedFilterItem] =
@@ -433,17 +426,19 @@ export default function SearchResultPage({ iteamFind, searchResults }) {
         <div className="search-result__main__heading">
           <p className="search-result__main__count">
             Tìm thấy{" "}
-            <span className="search-result__highlight">{totalResults}</span>{" "}
-            {iteamFind === "discountTrue" ? (
+            <span className="search-result__highlight">
+              {searchResults.length}
+            </span>{" "}
+            {itemFind === "discountTrue" ? (
               "sản phẩm khuyến mãi"
-            ) : iteamFind === "topRateTrue" ? (
-              "sản phẩm Hot"
-            ): iteamFind === "newTrue" ? (
+            ) : itemFind === "recommendTrue" ? (
+              "sản phẩm gợi ý hôm nay"
+            ) : itemFind === "newTrue" ? (
               "sản phẩm mới"
             ) : (
               <>
                 kết quả cho từ khóa &quot;
-                <span className="search-result__key">{iteamFind}</span>
+                <span className="search-result__key">{itemFind}</span>
                 &quot;
               </>
             )}
@@ -518,20 +513,18 @@ export default function SearchResultPage({ iteamFind, searchResults }) {
         </div>
 
         <div className="search-result__main-card">
-          {searchResultsProducts &&
-            searchResultsProducts.length >= 0 &&
-            (searchResultsProducts ?? []).map((product) => (
-              <>
-                <CustomerProductCard
-                  key={product.product_id_hashed}
-                  product={product}
-                />
-              </>
+          {searchResults &&
+            searchResults.length >= 0 &&
+            searchResults.map((product, index) => (
+              <CustomerProductCard
+                key={"search product" + index}
+                product={product}
+              />
             ))}
         </div>
-        <div className="pagination">
+        {/* <div className="pagination">
           <CustomerPagination maxPage={totalPage} />
-        </div>
+        </div> */}
       </section>
     </main>
   );

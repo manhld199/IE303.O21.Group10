@@ -58,16 +58,16 @@ public class ProductController {
 
     @GetMapping("/getRecommendedProducts")
     public ResponseEntity<List<ProductShortenDto>> getRecommendedProducts() {
-        return productService.getRandom10Products();
+        return productService.getNRandomProducts(10);
     }
 
     @GetMapping("/getDiscountedProducts")
     public ResponseEntity<List<ProductShortenDto>> getDiscountProducts() {
-        return productService.get10DiscountedProducts();
+        return productService.getNDiscountedProducts(10);
     }
 
     @GetMapping("/getNewestProducts")
     public ResponseEntity<List<ProductShortenDto>> getNewestProducts() {
-        return productService.get10NewestProducts();
+        return productService.getNNewestProducts(10);
     }
 }

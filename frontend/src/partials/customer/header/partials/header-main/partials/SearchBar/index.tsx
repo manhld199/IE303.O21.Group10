@@ -57,7 +57,7 @@ export default function SearchBar() {
   const fetchSearchResults = async (inputValue: string) => {
     try {
       const response = await fetch(
-        `${BACKEND_URL}/search/products?q=${inputValue}&c=&d=&s=10`
+        `${BACKEND_URL}/search/products?q=${inputValue}&c=&d=`
       );
 
       const data = await response.json();
@@ -122,7 +122,7 @@ export default function SearchBar() {
         <div className={cx("header__suggest-results-more")}>
           <Link
             className={cx("header__suggest-results-more-link")}
-            href={`/search-result?searchKey=${inputValue}`}>
+            href={`/search-result?q=${inputValue}`}>
             Xem tất cả{" "}
             <span className={cx("highlight")}>{totalSearchResults}</span> sản
             phẩm

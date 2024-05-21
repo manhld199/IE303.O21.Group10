@@ -114,9 +114,7 @@ export default async function Home() {
         <div className="wrapper color">
           <div className="content-container">
             <h2 className="tip-products__label">
-              <Link
-                href="/search-result?sortBy=hot"
-                className="tip-products__title">
+              <Link href="/search-result?r=1" className="tip-products__title">
                 Gợi ý hôm nay
                 <p> Xem tất cả </p>
               </Link>
@@ -129,9 +127,7 @@ export default async function Home() {
         <section className="content-container tip-products-wrapper wrapper--white">
           <div className="tip-products">
             <h2 className="tip-products__label">
-              <Link
-                href="/search-result?sortBy=new"
-                className="tip-products__title">
+              <Link href="/search-result?n=1" className="tip-products__title">
                 Hàng mới về
                 <p> Xem tất cả </p>
               </Link>
@@ -149,9 +145,7 @@ export default async function Home() {
             </div>
           </div>
           <div className="banner-wrapper">
-            <Link
-              className="banner-img--half"
-              href="/search-result?searchKey=reflex">
+            <Link className="banner-img--half" href="/search-result?q=reflex">
               <Image
                 className="banner-img"
                 fill={true}
@@ -205,9 +199,7 @@ export default async function Home() {
 
           <div className="tip-products">
             <h2 className="tip-products__label">
-              <Link
-                href="/search-result?discount=True"
-                className="tip-products__title">
+              <Link href="/search-result?d=1" className="tip-products__title">
                 Khuyến mãi hấp dẫn
                 <p> Xem tất cả </p>
               </Link>

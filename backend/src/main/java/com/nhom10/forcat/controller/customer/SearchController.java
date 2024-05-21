@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nhom10.forcat.dto.Product.ProductShortenDto;
+import com.nhom10.forcat.service.ProductService;
 import com.nhom10.forcat.service.SearchService;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -21,11 +22,30 @@ public class SearchController {
     @Autowired
     SearchService searchService;
 
+    @Autowired
+    ProductService productService;
+
     @GetMapping("/products")
     public ResponseEntity<List<ProductShortenDto>> getSearchProducts(
-            @RequestParam String q,
-            @RequestParam String c,
-            @RequestParam String d) {
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String c,
+            @RequestParam(required = false) String d,
+            @RequestParam(required = false) String r,
+            @RequestParam(required = false) String n) {
+
+        if (n != null)
+            return productService.getNNewestProducts(20);
+
+        if (r != null)
+            return productService.getNRandomProducts(20);
+
+        if (q == null && c == null && d != null)
+            return productService.getNDiscountedProducts(20);
+
+        q = q == null ? "" : q;
+        c = c == null ? "" : c;
+        d = d == null ? "" : d;
+
         return searchService.getSearchProducts(q, c, d);
     }
 }

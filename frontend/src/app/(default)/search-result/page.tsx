@@ -22,36 +22,40 @@ export const metadata: Metadata = {
 async function getSearchProduct(searchParams) {
   try {
     // Khởi tạo mảng rỗng để chứa các thành phần của query string
-    const queryParams = [];
+    let queryParams = [];
     if (searchParams.q) {
-      queryParams.push(`q=${searchParams.searchKey}`);
+      queryParams.push(`q=${searchParams.q}`);
     }
-    if (searchParams.c) {
-      queryParams.push(`c=${searchParams.category}`);
-    }
-    if (searchParams.d) {
-      queryParams.push(`d=${searchParams.discount}`);
-    }
-    // if (searchParams.topRate) {
-    //   queryParams.push(`sortBy=hot`);
-    // }
 
-    // Thêm page vào queryParams
-    queryParams.push(`page=${searchParams.page}`);
+    if (searchParams.c) {
+      queryParams.push(`c=${searchParams.c}`);
+    }
+
+    if (searchParams.d) {
+      queryParams.push(`d=${searchParams.d}`);
+    }
+
+    if (searchParams.r) {
+      queryParams = [`r=${searchParams.r}`];
+    }
+
+    if (searchParams.n) {
+      queryParams = [`n=${searchParams.n}`];
+    }
+
+    // // Thêm page vào queryParams
+    // queryParams.push(`page=${searchParams.page}`);
 
     // Tạo chuỗi query bằng cách nối các thành phần trong queryParams bằng "&"
     const queryString = queryParams.join("&");
 
-    const res = await fetch(
-      `${BACKEND_URL}/productList/search?${queryString}`,
-      {
-        next: { revalidate: 60 },
-      }
-    );
+    const res = await fetch(`${BACKEND_URL}/search/products?${queryString}`, {
+      next: { revalidate: 60 },
+    });
 
     const data = await res.json();
-    // console.log("Dữ liệu tôi cần", data.data);
-    return data.data;
+
+    return data;
   } catch {
     return notFound();
   }
@@ -65,24 +69,22 @@ export default async function SearchResultPage({
   searchParams?: { [key: string]: string };
 }) {
   // console.log("Lấy từ url", searchKey);
-  let iteamFind;
+  let itemFind;
   if (searchParams.q) {
-    iteamFind = searchParams.q;
-  } else if (searchParams.category) {
-    iteamFind = searchParams.category;
-  } else if (searchParams.discount) {
-    iteamFind = "discountTrue";
-  } else if (searchParams.sortBy == "hot") {
-    iteamFind = "topRateTrue";
-  } else if (searchParams.sortBy == "new") {
-    iteamFind = "newTrue";
+    itemFind = searchParams.q;
+  } else if (searchParams.c && !searchParams.q) {
+    itemFind = searchParams.c;
+  } else if (searchParams.d && !searchParams.q && !searchParams.c) {
+    itemFind = "discountTrue";
+  } else if (searchParams.r) {
+    itemFind = "recommendTrue";
+  } else if (searchParams.n) {
+    itemFind = "newTrue";
   }
 
   const searchResults = await getSearchProduct(searchParams);
+
   return (
-    <SearchResultContainer
-      iteamFind={iteamFind}
-      searchResults={searchResults}
-    />
+    <SearchResultContainer itemFind={itemFind} searchResults={searchResults} />
   );
 }

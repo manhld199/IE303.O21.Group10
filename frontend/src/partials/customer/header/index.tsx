@@ -24,21 +24,20 @@ const categoryProducts = async () => {
 
     const data = await response.json();
     return data.data; // Return the entire data object
-  } catch (error) {
-  }
+  } catch (error) {}
 };
 
 const headerLinks: IHeaderLinkProps[] = [
   {
     title: "Sản phẩm HOT",
     iconData: "local_fire_department",
-    url: "/search-result?sortBy=hot",
+    url: "/search-result?r=1",
     className: "menu__hot-product",
   },
   {
     title: "Khuyến mãi",
     iconData: "savings",
-    url: "/search-result?discount=True",
+    url: "/search-result?d=1",
     className: "menu__promo",
   },
   {

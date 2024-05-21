@@ -13,15 +13,17 @@ const cx = classNames.bind(styles);
 
 export default function CustomerHeaderItemUlt({ product }) {
   return (
-    <div className={cx("header__item-ult")}>
+    <Link
+      href={`/${product.product_slug}/${product.variant_slug}?pid=${product.product_id}`}
+      className={cx("header__item-ult")}>
       <div className={cx("header__item-ult__title")}>
-        <Link
+        <div
           className={cx("header__item-ult__title__link")}
           title={product.product_name}
-          href={`/${product.product_slug}/${product.variant_slug}?pid=${product.product_id}`} // Đường dẫn của sản phẩm
+          // Đường dẫn của sản phẩm
         >
           {product.product_name}
-        </Link>
+        </div>
         <div className={cx("header__item-ult__title__price")}>
           {product.variant_discount_amount == 0 ? (
             <>{convertNumberToMoney(product.variant_price)}</>
@@ -38,7 +40,7 @@ export default function CustomerHeaderItemUlt({ product }) {
         </div>
       </div>
       <div className={cx("header__item-ult__thumbs")}>
-        <Link href="#" className={cx("header__item-ult__thumbs__link")}>
+        <div className={cx("header__item-ult__thumbs__link")}>
           <CldImage
             className={cx("header__item-ult__thumbs__img")}
             src={product.product_img.url} // Sử dụng link hình ảnh từ dữ liệu sản phẩm
@@ -46,8 +48,8 @@ export default function CustomerHeaderItemUlt({ product }) {
             width={100} // Đặt chiều rộng và chiều cao của ảnh theo ý muốn
             height={100}
           />
-        </Link>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }

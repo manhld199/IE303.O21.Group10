@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.nhom10.forcat.dto.Product.ProductCartDto;
 import com.nhom10.forcat.dto.Product.ProductShortenDto;
 import com.nhom10.forcat.dto.Product.ProductShortenPageDto;
+import com.nhom10.forcat.dto.Product.ProductSitemapDto;
 import com.nhom10.forcat.model.Product.Product;
 import com.nhom10.forcat.repository.Product.ProductRepository;
 
@@ -133,6 +134,23 @@ public class ProductService {
             ProductShortenPageDto returnedProducts = new ProductShortenPageDto(shortenProducts, totalPages);
 
             return new ResponseEntity<>(returnedProducts, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<List<ProductSitemapDto>> getSitemapProducts() {
+        try {
+            List<Product> products = productRepository.findAll();
+
+            if (products.isEmpty())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            List<ProductSitemapDto> convertedProducts = products.stream().map(product -> new ProductSitemapDto(product))
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(convertedProducts, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nhom10.forcat.dto.Product.ProductCartDto;
 import com.nhom10.forcat.dto.Product.ProductShortenDto;
 import com.nhom10.forcat.dto.Product.ProductShortenPageDto;
+import com.nhom10.forcat.dto.Product.ProductSitemapDto;
 import com.nhom10.forcat.model.Product.Product;
 import com.nhom10.forcat.service.ProductService;
 
@@ -70,5 +71,10 @@ public class ProductController {
     @GetMapping("/getNewestProducts")
     public ResponseEntity<ProductShortenPageDto> getNewestProducts() {
         return productService.getNNewestProducts(0, 10);
+    }
+
+    @GetMapping("/getSitemapProducts")
+    public ResponseEntity<List<ProductSitemapDto>> getSitemapProducts() {
+        return productService.getSitemapProducts();
     }
 }

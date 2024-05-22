@@ -6,25 +6,23 @@ import { BACKEND_URL } from "@/utils/commonConst";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
-    const productsRes = await fetch(
-      `${BACKEND_URL}/productList/search?searchKey=`
-    );
-    const jsonRes = await productsRes.json();
-    const products = jsonRes.data.searchProducts;
+    const res = await fetch(`${BACKEND_URL}/products/getSitemapProducts`);
+    const products = await res.json();
+
     const productEntries: MetadataRoute.Sitemap = products.map(
       (item, index) => ({
-        url: `${process.env.NEXT_PUBLIC_BASE_URL}/${item.product_slug}?pid=${item.product_id_hashed}`,
-        lastModified: new Date(item.updatedAt),
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/${item.product_slug}?pid=${item.product_id}`,
+        lastModified: new Date(item.updated_at),
       })
     );
 
-    const newsRes = await fetch(`${BACKEND_URL}/articles/unlimited`);
-    const newResJson = await newsRes.json();
-    const news = newResJson.data;
-    const newEntries: MetadataRoute.Sitemap = news.map((item, index) => ({
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/news/${item.article_slug}?aid=${item.article_id_hashed}`,
-      lastModified: new Date(item.updatedAt),
-    }));
+    // const newsRes = await fetch(`${BACKEND_URL}/articles/unlimited`);
+    // const newResJson = await newsRes.json();
+    // const news = newResJson.data;
+    // const newEntries: MetadataRoute.Sitemap = news.map((item, index) => ({
+    //   url: `${process.env.NEXT_PUBLIC_BASE_URL}/news/${item.article_slug}?aid=${item.article_id_hashed}`,
+    //   lastModified: new Date(item.updatedAt),
+    // }));
 
     return [
       {
@@ -53,7 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: "daily",
       },
       ...productEntries,
-      ...newEntries,
+      // ...newEntries,
     ];
   } catch (err) {
     // console.log(err);

@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 
 // use components
 import { CustomerFooter, CustomerHeader, CustomerAppBar } from "@/partials";
-import { CustomerBreadcrumb } from "@/components";
+// import { CustomerBreadcrumb } from "@/components";
+import { Scrollup, ContactAside } from "@/components";
 
 export default function CustomerLayout({
   children,
@@ -13,7 +14,9 @@ export default function CustomerLayout({
   return (
     <>
       <CustomerHeader />
-      <CustomerBreadcrumb />
+      {/* <CustomerBreadcrumb /> */}
+      <Scrollup />
+      <ContactAside />
       {children}
       <CustomerFooter />
       <CustomerAppBar />

@@ -1,0 +1,40 @@
+.login-container {
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-white);
+  background-image: url(/imgs/admin/login-background.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.auth__forms-wrap {
+  position: relative;
+  width: 45%;
+  box-shadow: 0 2px 7px #dfdfdf;
+  margin: 0 auto;
+  background: #fff;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  padding: 28px;
+}
+
+.auth__form__inner-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.login__forms-wrap {
+  height: 100%;
+  width: 100%;
+  transition: 0.8s ease-in-out;
+}

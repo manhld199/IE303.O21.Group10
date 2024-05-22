@@ -13,4 +13,6 @@ public interface CustomProductRepository {
 
     Page<Product> searchProducts(String query, String category, String discount, Pageable pageable);
 
+    Page<Product> searchAdminProducts(String query, Pageable pageable);
+
 }

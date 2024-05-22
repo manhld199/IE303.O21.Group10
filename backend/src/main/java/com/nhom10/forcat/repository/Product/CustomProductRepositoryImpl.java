@@ -130,4 +130,35 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
     return new PageImpl<>(products, pageable, total);
   }
 
+  @Override
+  public Page<Product> searchAdminProducts(String query, Pageable pageable) {
+
+    List<String> path = Arrays.asList("product_name", "product_variants.variant_name",
+        "product_supp_price", "categories");
+
+    // create mongodb atlas search document
+    Document searchDocument = new Document("$search",
+        new Document("index", "admin-products")
+            .append("text", new Document("query", query)
+                .append("path", path)));
+    AggregationOperation searchOperation = context -> searchDocument;
+
+    long skipCount = pageable.getPageNumber() * pageable.getPageSize();
+    SkipOperation skipOperation = Aggregation.skip(skipCount);
+
+    LimitOperation limitOperation = Aggregation.limit(pageable.getPageSize());
+
+    Aggregation aggregation = Aggregation.newAggregation(searchOperation, skipOperation, limitOperation);
+    Aggregation countAggregation = Aggregation.newAggregation(searchOperation, Aggregation.count().as("count"));
+
+    AggregationResults<Product> results = mongoTemplate.aggregate(aggregation, "products", Product.class);
+
+    List<Product> products = results.getMappedResults();
+
+    AggregationResults<Document> count = mongoTemplate.aggregate(countAggregation, "products", Document.class);
+    int total = count.getUniqueMappedResult() != null ? count.getUniqueMappedResult().getInteger("count") : 0;
+
+    return new PageImpl<>(products, pageable, total);
+  }
+
 }

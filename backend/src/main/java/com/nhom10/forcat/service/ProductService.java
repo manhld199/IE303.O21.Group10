@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.nhom10.forcat.dto.Product.ProductAdminShortenDto;
+import com.nhom10.forcat.dto.Product.ProductAdminShortenPageDto;
 import com.nhom10.forcat.dto.Product.ProductCartDto;
 import com.nhom10.forcat.dto.Product.ProductShortenDto;
 import com.nhom10.forcat.dto.Product.ProductShortenPageDto;
@@ -132,6 +134,29 @@ public class ProductService {
                     .collect(Collectors.toList());
 
             ProductShortenPageDto returnedProducts = new ProductShortenPageDto(shortenProducts, totalPages);
+
+            return new ResponseEntity<>(returnedProducts, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<ProductAdminShortenPageDto> getAdminAllProducts(int p, int n) {
+        try {
+            Pageable pageable = PageRequest.of(p, n);
+            Page<Product> page = productRepository.findAllByOrderByCreatedAtDesc(pageable);
+            List<Product> products = page.getContent();
+            int totalPages = page.getTotalPages();
+
+            if (products.isEmpty())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            List<ProductAdminShortenDto> shortenProducts = products.stream()
+                    .map(product -> new ProductAdminShortenDto(product))
+                    .collect(Collectors.toList());
+
+            ProductAdminShortenPageDto returnedProducts = new ProductAdminShortenPageDto(shortenProducts, totalPages);
 
             return new ResponseEntity<>(returnedProducts, HttpStatus.OK);
         } catch (Exception e) {

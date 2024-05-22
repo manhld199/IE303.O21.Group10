@@ -1,6 +1,7 @@
 // use components
 import { CustomerFooter, CustomerHeader, CustomerAppBar } from "@/partials";
-import { CustomerBreadcrumb } from "@/components";
+// import { CustomerBreadcrumb } from "@/components";
+import { Scrollup, ContactAside } from "@/components";
 
 export default function DefaultLayout({
   children,
@@ -10,7 +11,9 @@ export default function DefaultLayout({
   return (
     <>
       <CustomerHeader />
-      <CustomerBreadcrumb />
+      {/* <CustomerBreadcrumb /> */}
+      <Scrollup />
+      <ContactAside />
       {children}
       <CustomerFooter />
       <CustomerAppBar></CustomerAppBar>

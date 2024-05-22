@@ -5,9 +5,6 @@ import { Quicksand } from "next/font/google";
 // use styles
 import "./global.css";
 
-// import components
-import { Scrollup, ContactAside } from "@/components";
-
 const quicksand = Quicksand({
   weight: "500",
   subsets: ["latin"],
@@ -86,11 +83,7 @@ export default function CustomerLayout({
 }>) {
   return (
     <html lang="vi" className={quicksand.className}>
-      <body>
-        {children}
-        <Scrollup />
-        <ContactAside />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

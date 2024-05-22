@@ -1,7 +1,7 @@
 .dashboard {
-    width: calc(100% - 324px);
+    width: 80%;
     background-color: var(--bg-white);
-    margin-left: 300px;
+    /* margin-left: 300px; */
     padding: 0.75rem;
     display: flex;
     flex-direction: column;

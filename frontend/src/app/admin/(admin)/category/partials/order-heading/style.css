@@ -1,0 +1,8 @@
+.order-page-heading {
+    width: 100%;
+    background-color: var(--white);
+    padding: 16px;
+    margin: 0;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 15px 0px;
+    z-index: 9999;
+}

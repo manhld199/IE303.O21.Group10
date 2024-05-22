@@ -1,3 +1,6 @@
+// admin components
+export { default as AdminPagination } from "./admin/pagination";
+
 // auth components
 export { default as AuthLoginForm } from "./auth/loginForm";
 export { default as AuthRegisterForm } from "./auth/registerForm";

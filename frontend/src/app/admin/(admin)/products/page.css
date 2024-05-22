@@ -1,5 +1,6 @@
 .product-page-container {
     width: 80%;
+    margin-top: 0;
     /* margin-left: 300px; */
     background-color: var(--white);
     padding: 0.5rem;

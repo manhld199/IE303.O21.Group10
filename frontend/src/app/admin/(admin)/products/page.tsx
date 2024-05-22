@@ -1,11 +1,10 @@
 // import libs
 import React from "react";
+import Link from "next/link";
 
 // import components
+import { AdminPagination } from "@/components";
 import { ProductImg } from "./components";
-
-// import partials
-import ProductPagination from "./partials/pagination";
 
 // import utils
 import { BACKEND_URL } from "@/utils/commonConst";
@@ -64,14 +63,15 @@ export default async function AdminProductsPage({
           </button>
         </div>
         <div className="product-page-head__item product-page-head__item--right">
-          <button
+          <Link
+            href="/admin/products/add"
             className="product-page__btn product-page__btn-add"
             type="button">
             <span className="material-icons-round product-page__btn-icon">
               add
             </span>
             <span className="product-page__btn-text">Thêm</span>
-          </button>
+          </Link>
           <button
             className="product-page__btn product-page__btn-delete"
             type="button">
@@ -106,7 +106,7 @@ export default async function AdminProductsPage({
           </form>
 
           {totalPages > 1 && (
-            <ProductPagination page={p} totalPages={totalPages} />
+            <AdminPagination page={p} totalPages={totalPages} />
           )}
         </div>
         <table className="product-page-table">
@@ -123,7 +123,7 @@ export default async function AdminProductsPage({
               <th className="product-page-table__title">Tên sản phẩm</th>
               <th className="product-page-table__title">Giá gốc</th>
               <th className="product-page-table__title">Danh mục</th>
-              <th className="product-page-table__title">Số biến thể</th>
+              <th className="product-page-table__title">Biến thể</th>
               <th className="product-page-table__title"></th>
             </tr>
           </thead>

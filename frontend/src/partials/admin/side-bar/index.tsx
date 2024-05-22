@@ -69,75 +69,71 @@ export default function AdminSideBar(props: ILogoProps) {
         </div>
 
         <div className={cx("admin-sidebar__list")}>
-          <div className={cx("admin-sidebar__list-item")}>
-            <a href="/admin/dasboard" className={cx("active")}>
-              <span className={"material-icons-round"}>space_dashboard</span>
-              <p>Dashboard</p>
-            </a>
-          </div>
+          <Link
+            className={cx("admin-sidebar__list-item", "active")}
+            href="/admin/dashboard">
+            <span className={"material-icons-round"}>space_dashboard</span>
+            <p>Dashboard</p>
+          </Link>
 
-          <div className={cx("admin-sidebar__list-item")}>
-            <a href="/admin/categories_admin">
-              <span className={"material-icons-round"}>category</span>
-              <p>Danh mục</p>
-            </a>
-          </div>
+          <Link
+            className={cx("admin-sidebar__list-item")}
+            href="/admin/category">
+            <span className={"material-icons-round"}>category</span>
+            <p>Danh mục</p>
+          </Link>
 
-          <div className={cx("admin-sidebar__list-item")}>
-            <a href="/admin/products">
-              <span className="material-icons-round">inventory_2</span>
-              <p>Sản phẩm</p>
-            </a>
-          </div>
+          <Link
+            className={cx("admin-sidebar__list-item")}
+            href="/admin/products">
+            <span className="material-icons-round">inventory_2</span>
+            <p>Sản phẩm</p>
+          </Link>
 
-          <div className={cx("admin-sidebar__list-item")}>
-            <a href="/feature_development">
-              <span className="material-icons-round">shopping_bag</span>
-              <p>Đơn hàng</p>
-            </a>
-          </div>
+          <Link className={cx("admin-sidebar__list-item")} href="/admin/order">
+            <span className="material-icons-round">shopping_bag</span>
+            <p>Đơn hàng</p>
+          </Link>
 
-          <div className={cx("admin-sidebar__list-item")}>
-            <a href="/feature_development">
-              <span className="material-icons-round">groups</span>
-              <p>Khách hàng</p>
-            </a>
-          </div>
+          <Link
+            className={cx("admin-sidebar__list-item")}
+            href="/feature_development">
+            <span className="material-icons-round">groups</span>
+            <p>Khách hàng</p>
+          </Link>
 
-          <div className={cx("admin-sidebar__list-item")}>
-            <a href="/feature_development">
-              <span className="material-icons-round">rate_review</span>
-              <p>Đánh giá</p>
-            </a>
-          </div>
+          <Link
+            className={cx("admin-sidebar__list-item")}
+            href="/feature_development">
+            <span className="material-icons-round">rate_review</span>
+            <p>Đánh giá</p>
+          </Link>
 
-          <div className={cx("admin-sidebar__list-item")}>
-            <a href="/feature_development">
-              <span className="material-icons-round">warehouse</span>
-              <p>Kho</p>
-            </a>
-          </div>
+          <Link
+            className={cx("admin-sidebar__list-item")}
+            href="/feature_development">
+            <span className="material-icons-round">warehouse</span>
+            <p>Kho</p>
+          </Link>
 
-          <div className={cx("admin-sidebar__list-item")}>
-            <a href="/feature_development">
-              <span className="material-icons-round">bar_chart</span>
-              <p>Báo cáo</p>
-            </a>
-          </div>
+          <Link
+            className={cx("admin-sidebar__list-item")}
+            href="/feature_development">
+            <span className="material-icons-round">bar_chart</span>
+            <p>Báo cáo</p>
+          </Link>
 
-          <div className={cx("admin-sidebar__list-item")}>
-            <a href="/feature_development">
-              <span className="material-icons-round">settings</span>
-              <p>Cài đặt</p>
-            </a>
-          </div>
+          <Link
+            className={cx("admin-sidebar__list-item")}
+            href="/feature_development">
+            <span className="material-icons-round">settings</span>
+            <p>Cài đặt</p>
+          </Link>
 
-          <div className={cx("admin-sidebar__list-item")}>
-            <a href="/admin/logout">
-              <span className="material-icons-round">logout</span>
-              <p>Đăng xuất</p>
-            </a>
-          </div>
+          <Link className={cx("admin-sidebar__list-item")} href="/admin/logout">
+            <span className="material-icons-round">logout</span>
+            <p>Đăng xuất</p>
+          </Link>
         </div>
       </div>
     </aside>

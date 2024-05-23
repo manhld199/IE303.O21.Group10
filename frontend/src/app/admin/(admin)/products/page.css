@@ -130,6 +130,10 @@
     width: 12%;
 }
 
+.product-page-table__product-variants {
+    width: 10%;
+}
+
 .product-page-table__product-category {
     width: 12%;
 }

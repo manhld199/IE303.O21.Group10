@@ -1,7 +1,9 @@
 package com.nhom10.forcat.model.Product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nhom10.forcat.util.Util;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 import lombok.Data;
@@ -11,7 +13,7 @@ public class ProductVariant {
     @Id
     @Field(name = "_id")
     @JsonProperty("variant_id")
-    private String variantId;
+    private ObjectId variantId;
 
     @Field(name = "variant_name")
     @JsonProperty("variant_name")
@@ -38,5 +40,15 @@ public class ProductVariant {
     private int variantInStock;
 
     public ProductVariant() {
-    }
+    };
+
+    public ProductVariant(String variantName, double variantPrice, ProductImg variantImg, int variantInStock) {
+        this.variantId = new ObjectId();
+        this.variantName = variantName;
+        this.variantSlug = Util.createSlug(variantName);
+        this.variantPrice = variantPrice;
+        this.variantImg = variantImg;
+        this.variantDiscount = new ProductVariantDiscount(null, 0);
+        this.variantInStock = variantInStock;
+    };
 }

@@ -20,4 +20,9 @@ public class ProductCategory {
 
     public ProductCategory() {
     }
+
+    public ProductCategory(ObjectId objectId, String categoryName) {
+        this.categoryId = objectId;
+        this.categoryName = categoryName;
+    }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 // import libs
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 // import css
 import "./page.css";
@@ -39,6 +39,31 @@ const handleCloseBtn = (event: any) => {
   reindexVariant();
 };
 
+const handleChangeImg = (event: any) => {
+  const current = event.currentTarget;
+  const files = Array.from(current.files);
+
+  let nextElement = current.nextSibling;
+  if (nextElement) nextElement.remove();
+
+  nextElement = document.createElement("div");
+  nextElement.classList.add("add-product-main__preview-image-div");
+  nextElement.innerHTML = `${files
+    .map(
+      (file: any, index) => `<img
+                        class="add-product-main__preview-image"
+                        src=${URL.createObjectURL(file)}
+                        alt="Preview"
+                      />`
+    )
+    .join("")}`;
+
+  const addedElement = current.parentNode.insertBefore(
+    nextElement,
+    current.nextSibling
+  );
+};
+
 // handle add more variant
 const handleAddVariant = () => {
   countVariant += 1;
@@ -67,6 +92,23 @@ const handleAddVariant = () => {
                                     required
                                 />
                             </div>
+
+                            <div class="add-product-main__input-row add-product-variant__input-row">
+                              <h5>Hình ảnh</h5>
+                              <input
+                                class="add-product-main__input"
+                                placeholder="Nhập văn bản thay thế"
+                                type="text"
+                                name="product_variant_img_alt"
+                                required
+                              />
+                              <input
+                                type="file"
+                                name="product_variant_img"
+                                className="add-image-input"
+                              />
+                            </div>
+
                             <div class="add-product-main__input-row add-product-variant__input-row">
                                 <h5>Giá tiền</h5>
                                 <input
@@ -98,6 +140,9 @@ const handleAddVariant = () => {
       newVariant,
       addMoreVariantBtn
     );
+  addedElement
+    ?.querySelector("input[name='product_variant_img']")
+    ?.addEventListener("change", handleChangeImg);
   addedElement
     ?.querySelector("input[name='variant_price'")
     ?.addEventListener("blur", validateInputNumber);
@@ -160,7 +205,35 @@ const handleAddSpecification = () => {
     ?.addEventListener("click", handleCloseBtn);
 };
 
-const handleSubmitForm = (event: any) => {
+const uploadImages = async (files: any) => {
+  const urls = [];
+
+  for (const file of files) {
+    const uploadData = new FormData();
+
+    uploadData.append("file", file);
+    uploadData.append("upload_preset", "java_images");
+
+    const uploadResponse = await fetch(
+      `https://api.cloudinary.com/v1_1/dmjwq3ebx/image/upload`,
+      {
+        method: "POST",
+        body: uploadData,
+      }
+    );
+    if (uploadResponse.ok) {
+      const imageData = await uploadResponse.json();
+      // console.log("imgdata", imageData);
+      urls.push(imageData.public_id);
+    } else {
+      alert("Failed to upload image");
+    }
+  }
+
+  return urls;
+};
+
+const handleSubmitForm = async (event: any) => {
   event?.preventDefault();
   const addProductForm = document.querySelector("#add-product-form");
 
@@ -170,6 +243,23 @@ const handleSubmitForm = (event: any) => {
     ) as HTMLInputElement
   ).value;
   //   console.log(productName);
+
+  const productImgFiles = Array.from(
+    (document.querySelector("input[name='product_imgs']") as HTMLInputElement)
+      .files
+  );
+
+  const productAlt = (
+    addProductForm?.querySelector(
+      "input[name='product_image_alt']"
+    ) as HTMLInputElement
+  ).value;
+  // console.log(productAlt);
+
+  const productImgUrls = await uploadImages(productImgFiles);
+  // console.log("1 product up url", productImgUrls);
+
+  // console.log("image urls", imageUrls);
 
   const productCategories = (
     addProductForm?.querySelector(
@@ -203,33 +293,62 @@ const handleSubmitForm = (event: any) => {
   );
   // console.log(productSuppPrice);
 
-  const productVariants = Array.from(
-    document.querySelectorAll(".add-product-variant__input-group")
-  ).map((variant: any) => {
-    const variantName = (
-      variant.querySelector("input[name='variant_name']") as HTMLInputElement
-    ).value;
+  const productVariants = await Promise.all(
+    Array.from(
+      addProductForm.querySelectorAll(".add-product-variant__input-group")
+    ).map(async (variant: any) => {
+      const variantName = (
+        variant.querySelector("input[name='variant_name']") as HTMLInputElement
+      ).value;
 
-    const variantPrice = Number(
-      (variant.querySelector("input[name='variant_price']") as HTMLInputElement)
-        .value
-    );
+      const variantImgAlt = variant.querySelector(
+        "input[name='product_variant_img_alt']"
+      ).value;
+      // console.log("va alt", variantImgAlt);
 
-    const variantQuantity = Number(
-      (
-        variant.querySelector(
-          "input[name='variant_quantity']"
-        ) as HTMLInputElement
-      ).value
-    );
+      const variantImg = Array.from(
+        variant.querySelector("input[name='product_variant_img']").files
+      );
+      // console.log("va img", variantImg);
 
-    return {
-      variant_name: variantName,
-      variant_price: variantPrice,
-      variant_quantity: variantQuantity,
-    };
-  });
+      const variantImgUrl = await uploadImages(variantImg);
+      // console.log("2. va up url", variantImgUrl[0]);
+
+      productImgUrls.push(variantImgUrl[0]);
+
+      const variantPrice = Number(
+        (
+          variant.querySelector(
+            "input[name='variant_price']"
+          ) as HTMLInputElement
+        ).value
+      );
+
+      const variantQuantity = Number(
+        (
+          variant.querySelector(
+            "input[name='variant_quantity']"
+          ) as HTMLInputElement
+        ).value
+      );
+
+      return {
+        variant_name: variantName,
+        variant_price: variantPrice,
+        variant_in_stock: variantQuantity,
+        variant_img: {
+          url: variantImgUrl[0],
+          alt: variantImgAlt,
+        },
+      };
+    })
+  );
   // console.log(productVariants);
+
+  const productImgs = productImgUrls.map((file, index) => ({
+    url: file,
+    alt: productAlt + "-" + (index + 1),
+  }));
 
   const productSpecifications = Array.from(
     document.querySelectorAll(".add-product-specification__input-row")
@@ -257,14 +376,16 @@ const handleSubmitForm = (event: any) => {
 
   const formData = {
     product_name: productName,
-    product_categories: productCategories,
+    categories: productCategories,
+    product_imgs: productImgs,
     product_short_description: productShortDescription,
     product_description: productDescription,
     product_supp_price: productSuppPrice,
     product_variants: productVariants,
-    product_specifications: productSpecifications,
+    product_details: productSpecifications,
   };
-  // console.log(formData);
+
+  console.log("formdaata", formData);
 };
 
 export default function AdminAddProductPage() {
@@ -287,77 +408,153 @@ export default function AdminAddProductPage() {
         id="add-product-form"
         className="add-product-main"
         onSubmit={handleSubmitForm}>
-        <section className="add-product-info add-product-section">
-          <div className="add-product-main__title-div">
-            <h3 className="add-product-main__title">Thông tin sản phẩm</h3>
-          </div>
-
-          <div className="add-product-main__input-group">
-            <div className="add-product-main__input-row">
-              <h5>Tên sản phẩm</h5>
-              <input
-                className="add-product-main__input"
-                placeholder="Nhập tên sản phẩm"
-                type="text"
-                name="product_name"
-                required
-              />
+        <div className="add-product-form-left">
+          <section className="add-product-info add-product-section">
+            <div className="add-product-main__title-div">
+              <h3 className="add-product-main__title">Thông tin sản phẩm</h3>
             </div>
 
-            <div className="add-product-main__input-row">
-              <h5>Danh mục</h5>
-              <input
-                className="add-product-main__input"
-                placeholder="Nhập tên danh mục"
-                type="text"
-                name="product_categories"
-                required
-              />
+            <div className="add-product-main__input-group">
+              <div className="add-product-main__input-row">
+                <h5>Tên sản phẩm</h5>
+                <input
+                  className="add-product-main__input"
+                  placeholder="Nhập tên sản phẩm"
+                  type="text"
+                  name="product_name"
+                  required
+                />
+              </div>
+
+              <div className="add-product-main__input-row">
+                <h5>Hình ảnh</h5>
+                <input
+                  className="add-product-main__input"
+                  placeholder="Nhập văn bản thay thế"
+                  type="text"
+                  name="product_image_alt"
+                  required
+                />
+                <input
+                  type="file"
+                  name="product_imgs"
+                  multiple
+                  onChange={handleChangeImg}
+                  className="add-image-input"
+                />
+              </div>
+
+              <div className="add-product-main__input-row">
+                <h5>Danh mục</h5>
+                <input
+                  className="add-product-main__input"
+                  placeholder="Nhập tên danh mục"
+                  type="text"
+                  name="product_categories"
+                  required
+                />
+              </div>
+
+              <div className="add-product-main__input-row">
+                <h5>Mô tả ngắn</h5>
+                <input
+                  className="add-product-main__input"
+                  placeholder="Nhập mô tả ngắn"
+                  type="text"
+                  name="product_short_description"
+                  required
+                />
+              </div>
+
+              <div className="add-product-main__input-row">
+                <h5>Mô tả sản phẩm</h5>
+                <input
+                  className="add-product-main__input"
+                  placeholder="Nhập mô tả sản phẩm"
+                  type="text"
+                  name="product_description"
+                  required
+                />
+              </div>
+
+              <div
+                className="add-product-main__input-row"
+                onBlur={validateInputNumber}>
+                <h5>Giá gốc</h5>
+                <input
+                  className="add-product-main__input"
+                  placeholder="Nhập giá gốc"
+                  type="text"
+                  name="product_supp_price"
+                  required
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className="add-product-specification add-product-section">
+            <div className="add-product-main__title-div">
+              <h3 className="add-product-main__title">Thông số sản phẩm</h3>
             </div>
 
-            <div className="add-product-main__input-row">
-              <h5>Mô tả ngắn</h5>
-              <input
-                className="add-product-main__input"
-                placeholder="Nhập mô tả ngắn"
-                type="text"
-                name="product_short_description"
-                required
-              />
-            </div>
+            <div className="add-product-main__input-group">
+              <div className="add-product-main__input-row add-product-specification__input-row">
+                <h5 className="add-product-specification__item-title">
+                  Tên thông số
+                </h5>
+                <h5 className="add-product-specification__item-title">
+                  Giá trị thông số
+                </h5>
+                <div className="add-product-main__close-btn"></div>
+              </div>
 
-            <div className="add-product-main__input-row">
-              <h5>Mô tả sản phẩm</h5>
-              <input
-                className="add-product-main__input"
-                placeholder="Nhập mô tả sản phẩm"
-                type="text"
-                name="product_description"
-                required
-              />
-            </div>
+              <div className="add-product-main__input-row add-product-specification__input-row">
+                <div className="add-product-specification__input-row-item">
+                  <input
+                    className="add-product-main__input"
+                    placeholder="Nhập tên thông số"
+                    type="text"
+                    name="specification_name"
+                    required
+                  />
+                </div>
 
-            <div
-              className="add-product-main__input-row"
-              onBlur={validateInputNumber}>
-              <h5>Giá gốc</h5>
-              <input
-                className="add-product-main__input"
-                placeholder="Nhập giá gốc"
-                type="text"
-                name="product_supp_price"
-                required
-              />
-            </div>
-          </div>
-        </section>
+                <div className="add-product-specification__input-row-item">
+                  <input
+                    className="add-product-main__input"
+                    placeholder="Nhập giá trị thông số"
+                    type="text"
+                    name="specification_value"
+                    required
+                  />
+                </div>
 
-        <section className="add-product-imgs add-product-section">
-          <div className="add-product-main__title-div">
-            <h3 className="add-product-main__title">Hình ảnh</h3>
-          </div>
-          <div className="add-product-imgs__input-field"></div>
-        </section>
+                <div className="add-product-specification__close-btn-div">
+                  <button
+                    className="add-product-main__close-btn"
+                    type="button"
+                    onClick={handleCloseBtn}>
+                    <span className="material-icons-round add-product-main__icon">
+                      close
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="add-product-main__add-more-btn add-product-specification__add-more-btn"
+                onClick={handleAddSpecification}>
+                <span className="material-icons-round add-product-main__add-more-btn-icon">
+                  add
+                </span>
+                <span className="add-product-main__add-more-btn-text">
+                  Thêm thông số khác
+                </span>
+              </button>
+            </div>
+          </section>
+        </div>
 
         <section className="add-product-variant add-product-section">
           <div className="add-product-main__title-div">
@@ -388,6 +585,23 @@ export default function AdminAddProductPage() {
                 type="text"
                 name="variant_name"
                 required
+              />
+            </div>
+
+            <div className="add-product-main__input-row add-product-variant__input-row">
+              <h5>Hình ảnh</h5>
+              <input
+                className="add-product-main__input"
+                placeholder="Nhập văn bản thay thế"
+                type="text"
+                name="product_variant_img_alt"
+                required
+              />
+              <input
+                type="file"
+                name="product_variant_img"
+                className="add-image-input"
+                onChange={handleChangeImg}
               />
             </div>
 
@@ -427,69 +641,6 @@ export default function AdminAddProductPage() {
               Thêm biến thể khác
             </span>
           </button>
-        </section>
-
-        <section className="add-product-specification add-product-section">
-          <div className="add-product-main__title-div">
-            <h3 className="add-product-main__title">Thông số sản phẩm</h3>
-          </div>
-
-          <div className="add-product-main__input-group">
-            <div className="add-product-main__input-row add-product-specification__input-row">
-              <h5 className="add-product-specification__item-title">
-                Tên thông số
-              </h5>
-              <h5 className="add-product-specification__item-title">
-                Giá trị thông số
-              </h5>
-              <div className="add-product-main__close-btn"></div>
-            </div>
-
-            <div className="add-product-main__input-row add-product-specification__input-row">
-              <div className="add-product-specification__input-row-item">
-                <input
-                  className="add-product-main__input"
-                  placeholder="Nhập tên thông số"
-                  type="text"
-                  name="specification_name"
-                  required
-                />
-              </div>
-
-              <div className="add-product-specification__input-row-item">
-                <input
-                  className="add-product-main__input"
-                  placeholder="Nhập giá trị thông số"
-                  type="text"
-                  name="specification_value"
-                  required
-                />
-              </div>
-
-              <div className="add-product-specification__close-btn-div">
-                <button
-                  className="add-product-main__close-btn"
-                  type="button"
-                  onClick={handleCloseBtn}>
-                  <span className="material-icons-round add-product-main__icon">
-                    close
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              className="add-product-main__add-more-btn add-product-specification__add-more-btn"
-              onClick={handleAddSpecification}>
-              <span className="material-icons-round add-product-main__add-more-btn-icon">
-                add
-              </span>
-              <span className="add-product-main__add-more-btn-text">
-                Thêm thông số khác
-              </span>
-            </button>
-          </div>
         </section>
       </form>
 

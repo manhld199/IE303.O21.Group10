@@ -153,7 +153,7 @@ export default async function AdminProductsPage({
                   <td className="product-page-table__text product-page-table__product-category">
                     {product.product_categories}
                   </td>
-                  <td className="product-page-table__text">
+                  <td className="product-page-table__text product-page-table__product-variants">
                     {product.product_variants_count}
                   </td>
                   <td className="product-page-table__text">

@@ -3,6 +3,9 @@
 // import libs
 import React, { useRef, useState } from "react";
 
+// import utils
+import { BACKEND_URL } from "@/utils/commonConst";
+
 // import css
 import "./page.css";
 
@@ -221,6 +224,7 @@ const uploadImages = async (files: any) => {
         body: uploadData,
       }
     );
+
     if (uploadResponse.ok) {
       const imageData = await uploadResponse.json();
       // console.log("imgdata", imageData);
@@ -231,6 +235,23 @@ const uploadImages = async (files: any) => {
   }
 
   return urls;
+};
+
+const addProduct = async (product: any) => {
+  try {
+    const res = await fetch(`${BACKEND_URL}/admin/products/addProduct`, {
+      method: "POST",
+      body: JSON.stringify(product),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.ok) location.href = "/admin/products";
+    else alert("Try again later!");
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const handleSubmitForm = async (event: any) => {
@@ -258,8 +279,6 @@ const handleSubmitForm = async (event: any) => {
 
   const productImgUrls = await uploadImages(productImgFiles);
   // console.log("1 product up url", productImgUrls);
-
-  // console.log("image urls", imageUrls);
 
   const productCategories = (
     addProductForm?.querySelector(
@@ -386,6 +405,8 @@ const handleSubmitForm = async (event: any) => {
   };
 
   console.log("formdaata", formData);
+
+  addProduct(formData);
 };
 
 export default function AdminAddProductPage() {

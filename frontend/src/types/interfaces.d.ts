@@ -144,15 +144,16 @@ interface IProductItemInOrderItemProps {
   product_id_hashed: string;
   product_name?: string;
   product_slug?: string;
-  variant_id: string;
+  variant_id?: string;
   variant_name?: string;
   product_img?: {
     link: string;
     alt: string;
   };
-  quantity: number;
-  unit_price: number;
+  product_quantity: number;
+  unit_price?: number;
   price_discount?: number;
+  product_price: number;
 }
 
 interface IOrderItemProps {

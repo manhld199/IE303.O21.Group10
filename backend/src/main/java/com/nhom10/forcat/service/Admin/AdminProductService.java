@@ -1,11 +1,13 @@
-package com.nhom10.forcat.service.Admin;
+package com.nhom10.forcat.service.admin;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.nhom10.forcat.dto.Product.ProductAdminAddDto;
 import com.nhom10.forcat.dto.Product.ProductAdminShortenDto;
 import com.nhom10.forcat.dto.Product.ProductAdminShortenPageDto;
+import com.nhom10.forcat.dto.Product.ProductAdminUpdateDto;
 import com.nhom10.forcat.model.Product.Product;
 import com.nhom10.forcat.repository.Product.ProductRepository;
 
@@ -22,6 +25,20 @@ public class AdminProductService {
 
     @Autowired
     ProductRepository productRepository;
+
+    public ResponseEntity<Product> getProductByProductId(ObjectId productId) {
+        try {
+            Optional<Product> productOptional = productRepository.findById(productId);
+
+            if (!productOptional.isPresent())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            return new ResponseEntity<>(productOptional.get(), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     public ResponseEntity<ProductAdminShortenPageDto> getAdminAllProducts(int p, int n) {
         try {
@@ -57,6 +74,22 @@ public class AdminProductService {
             else
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<Object> updateProduct(ProductAdminUpdateDto product) {
+        try {
+            Product updateProduct = new Product(product);
+
+            Product updatedProduct = productRepository.save(updateProduct);
+
+            if (updatedProduct != null)
+                return new ResponseEntity<>(HttpStatus.OK);
+            else
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

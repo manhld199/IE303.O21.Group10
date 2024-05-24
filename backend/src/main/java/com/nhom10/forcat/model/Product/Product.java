@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nhom10.forcat.dto.Product.ProductAdminAddDto;
+import com.nhom10.forcat.dto.Product.ProductAdminUpdateDto;
 import com.nhom10.forcat.util.Util;
 
 import lombok.Data;
@@ -89,6 +90,25 @@ public class Product {
         this.productSuppPrice = p.getProductSuppPrice();
         this.createdAt = new Date();
         this.updatedAt = new Date();
+    }
 
+    public Product(ProductAdminUpdateDto p) {
+        this.productId = new ObjectId(p.getProductId());
+        this.productName = p.getProductName();
+        this.productSlug = Util.createSlug(p.getProductName());
+        // this.categories = p.getCategories();
+        this.categories = new ArrayList<ProductCategory>();
+        this.categories.add(new ProductCategory(null, "Forcat"));
+        this.productImgs = p.getProductImgs();
+        this.productDescription = p.getProductDescription();
+        this.productShortDescription = p.getProductShortDescription();
+        this.productDetails = p.getProductDetails();
+        this.productVariants = p.getProductVariants().stream()
+                .map(variant -> new ProductVariant(variant.getVariantId(), variant.getVariantName(),
+                        variant.getVariantPrice(), variant.getVariantImg(), variant.getVariantInStock()))
+                .collect(Collectors.toList());
+        this.productSuppPrice = p.getProductSuppPrice();
+        this.createdAt = p.getCreatedAt();
+        this.updatedAt = new Date();
     }
 }

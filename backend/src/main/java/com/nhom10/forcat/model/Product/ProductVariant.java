@@ -51,4 +51,18 @@ public class ProductVariant {
         this.variantDiscount = new ProductVariantDiscount(null, 0);
         this.variantInStock = variantInStock;
     };
+
+    public ProductVariant(ObjectId variantId, String variantName, double variantPrice,
+            ProductImg variantImg, int variantInStock) {
+        if (variantId != null)
+            this.variantId = variantId;
+        else
+            this.variantId = new ObjectId();
+        this.variantName = variantName;
+        this.variantSlug = Util.createSlug(variantName);
+        this.variantPrice = variantPrice;
+        this.variantImg = variantImg;
+        this.variantDiscount = new ProductVariantDiscount(null, 0);
+        this.variantInStock = variantInStock;
+    };
 }

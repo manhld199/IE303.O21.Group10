@@ -98,7 +98,7 @@ export default async function AdminProductsPage({
           </form>
 
           {totalPages > 1 && (
-            <AdminPagination page={p} totalPages={totalPages} />
+            <AdminPagination query={q} page={p} totalPages={totalPages} />
           )}
         </div>
         <table className="product-page-table">

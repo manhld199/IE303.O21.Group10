@@ -1,4 +1,4 @@
-package com.nhom10.forcat.service.Admin;
+package com.nhom10.forcat.service.admin;
 
 import java.util.List;
 import java.util.stream.Collectors;

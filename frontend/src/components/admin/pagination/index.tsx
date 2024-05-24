@@ -7,25 +7,37 @@ import classNames from "classnames/bind";
 // import css
 import styles from "./pagination.module.css";
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 // use css
 const cx = classNames.bind(styles);
 
-export default function ProductPagination({
+export default function AdminPagination({
+  query,
   page,
   totalPages,
 }: {
+  query: any;
   page: any;
   totalPages: any;
 }) {
-  const [currentPage, setCurrentPage] = useState(page);
+  const pathName = usePathname();
+  const router = useRouter();
+
+  const [currentPage, setCurrentPage] = useState(Number(page));
 
   const handleClickPrev = () => {
-    if (currentPage > 0) setCurrentPage(currentPage - 1);
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+      router.replace(`${pathName}?q=${query}&p=${currentPage - 1}`);
+    }
   };
 
   const handleClickNext = () => {
-    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+      router.replace(`${pathName}?q=${query}&p=${currentPage + 1}`);
+    }
   };
 
   const handleClickPagination = (event) => {
@@ -57,7 +69,7 @@ export default function ProductPagination({
               )}
               onClick={handleClickPagination}
               key={"pagination" + index}
-              href={`/admin/products?p=${index}`}>
+              href={`${pathName}?q=${query}&p=${index}`}>
               {index + 1}
             </Link>
           );

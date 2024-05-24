@@ -138,6 +138,39 @@
     width: 12%;
 }
 
+.product-page-table__product-action {
+    width: 8%;
+}
+
+.product-page__btn-small {
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: transparent;
+    display: inline-block;
+}
+
+.product-page__btn-small-delete {
+    background-color: var(--red12);
+    color: var(--white);
+}
+
+.product-page-table__product-action-edit {
+    cursor: pointer;
+    background-color: var(--blue12);
+    margin-bottom: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.product-page-table__product-action-edit-btn {
+    cursor: pointer;
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    color: var(--white);
+}
+
 .product-page-table__image {
     padding: 0.25rem;
     border: 1px solid var(--outline1);

@@ -35,9 +35,14 @@ export default function CartPage() {
   const [cartItems, setCartItems] = useState(null);
 
   useEffect(() => {
-    const cartStorageItems = JSON.parse(
-      localStorage.getItem("cartItems")
-    )?.payload;
+    const cartItemsLocal = JSON.parse(localStorage.getItem("cartItems"));
+
+    if (Date.now() - cartItemsLocal?.timestamp > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem("cartItems");
+    }
+
+    const cartStorageItems = cartItemsLocal?.payload;
+    // console.log(cartStorageItems);
 
     if (cartStorageItems?.length) {
       const fetchData = async () => {
@@ -49,6 +54,9 @@ export default function CartPage() {
             const dataIndex = data.findIndex(
               (item) => item.product_id == cartStorageItem.product_id
             );
+
+            console.log(dataIndex);
+
             const cartItem = {
               product_id: data[dataIndex].product_id,
               product_name: data[dataIndex].product_name,
@@ -88,6 +96,7 @@ export default function CartPage() {
           );
         } catch (err) {
           console.log(err);
+          localStorage.removeItem("cartItems");
         }
       };
 

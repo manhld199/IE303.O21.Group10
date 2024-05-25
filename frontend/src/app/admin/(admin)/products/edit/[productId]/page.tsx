@@ -1,11 +1,16 @@
 "use client";
 
 // import libs
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { CldImage } from "next-cloudinary";
 
 // import utils
 import { BACKEND_URL } from "@/utils/commonConst";
-import { createSlug } from "@/utils";
+import {
+  convertMoneyToNumber,
+  convertNumberToMoney,
+  createSlug,
+} from "@/utils";
 
 // import css
 import "./page.css";
@@ -209,6 +214,21 @@ const handleAddSpecification = () => {
     ?.addEventListener("click", handleCloseBtn);
 };
 
+const getProduct = async (productId: string) => {
+  try {
+    const res = await fetch(
+      `${BACKEND_URL}/admin/products/getProduct/${productId}`
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+  } catch (err) {
+    console.log("get product", err);
+  }
+};
+
 const uploadImages = async (files: any) => {
   const urls = [];
 
@@ -238,17 +258,16 @@ const uploadImages = async (files: any) => {
   return urls;
 };
 
-const addProduct = async (product: any) => {
+const updateProduct = async (product: any) => {
   try {
-    const res = await fetch(`${BACKEND_URL}/admin/products/addProduct`, {
+    const res = await fetch(`${BACKEND_URL}/admin/products/updateProduct`, {
       method: "POST",
       body: JSON.stringify(product),
       headers: {
         "Content-Type": "application/json",
       },
     });
-
-    if (res.ok) location.href = "/admin/products";
+    if (res.ok) location.reload();
     else alert("Try again later!");
   } catch (err) {
     console.log(err);
@@ -259,59 +278,92 @@ const handleSubmitForm = async (event: any) => {
   event?.preventDefault();
   const addProductForm = document.querySelector("#add-product-form");
 
-  const productName = (
+  const productId = (
     addProductForm?.querySelector(
-      "input[name='product_name']"
+      "input[name='product_id']"
     ) as HTMLInputElement
   ).value;
-  //   console.log(productName);
 
-  const productImgFiles = Array.from(
-    (document.querySelector("input[name='product_imgs']") as HTMLInputElement)
-      .files
-  );
+  const productNameInput = addProductForm?.querySelector(
+    "input[name='product_name']"
+  ) as HTMLInputElement;
 
-  const productAlt = createSlug(
-    (
-      addProductForm?.querySelector(
-        "input[name='product_image_alt']"
-      ) as HTMLInputElement
-    ).value
-  );
-  // console.log(productAlt);
+  const productName =
+    productNameInput.value == ""
+      ? productNameInput.placeholder
+      : productNameInput.value;
+  // console.log("pn", productName);
 
-  const productImgUrls = await uploadImages(productImgFiles);
-  // console.log("1 product up url", productImgUrls);
+  const productAltInput = addProductForm?.querySelector(
+    "input[name='product_image_alt']"
+  ) as HTMLInputElement;
+
+  const productAlt =
+    productAltInput.value == ""
+      ? productAltInput.placeholder
+      : productAltInput.value;
+  // console.log("pral", productAlt);
+
+  const productImgInput = document.querySelector(
+    "input[name='product_imgs']"
+  ) as HTMLInputElement;
+
+  const productImgFiles = Array.from(productImgInput.files);
+  // console.log("pfle", productImgFiles);
+
+  let productImgUrls;
+  if (productImgFiles.length == 0) {
+    productImgUrls = Array.from(
+      productImgInput.nextElementSibling.querySelectorAll(
+        "input[name='product_image_url']"
+      )
+    ).map((image: any) => image.value);
+  } else if (productImgFiles.length > 0) {
+    productImgUrls = await uploadImages(productImgFiles);
+  }
+  // console.log("pfle", productImgUrls);
+
+  const productCategoriesInput = addProductForm?.querySelector(
+    "input[name='product_categories']"
+  ) as HTMLInputElement;
 
   const productCategories = (
-    addProductForm?.querySelector(
-      "input[name='product_categories']"
-    ) as HTMLInputElement
-  ).value
+    productCategoriesInput.value == ""
+      ? productCategoriesInput.placeholder
+      : productCategoriesInput.value
+  )
     .split(",")
     .map((category) => category.trim());
-  //   console.log(productCategories);
+  // console.log(productCategories);
 
-  const productShortDescription = (
-    addProductForm?.querySelector(
-      "input[name='product_short_description']"
-    ) as HTMLInputElement
-  ).value;
+  const productShortDescriptionInput = addProductForm?.querySelector(
+    "input[name='product_short_description']"
+  ) as HTMLInputElement;
+
+  const productShortDescription =
+    productShortDescriptionInput.value == ""
+      ? productShortDescriptionInput.placeholder
+      : productShortDescriptionInput.value;
   // console.log(productShortDescription);
 
-  const productDescription = (
-    addProductForm?.querySelector(
-      "input[name='product_description']"
-    ) as HTMLInputElement
-  ).value;
+  const productDescriptionInput = addProductForm?.querySelector(
+    "input[name='product_description']"
+  ) as HTMLInputElement;
+
+  const productDescription =
+    productDescriptionInput.value == ""
+      ? productDescriptionInput.placeholder
+      : productDescriptionInput.value;
   // console.log(productDescription);
 
-  const productSuppPrice = Number(
-    (
-      addProductForm?.querySelector(
-        "input[name='product_supp_price']"
-      ) as HTMLInputElement
-    ).value
+  const productSuppPriceInput = addProductForm?.querySelector(
+    "input[name='product_supp_price']"
+  ) as HTMLInputElement;
+
+  const productSuppPrice = convertMoneyToNumber(
+    productSuppPriceInput.value == ""
+      ? productSuppPriceInput.placeholder
+      : productSuppPriceInput.value
   );
   // console.log(productSuppPrice);
 
@@ -319,13 +371,32 @@ const handleSubmitForm = async (event: any) => {
     Array.from(
       addProductForm.querySelectorAll(".add-product-variant__input-group")
     ).map(async (variant: any) => {
-      const variantName = (
-        variant.querySelector("input[name='variant_name']") as HTMLInputElement
-      ).value;
+      const variantIdInput = variant.querySelector(
+        "input[name='variant_id']"
+      ) as HTMLInputElement;
 
-      const variantImgAlt = variant.querySelector(
+      let variantId;
+      if (variantIdInput) variantId = variantIdInput.value;
+      // console.log(variantId);
+
+      const variantNameInput = variant.querySelector(
+        "input[name='variant_name']"
+      ) as HTMLInputElement;
+
+      const variantName =
+        variantNameInput.value == ""
+          ? variantNameInput.placeholder
+          : variantNameInput.value;
+      // console.log("va n", variantName);
+
+      const variantImgAltInput = variant.querySelector(
         "input[name='product_variant_img_alt']"
-      ).value;
+      ) as HTMLInputElement;
+
+      const variantImgAlt =
+        variantImgAltInput.value == ""
+          ? variantImgAltInput.placeholder
+          : variantImgAltInput.value;
       // console.log("va alt", variantImgAlt);
 
       const variantImg = Array.from(
@@ -333,33 +404,51 @@ const handleSubmitForm = async (event: any) => {
       );
       // console.log("va img", variantImg);
 
-      const variantImgUrl = await uploadImages(variantImg);
-      // console.log("2. va up url", variantImgUrl[0]);
-
-      productImgUrls.push(variantImgUrl[0]);
-
-      const variantPrice = Number(
-        (
+      let variantImgUrl;
+      if (variantImg.length == 0) {
+        variantImgUrl = (
           variant.querySelector(
-            "input[name='variant_price']"
+            "input[name='product_variant_img_url']"
           ) as HTMLInputElement
-        ).value
+        ).value;
+      } else {
+        const variantImgUrls = await uploadImages(variantImg);
+        variantImgUrl = variantImgUrls[0];
+      }
+      // console.log("urllll", variantImgUrl);
+
+      productImgUrls.push(variantImgUrl);
+      // console.log("proooou", productImgUrls);
+
+      const variantPriceInput = variant.querySelector(
+        "input[name='variant_price']"
+      ) as HTMLInputElement;
+
+      const variantPrice = convertMoneyToNumber(
+        variantPriceInput.value == ""
+          ? variantPriceInput.placeholder
+          : variantPriceInput.value
       );
+      // console.log("varpppp", variantPrice);
+
+      const variantQuantityInput = variant.querySelector(
+        "input[name='variant_quantity']"
+      ) as HTMLInputElement;
 
       const variantQuantity = Number(
-        (
-          variant.querySelector(
-            "input[name='variant_quantity']"
-          ) as HTMLInputElement
-        ).value
+        variantQuantityInput.value == ""
+          ? variantQuantityInput.placeholder
+          : variantQuantityInput.value
       );
+      // console.log("varpppp", variantQuantity);
 
       return {
+        variant_id: variantId,
         variant_name: variantName,
         variant_price: variantPrice,
         variant_in_stock: variantQuantity,
         variant_img: {
-          url: variantImgUrl[0],
+          url: variantImgUrl,
           alt: createSlug(variantImgAlt),
         },
       };
@@ -367,8 +456,8 @@ const handleSubmitForm = async (event: any) => {
   );
   // console.log(productVariants);
 
-  const productImgs = productImgUrls.map((file, index) => ({
-    url: file,
+  const productImgs = productImgUrls.map((img, index) => ({
+    url: img,
     alt: createSlug(productAlt + "-" + (index + 1)),
   }));
 
@@ -377,17 +466,25 @@ const handleSubmitForm = async (event: any) => {
   )
     .slice(1)
     .map((specification) => {
-      const specificationName = (
-        specification.querySelector(
-          "input[name='specification_name']"
-        ) as HTMLInputElement
-      ).value;
+      const specificationNameInput = specification.querySelector(
+        "input[name='specification_name']"
+      ) as HTMLInputElement;
 
-      const specificationValue = (
-        specification.querySelector(
-          "input[name='specification_value']"
-        ) as HTMLInputElement
-      ).value;
+      const specificationName =
+        specificationNameInput.value == ""
+          ? specificationNameInput.placeholder
+          : specificationNameInput.value;
+      // console.log("spppppp", specificationName);
+
+      const specificationValueInput = specification.querySelector(
+        "input[name='specification_value']"
+      ) as HTMLInputElement;
+
+      const specificationValue =
+        specificationValueInput.value == ""
+          ? specificationValueInput.placeholder
+          : specificationValueInput.value;
+      // console.log("spppppp", specificationValue);
 
       return {
         name: specificationName,
@@ -396,7 +493,12 @@ const handleSubmitForm = async (event: any) => {
     });
   // console.log(productSpecifications);
 
+  const createdAt = (document.querySelector(".created-at") as HTMLSpanElement)
+    .innerHTML;
+  // console.log("uppppppppp", createdAt);
+
   const formData = {
+    product_id: productId,
     product_name: productName,
     categories: productCategories,
     product_imgs: productImgs,
@@ -405,18 +507,39 @@ const handleSubmitForm = async (event: any) => {
     product_supp_price: productSuppPrice,
     product_variants: productVariants,
     product_details: productSpecifications,
+    created_at: createdAt,
   };
 
   // console.log("formdaata", formData);
 
-  addProduct(formData);
+  updateProduct(formData);
 };
 
-export default function AdminAddProductPage() {
+export default function AdminEditProductPage({
+  params,
+}: {
+  params: { productId: string };
+}) {
+  const productId = params.productId;
+  // console.log("prrrrrrrrrrr", productId);
+
+  const [product, setProduct] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getProduct(productId);
+      if (data) setProduct(data);
+    };
+
+    fetchData();
+  }, []);
+
+  // console.log("pppppppppp", product);
+
   return (
     <main className="add-product-container">
       <section className="add-product-head">
-        <h2>Thêm sản phẩm</h2>
+        <h2>Cập nhật sản phẩm</h2>
         <button
           form="add-product-form"
           className="add-product-head__add-btn"
@@ -424,9 +547,21 @@ export default function AdminAddProductPage() {
           <span className="material-icons-round add-product-head__add-btn-icon">
             save
           </span>
-          <span className="add-product-head__add-btn-text">Thêm sản phẩm</span>
+          <span className="add-product-head__add-btn-text">Lưu thay đổi</span>
         </button>
       </section>
+
+      <p className="add-product-date">
+        <span className="add-product-date__title">Ngày thêm: </span>
+        <span className="add-product-date__text created-at">
+          {product?.created_at}
+        </span>
+      </p>
+
+      <p className="add-product-date">
+        <span className="add-product-date__title">Cập nhật lần cuối: </span>
+        <span className="add-product-date__text">{product?.updated_at}</span>
+      </p>
 
       <form
         id="add-product-form"
@@ -440,13 +575,23 @@ export default function AdminAddProductPage() {
 
             <div className="add-product-main__input-group">
               <div className="add-product-main__input-row">
+                <h5>Mã sản phẩm</h5>
+                <input
+                  className="add-product-main__input"
+                  value={product?.product_id}
+                  type="text"
+                  name="product_id"
+                  disabled
+                />
+              </div>
+
+              <div className="add-product-main__input-row">
                 <h5>Tên sản phẩm</h5>
                 <input
                   className="add-product-main__input"
-                  placeholder="Nhập tên sản phẩm"
+                  placeholder={product?.product_name}
                   type="text"
                   name="product_name"
-                  required
                 />
               </div>
 
@@ -454,10 +599,12 @@ export default function AdminAddProductPage() {
                 <h5>Hình ảnh</h5>
                 <input
                   className="add-product-main__input"
-                  placeholder="Nhập văn bản thay thế"
+                  placeholder={product?.product_imgs[0].alt
+                    .split("-")
+                    .slice(0, -1)
+                    .join("-")}
                   type="text"
                   name="product_image_alt"
-                  required
                 />
                 <input
                   type="file"
@@ -466,16 +613,36 @@ export default function AdminAddProductPage() {
                   onChange={handleChangeImg}
                   className="add-image-input"
                 />
+
+                <div className="add-product-main__preview-image-div">
+                  {product?.product_imgs.map((img, index) => (
+                    <React.Fragment key={"product-image" + index}>
+                      <input
+                        type="hidden"
+                        name="product_image_url"
+                        value={img.url}
+                      />
+                      <CldImage
+                        className="add-product-main__preview-image"
+                        src={img.url}
+                        alt={img.alt}
+                        width={100}
+                        height={100}
+                      />
+                    </React.Fragment>
+                  ))}
+                </div>
               </div>
 
               <div className="add-product-main__input-row">
                 <h5>Danh mục</h5>
                 <input
                   className="add-product-main__input"
-                  placeholder="Nhập tên danh mục"
+                  placeholder={product?.categories
+                    .map((category) => category.category_name)
+                    .join(", ")}
                   type="text"
                   name="product_categories"
-                  required
                 />
               </div>
 
@@ -483,10 +650,9 @@ export default function AdminAddProductPage() {
                 <h5>Mô tả ngắn</h5>
                 <input
                   className="add-product-main__input"
-                  placeholder="Nhập mô tả ngắn"
+                  placeholder={product?.product_short_description}
                   type="text"
                   name="product_short_description"
-                  required
                 />
               </div>
 
@@ -494,10 +660,9 @@ export default function AdminAddProductPage() {
                 <h5>Mô tả sản phẩm</h5>
                 <input
                   className="add-product-main__input"
-                  placeholder="Nhập mô tả sản phẩm"
+                  placeholder={product?.product_description}
                   type="text"
                   name="product_description"
-                  required
                 />
               </div>
 
@@ -507,10 +672,11 @@ export default function AdminAddProductPage() {
                 <h5>Giá gốc</h5>
                 <input
                   className="add-product-main__input"
-                  placeholder="Nhập giá gốc"
+                  placeholder={convertNumberToMoney(
+                    product?.product_supp_price
+                  )}
                   type="text"
                   name="product_supp_price"
-                  required
                 />
               </div>
             </div>
@@ -521,7 +687,9 @@ export default function AdminAddProductPage() {
               <h3 className="add-product-main__title">Thông số sản phẩm</h3>
             </div>
 
-            <div className="add-product-main__input-group">
+            <div
+              className="add-product-main__input-group"
+              key={"product detail"}>
               <div className="add-product-main__input-row add-product-specification__input-row">
                 <h5 className="add-product-specification__item-title">
                   Tên thông số
@@ -532,38 +700,45 @@ export default function AdminAddProductPage() {
                 <div></div>
               </div>
 
-              <div className="add-product-main__input-row add-product-specification__input-row">
-                <div className="add-product-specification__input-row-item">
-                  <input
-                    className="add-product-main__input"
-                    placeholder="Nhập tên thông số"
-                    type="text"
-                    name="specification_name"
-                    required
-                  />
-                </div>
+              {product?.product_details &&
+                Object.keys(product?.product_details).map(
+                  (detailKey, index) => (
+                    <div
+                      className="add-product-main__input-row add-product-specification__input-row"
+                      key={"product detail " + index}>
+                      <div className="add-product-specification__input-row-item">
+                        <input
+                          className="add-product-main__input"
+                          placeholder={product?.product_details[detailKey].name}
+                          type="text"
+                          name="specification_name"
+                        />
+                      </div>
 
-                <div className="add-product-specification__input-row-item">
-                  <input
-                    className="add-product-main__input"
-                    placeholder="Nhập giá trị thông số"
-                    type="text"
-                    name="specification_value"
-                    required
-                  />
-                </div>
+                      <div className="add-product-specification__input-row-item">
+                        <input
+                          className="add-product-main__input"
+                          placeholder={
+                            product?.product_details[detailKey].value
+                          }
+                          type="text"
+                          name="specification_value"
+                        />
+                      </div>
 
-                <div className="add-product-specification__close-btn-div">
-                  <button
-                    className="add-product-main__close-btn"
-                    type="button"
-                    onClick={handleCloseBtn}>
-                    <span className="material-icons-round add-product-main__icon">
-                      close
-                    </span>
-                  </button>
-                </div>
-              </div>
+                      <div className="add-product-specification__close-btn-div">
+                        <button
+                          className="add-product-main__close-btn"
+                          type="button"
+                          onClick={handleCloseBtn}>
+                          <span className="material-icons-round add-product-main__icon">
+                            close
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  )
+                )}
 
               <button
                 type="button"
@@ -585,74 +760,100 @@ export default function AdminAddProductPage() {
             <h3 className="add-product-main__title">Thông tin biến thể</h3>
           </div>
 
-          <div className="add-product-main__input-group add-product-variant__input-group">
-            <div className="add-product-variant__title-div">
-              <h4 className="add-product-variant__title">
-                Biến thể {countVariant}
-              </h4>
+          {product?.product_variants.map((variant, index) => {
+            countVariant = index + 1;
+            return (
+              <div className="add-product-main__input-group add-product-variant__input-group">
+                <div className="add-product-variant__title-div">
+                  <h4 className="add-product-variant__title">
+                    Biến thể {countVariant}
+                  </h4>
 
-              <button
-                className="add-product-main__close-btn"
-                type="button"
-                onClick={handleCloseBtn}>
-                <span className="material-icons-round add-product-main__icon">
-                  close
-                </span>
-              </button>
-            </div>
+                  <button
+                    className="add-product-main__close-btn"
+                    type="button"
+                    onClick={handleCloseBtn}>
+                    <span className="material-icons-round add-product-main__icon">
+                      close
+                    </span>
+                  </button>
+                </div>
 
-            <div className="add-product-main__input-row add-product-variant__input-row">
-              <h5>Tên biến thể</h5>
-              <input
-                className="add-product-main__input"
-                placeholder="Nhập tên biến thể"
-                type="text"
-                name="variant_name"
-                required
-              />
-            </div>
+                <div className="add-product-main__input-row add-product-variant__input-row">
+                  <h5>Mã biến thể</h5>
+                  <input
+                    className="add-product-main__input"
+                    value={variant.variant_id}
+                    type="text"
+                    name="variant_id"
+                    disabled
+                  />
+                </div>
 
-            <div className="add-product-main__input-row add-product-variant__input-row">
-              <h5>Hình ảnh</h5>
-              <input
-                className="add-product-main__input"
-                placeholder="Nhập văn bản thay thế"
-                type="text"
-                name="product_variant_img_alt"
-                required
-              />
-              <input
-                type="file"
-                name="product_variant_img"
-                className="add-image-input"
-                onChange={handleChangeImg}
-              />
-            </div>
+                <div className="add-product-main__input-row add-product-variant__input-row">
+                  <h5>Tên biến thể</h5>
+                  <input
+                    className="add-product-main__input"
+                    placeholder={variant.variant_name}
+                    type="text"
+                    name="variant_name"
+                  />
+                </div>
 
-            <div className="add-product-main__input-row add-product-variant__input-row">
-              <h5>Giá tiền</h5>
-              <input
-                className="add-product-main__input"
-                placeholder="Nhập giá tiền"
-                type="text"
-                name="variant_price"
-                required
-                onBlur={validateInputNumber}
-              />
-            </div>
+                <div className="add-product-main__input-row add-product-variant__input-row">
+                  <h5>Hình ảnh</h5>
+                  <input
+                    className="add-product-main__input"
+                    placeholder={variant.variant_img.alt}
+                    type="text"
+                    name="product_variant_img_alt"
+                  />
+                  <input
+                    type="file"
+                    name="product_variant_img"
+                    className="add-image-input"
+                    onChange={handleChangeImg}
+                  />
+                  <div className="add-product-main__preview-image-div">
+                    <input
+                      type="hidden"
+                      name="product_variant_img_url"
+                      value={variant.variant_img.url}
+                    />
+                    <CldImage
+                      className="add-product-main__preview-image"
+                      src={variant.variant_img.url}
+                      alt={variant.variant_img.alt}
+                      width={100}
+                      height={100}
+                    />
+                  </div>
+                </div>
 
-            <div className="add-product-main__input-row add-product-variant__input-row">
-              <h5>Số lượng</h5>
-              <input
-                className="add-product-main__input"
-                placeholder="Nhập số lượng sản phẩm"
-                type="text"
-                name="variant_quantity"
-                required
-                onBlur={validateInputNumber}
-              />
-            </div>
-          </div>
+                <div className="add-product-main__input-row add-product-variant__input-row">
+                  <h5>Giá tiền</h5>
+                  <input
+                    className="add-product-main__input"
+                    placeholder={convertNumberToMoney(variant.variant_price)}
+                    type="text"
+                    name="variant_price"
+                    onBlur={validateInputNumber}
+                  />
+                </div>
+
+                <div className="add-product-main__input-row add-product-variant__input-row">
+                  <h5>Số lượng</h5>
+                  <input
+                    className="add-product-main__input"
+                    placeholder={variant.variant_in_stock}
+                    type="text"
+                    name="variant_quantity"
+                    onBlur={validateInputNumber}
+                  />
+                </div>
+              </div>
+            );
+          })}
 
           <button
             type="button"
@@ -675,7 +876,7 @@ export default function AdminAddProductPage() {
         <span className="material-icons-round add-product-head__add-btn-icon">
           save
         </span>
-        <span className="add-product-head__add-btn-text">Thêm sản phẩm</span>
+        <span className="add-product-head__add-btn-text">Lưu thay đổi</span>
       </button>
     </main>
   );

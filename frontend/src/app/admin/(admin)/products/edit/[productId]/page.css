@@ -28,6 +28,10 @@
     gap: 0.5rem;
 }
 
+.add-product-date__title {
+    font-weight: 600;
+}
+
 .add-product-main {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
@@ -60,8 +64,6 @@
     width: 100%;
     text-align: center;
 }
-
-
 
 .add-product-main__input-group {
     padding: 0 1rem 1rem;

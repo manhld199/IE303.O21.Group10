@@ -14,11 +14,15 @@ public class ProductVariantDiscount {
     @JsonProperty("discount_id")
     private ObjectId discountId;
 
-    // Lưu thêm để giảm độ phức tạp của câu truy vấn
     @Field(name = "discount_amount")
     @JsonProperty("discount_amount")
-    private int discountAmount;
+    private Integer discountAmount;
 
-    public ProductVariantDiscount() {
-    }
+    ProductVariantDiscount() {
+    };
+
+    public ProductVariantDiscount(ObjectId discountId, int discountAmount) {
+        this.discountId = discountId;
+        this.discountAmount = discountAmount;
+    };
 }

@@ -80,14 +80,6 @@ export default async function AdminProductsPage({
             </span>
             <span className="product-page__btn-text">Xóa</span>
           </button>
-          <button
-            className="product-page__btn product-page__btn-update"
-            type="button">
-            <span className="material-icons-round product-page__btn-icon">
-              update
-            </span>
-            <span className="product-page__btn-text">Cập nhật</span>
-          </button>
         </div>
       </section>
 
@@ -106,7 +98,7 @@ export default async function AdminProductsPage({
           </form>
 
           {totalPages > 1 && (
-            <AdminPagination page={p} totalPages={totalPages} />
+            <AdminPagination query={q} page={p} totalPages={totalPages} />
           )}
         </div>
         <table className="product-page-table">
@@ -124,7 +116,7 @@ export default async function AdminProductsPage({
               <th className="product-page-table__title">Giá gốc</th>
               <th className="product-page-table__title">Danh mục</th>
               <th className="product-page-table__title">Biến thể</th>
-              <th className="product-page-table__title"></th>
+              <th className="product-page-table__title">Thao tác</th>
             </tr>
           </thead>
 
@@ -153,13 +145,26 @@ export default async function AdminProductsPage({
                   <td className="product-page-table__text product-page-table__product-category">
                     {product.product_categories}
                   </td>
-                  <td className="product-page-table__text">
+                  <td className="product-page-table__text product-page-table__product-variants">
                     {product.product_variants_count}
                   </td>
-                  <td className="product-page-table__text">
-                    <span className="material-icons-round product-page-table__action">
-                      more_horiz
-                    </span>
+                  <td className="product-page-table__text product-page-table__product-action">
+                    <Link
+                      className="product-page__btn-small product-page__btn-small-edit product-page-table__product-action-edit"
+                      href={`/admin/products/edit/${product.product_id}`}>
+                      <button className="product-page-table__product-action-edit-btn">
+                        <span className="material-icons-round product-page__btn-icon">
+                          edit
+                        </span>
+                      </button>
+                    </Link>
+                    <button
+                      className="product-page__btn-small product-page__btn-small-delete"
+                      type="button">
+                      <span className="material-icons-round product-page__btn-icon">
+                        delete
+                      </span>
+                    </button>
                   </td>
                 </tr>
               ))}

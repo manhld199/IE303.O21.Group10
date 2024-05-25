@@ -19,6 +19,7 @@ public class CategoryService {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
                 .map(category -> new CategoryDto(
+                        category.getCategoryId(),
                         category.getCategoryName(),
                         category.getCategoryImg().getUrl(),
                         category.getCategoryImg().getAlt()))

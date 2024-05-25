@@ -57,8 +57,8 @@ const filteredArticles = rawArticles.map((article) => ({
   article_slug: article.article_slug,
   article_avt: { url: article.article_avt.link, alt: article.article_avt.alt },
   article_type: article.article_type,
-  article_author: article.article_info.article_author,
-  article_published_date: article.article_info.article_published_dates,
+  article_author: article.article_info.author,
+  article_published_date: article.article_info.published_date["$date"],
   article_short_description: article.article_short_description,
   article_description: article.article_content,
 }));

@@ -13,7 +13,7 @@ import java.util.Date;
 @Document(collection = "admins")
 public class Admin {
     @Id
-    @Field(name = "admin_id")
+    @Field(name = "_id")
     @JsonProperty("admin_id")
     private ObjectId adminId;
 

@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.Data;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Document(collection = "orders")
@@ -55,4 +56,14 @@ public class Order {
 
 	public Order() {
 	}
+
+	private List<OrderDetail> orderDetailList;
+
+    public List<OrderDetail> getOrderDetailList() {
+        return orderDetailList;
+    }
+
+    public void setOrderDetailList(List<OrderDetail> orderDetailList) {
+        this.orderDetailList = orderDetailList;
+    }
 }

@@ -22,4 +22,5 @@ public interface ProductRepository extends MongoRepository<Product, ObjectId>, C
 
     Page<Product> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
+    void deleteByProductIdIn(List<ObjectId> ids);
 }

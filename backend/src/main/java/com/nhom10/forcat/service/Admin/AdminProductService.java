@@ -40,7 +40,7 @@ public class AdminProductService {
         }
     }
 
-    public ResponseEntity<ProductAdminShortenPageDto> getAdminAllProducts(int p, int n) {
+    public ResponseEntity<ProductAdminShortenPageDto> getAllProducts(int p, int n) {
         try {
             Pageable pageable = PageRequest.of(p, n);
             Page<Product> page = productRepository.findAllByOrderByCreatedAtDesc(pageable);
@@ -70,7 +70,7 @@ public class AdminProductService {
             Product addedProduct = productRepository.insert(addProduct);
 
             if (addedProduct != null)
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.CREATED);
             else
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -90,6 +90,20 @@ public class AdminProductService {
                 return new ResponseEntity<>(HttpStatus.OK);
             else
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<Object> deleteProducts(List<ObjectId> productOjectIds) {
+        try {
+            if (productOjectIds.size() == 0)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            productRepository.deleteByProductIdIn(productOjectIds);
+
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

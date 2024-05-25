@@ -4,7 +4,14 @@ import Link from "next/link";
 
 // import components
 import { AdminPagination } from "@/components";
-import { ProductImg } from "./components";
+import {
+  ProductImg,
+  ProductCheckOne,
+  ProductCheckAll,
+  ProductDeleteOne,
+  ProductDeleteMulti,
+  ProductSaveBtn,
+} from "./components";
 
 // import utils
 import { BACKEND_URL } from "@/utils/commonConst";
@@ -13,10 +20,10 @@ import { convertNumberToMoney } from "@/utils";
 // import css
 import "./page.css";
 
-const getAllProducts = async (qery: String, page: String) => {
+const getAllProducts = async (query: String, page: String) => {
   try {
     const response = await fetch(
-      `${BACKEND_URL}/admin/products/getProducts?q=${qery}&p=${page}`,
+      `${BACKEND_URL}/admin/products/getProducts?q=${query}&p=${page}`,
       { next: { revalidate: 60 } }
     );
 
@@ -72,14 +79,8 @@ export default async function AdminProductsPage({
             </span>
             <span className="product-page__btn-text">Thêm</span>
           </Link>
-          <button
-            className="product-page__btn product-page__btn-delete"
-            type="button">
-            <span className="material-icons-round product-page__btn-icon">
-              delete
-            </span>
-            <span className="product-page__btn-text">Xóa</span>
-          </button>
+          <ProductDeleteMulti />
+          <ProductSaveBtn />
         </div>
       </section>
 
@@ -105,10 +106,7 @@ export default async function AdminProductsPage({
           <thead>
             <tr className="product-page-table__row">
               <th className="product-page-table__title">
-                <input
-                  className="product-page-table__checkbox"
-                  type="checkbox"
-                />
+                <ProductCheckAll />
               </th>
               <th className="product-page-table__title">Hình ảnh</th>
               <th className="product-page-table__title">Mã sản phẩm</th>
@@ -123,18 +121,17 @@ export default async function AdminProductsPage({
           <tbody>
             {products &&
               products.map((product, index) => (
-                <tr className="product-page-table__row" key={"product" + index}>
+                <tr
+                  className="product-page-table__row product-page-table__product"
+                  key={"product" + index}>
                   <td className="product-page-table__text">
-                    <input
-                      className="product-page-table__checkbox"
-                      type="checkbox"
-                    />
+                    <ProductCheckOne />
                   </td>
                   <td className="product-page-table__image">
                     <ProductImg productImg={product.product_img} />
                   </td>
                   <td className="product-page-table__text product-page-table__product-id">
-                    #{product.product_id}
+                    {product.product_id}
                   </td>
                   <td className="product-page-table__text product-page-table__product-name">
                     {product.product_name}
@@ -158,13 +155,7 @@ export default async function AdminProductsPage({
                         </span>
                       </button>
                     </Link>
-                    <button
-                      className="product-page__btn-small product-page__btn-small-delete"
-                      type="button">
-                      <span className="material-icons-round product-page__btn-icon">
-                        delete
-                      </span>
-                    </button>
+                    <ProductDeleteOne />
                   </td>
                 </tr>
               ))}

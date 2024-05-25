@@ -156,6 +156,10 @@
     color: var(--white);
 }
 
+.product-page__save-btn {
+    background-color: var(--green4);
+}
+
 .product-page-table__product-action-edit {
     cursor: pointer;
     background-color: var(--blue12);

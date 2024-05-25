@@ -1,5 +1,8 @@
 package com.nhom10.forcat.controller.admin;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +19,8 @@ import com.nhom10.forcat.dto.Product.ProductAdminAddDto;
 import com.nhom10.forcat.dto.Product.ProductAdminShortenPageDto;
 import com.nhom10.forcat.dto.Product.ProductAdminUpdateDto;
 import com.nhom10.forcat.model.Product.Product;
-import com.nhom10.forcat.service.Admin.AdminProductService;
-import com.nhom10.forcat.service.Admin.AdminSearchService;
+import com.nhom10.forcat.service.admin.AdminProductService;
+import com.nhom10.forcat.service.admin.AdminSearchService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -44,7 +47,7 @@ public class AdminProductController {
         if (!q.isEmpty())
             return searchService.getAdminSearchProducts(q, p, 10);
 
-        return productService.getAdminAllProducts(p, 10);
+        return productService.getAllProducts(p, 10);
     }
 
     @PostMapping("/addProduct")
@@ -55,5 +58,14 @@ public class AdminProductController {
     @PostMapping("/updateProduct")
     public ResponseEntity<Object> updateProduct(@RequestBody ProductAdminUpdateDto product) {
         return productService.updateProduct(product);
+    }
+
+    @PostMapping("/deleteProducts")
+    public ResponseEntity<Object> deleteProducts(@RequestParam(name = "pid", required = true) List<String> productIds) {
+        List<ObjectId> productOjectIds = productIds.stream()
+                .map(product -> new ObjectId(product))
+                .collect(Collectors.toList());
+
+        return productService.deleteProducts(productOjectIds);
     }
 }

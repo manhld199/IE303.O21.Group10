@@ -49,7 +49,7 @@ export default async function AdminProductsPage({
 
   return (
     <main className="product-page-container">
-      <h2>Danh sách sản phẩm</h2>
+      <h2 className="product-page-container__title">Danh sách sản phẩm</h2>
       <section className="product-page-head">
         <div className="product-page-head__item product-page-head__item--left">
           <button
@@ -98,9 +98,7 @@ export default async function AdminProductsPage({
             </button>
           </form>
 
-          {totalPages > 1 && (
-            <AdminPagination query={q} page={p} totalPages={totalPages} />
-          )}
+          {totalPages > 1 && <AdminPagination totalPages={totalPages} />}
         </div>
         <table className="product-page-table">
           <thead>
@@ -162,6 +160,7 @@ export default async function AdminProductsPage({
           </tbody>
         </table>
       </section>
+      {totalPages > 1 && <AdminPagination totalPages={totalPages} />}
     </main>
   );
 }

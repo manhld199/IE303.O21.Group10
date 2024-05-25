@@ -19,7 +19,13 @@ export default function CustomerHeaderMain() {
   const [cart, setCart] = useState(null);
 
   useEffect(() => {
-    setCart(JSON.parse(localStorage.getItem("cartItems")));
+    const cartItemsLocal = JSON.parse(localStorage.getItem("cartItems"));
+
+    if (Date.now() - cartItemsLocal?.timestamp > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem("cartItems");
+    }
+
+    setCart(cartItemsLocal);
   }, []);
 
   return (

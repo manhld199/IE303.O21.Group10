@@ -43,6 +43,10 @@ export default function CustomerHeaderNav() {
           </Link>
         </div>
         <CustomerLogo className={cx("header--mobile__logo")} white />
+        <Link className={cx("header__order-lookup")} href="/order-lookup">
+          <span className="material-icons-round">shopping_bag</span>Tra cứu đơn
+          hàng
+        </Link>
         <div className={cx("header--mobile__noti-support")}>
           <Link href="/contact" className={cx("help--mobile")}>
             <span className="material-icons-outlined" title="Hỗ trợ">

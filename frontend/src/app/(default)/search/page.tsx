@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 //import partials
-import { SearchResultContainer } from "./partials";
+import { SearchContainer } from "./partials";
 
 // import utils
 import { BACKEND_URL } from "@/utils/commonConst";
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 // fetch data
-async function getSearchProduct(searchParams) {
+const getSearchProduct = async (searchParams: any) => {
   try {
     // Khởi tạo mảng rỗng để chứa các thành phần của query string
     let queryParams = [];
@@ -59,13 +59,23 @@ async function getSearchProduct(searchParams) {
   } catch {
     return notFound();
   }
-}
+};
 
-export default async function SearchResultPage({
-  params,
+const getAllCategories = async () => {
+  try {
+    const response = await fetch(`${BACKEND_URL}/categories/getAllCategories`);
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching recommend products:", error);
+  }
+};
+
+export default async function SearchPage({
   searchParams,
 }: {
-  params: { "search-result": string };
   searchParams?: { [key: string]: string };
 }) {
   // console.log("Lấy từ url", searchKey);
@@ -83,8 +93,13 @@ export default async function SearchResultPage({
   }
 
   const searchResults = await getSearchProduct(searchParams);
+  const categories = await getAllCategories();
 
   return (
-    <SearchResultContainer itemFind={itemFind} searchResults={searchResults} />
+    <SearchContainer
+      itemFind={itemFind}
+      searchResults={searchResults}
+      categories={categories}
+    />
   );
 }

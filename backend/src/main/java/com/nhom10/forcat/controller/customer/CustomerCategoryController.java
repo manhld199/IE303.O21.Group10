@@ -20,7 +20,7 @@ public class CustomerCategoryController {
     @Autowired
     private CustomerCategoryService categoryService;
 
-    @GetMapping
+    @GetMapping("/getAllCategories")
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
         List<CategoryDto> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);

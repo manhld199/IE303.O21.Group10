@@ -63,7 +63,7 @@ export default function SearchBar() {
       const data = await response.json();
 
       if (Array.isArray(data.products)) {
-        setSearchResults(data.products.slice(0, 9));
+        setSearchResults(data.products.slice(0, 5));
         setTotalSearchResults(data.products.length);
         setShowSmartSearch(true);
       }
@@ -89,7 +89,7 @@ export default function SearchBar() {
     <div className={cx("header__search-bar-wrapper")}>
       <form
         className={cx("header__search-bar__main")}
-        action="/search-result"
+        action="/search"
         method="GET">
         <div className={cx("header__search-bar")}>
           <input

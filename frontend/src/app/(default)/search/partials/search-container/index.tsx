@@ -4,6 +4,7 @@
 import classNames from "classnames/bind";
 import React from "react";
 import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 // import css
 import styles from "./search-result-container.module.css";
@@ -12,10 +13,14 @@ const cx = classNames.bind(styles);
 // import components
 import { CustomerProductCard, CustomerPagination } from "@/components";
 
-// import css
-// import "./search-result.css";
-
-export default function SearchResultPage({ itemFind, searchResults }) {
+export default function SearchContainer({
+  itemFind,
+  searchResults,
+  categories,
+}) {
+  const router = useRouter();
+  const pathName = usePathname();
+  const searchParams = useSearchParams();
   // const totalResults = searchResults;
   // const totalPage = searchResults.totalPages;
   // const currentPage = searchResults.currentPage;
@@ -193,226 +198,135 @@ export default function SearchResultPage({ itemFind, searchResults }) {
     }
   };
 
+  const [category, setCategory] = useState(searchParams.get("c") ?? "");
+  const [isDiscount, setIsDiscount] = useState(searchParams.get("d") ?? "");
+
+  const handleChooseCategory = (event: any) => {
+    const current = event.currentTarget;
+    const category = current.innerHTML;
+
+    const filter =
+      current.parentElement.parentElement.parentElement.previousElementSibling
+        .previousElementSibling;
+    filter.innerHTML = category;
+
+    setCategory(category);
+  };
+
+  const handleClickDiscount = (event: any) => {
+    console.log(isDiscount);
+    if (isDiscount == "") {
+      event.currentTarget.style.display = "none";
+      event.currentTarget.nextElementSibling.style.display = "flex";
+      setIsDiscount("1");
+    } else {
+      event.currentTarget.style.display = "none";
+      event.currentTarget.previousElementSibling.style.display = "flex";
+      setIsDiscount("");
+    }
+  };
+
+  const handleApplyFilter = () => {
+    router.replace(
+      `${pathName}?q=${searchParams.get("q") ?? ""}${
+        category != "" ? `&c=${category}` : ""
+      }${isDiscount != "" ? `&d=${isDiscount}` : ""}`
+    );
+  };
+
+  const handleResetFilter = (event: any) => {
+    router.replace(`${pathName}?q=${searchParams.get("q") ?? ""}`);
+    const filters =
+      event.currentTarget.parentElement.previousElementSibling.querySelectorAll(
+        "button"
+      );
+
+    filters[0].style.display = "flex";
+    filters[1].style.display = "none";
+    (filters[2].querySelector("p") as HTMLParagraphElement).innerHTML =
+      "Danh mục";
+
+    setCategory("");
+    setIsDiscount("");
+  };
+
   return (
     <main className="search-result__container">
       {/* <SearchResultFilter /> */}
       <div>
         <section className={cx("search-result__filter")}>
           <div className={cx("search-result__filter-normal")}>
-            <h5 className={cx("search-result__filter-normal__title")}>
-              Bộ lọc:
-            </h5>
-            <div
-              className={cx(
-                "search-result__filter-normal__content",
-                "search-result__filter-normal__content_cover"
-              )}
-              onClick={(e: any) => handleFilterItemClick(e)}>
-              <p>Danh mục</p>
-              <span className={cx("material-icons-round dropdown-button")}>
-                expand_more
-              </span>
-              <div
-                className={cx("dropdown-content", "dropdown-content__cover")}>
-                <div className={cx("filter-list")}>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="type1"
-                      value="type1"
-                    />
-                    <label htmlFor="type1" className={cx("filter-label")}>
-                      Thực phẩm
-                    </label>
-                  </div>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="type2"
-                      value="type2"
-                    />
-                    <label htmlFor="type2" className={cx("filter-label")}>
-                      Vệ sinh
-                    </label>
-                  </div>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="type3"
-                      value="type3"
-                    />
-                    <label htmlFor="type3" className={cx("filter-label")}>
-                      Giấc ngủ
-                    </label>
-                  </div>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="type4"
-                      value="type4"
-                    />
-                    <label htmlFor="type4" className={cx("filter-label")}>
-                      Đồ dùng, phụ kiện
-                    </label>
-                  </div>
-                </div>
-                {/* Comment */}
-              </div>
-            </div>
+            <div className={cx("search-result__filter-left")}>
+              <h5 className={cx("search-result__filter-normal__title")}>
+                Bộ lọc:
+              </h5>
 
-            <div
-              className={cx(
-                "search-result__filter-normal__content",
-                "search-result__filter-normal__content_cover"
-              )}
-              onClick={(e: any) => handleFilterItemClick(e)}>
-              <p>Giá tiền</p>
-              <span className={cx("material-icons-round dropdown-button")}>
-                expand_more
-              </span>
-              <div
-                className={cx("dropdown-content", "dropdown-content__cover")}>
-                <div className={cx("filter-list")}>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="price1"
-                      value="price1"
-                    />
-                    <label htmlFor="price1" className={cx("filter-label")}>
-                      Dưới 100.000đ
-                    </label>
-                  </div>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="price2"
-                      value="price2"
-                    />
-                    <label htmlFor="price2" className={cx("filter-label")}>
-                      100.000 - 500.000đ
-                    </label>
-                  </div>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="price3"
-                      value="price3"
-                    />
-                    <label htmlFor="price3" className={cx("filter-label")}>
-                      Trên 500.000đ
-                    </label>
-                  </div>
-                </div>
-                {/* Comment */}
-              </div>
-            </div>
-
-            <div
-              className={cx(
-                "search-result__filter-normal__content",
-                "search-result__filter-normal__content_cover"
-              )}
-              onClick={(e: any) => handleFilterItemClick(e)}>
-              <p>Đánh giá</p>
-              <span className={cx("material-icons-round dropdown-button")}>
-                expand_more
-              </span>
-              <div
-                className={cx("dropdown-content", "dropdown-content__cover")}>
-                <div className={cx("filter-list")}>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="rate1"
-                      value="rate1"
-                    />
-                    <label htmlFor="rate1" className={cx("filter-label")}>
-                      <div className={cx("filter-label__rate")}>
-                        <span className="material-icons-round">star</span>
-                      </div>
-                    </label>
-                  </div>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="rate2"
-                      value="rate2"
-                    />
-                    <label htmlFor="rate2" className={cx("filter-label")}>
-                      <div className={cx("filter-label__rate")}>
-                        <span className="material-icons-round">star</span>
-                        <span className="material-icons-round">star</span>
-                      </div>
-                    </label>
-                  </div>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="rate3"
-                      value="rate3"
-                    />
-                    <label htmlFor="rate3" className={cx("filter-label")}>
-                      <div className={cx("filter-label__rate")}>
-                        <span className="material-icons-round">star</span>
-                        <span className="material-icons-round">star</span>
-                        <span className="material-icons-round">star</span>
-                      </div>
-                    </label>
-                  </div>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="rate4"
-                      value="rate4"
-                    />
-                    <label htmlFor="rate4" className={cx("filter-label")}>
-                      <div className={cx("filter-label__rate")}>
-                        <span className="material-icons-round">star</span>
-                        <span className="material-icons-round">star</span>
-                        <span className="material-icons-round">star</span>
-                        <span className="material-icons-round">star</span>
-                      </div>
-                    </label>
-                  </div>
-                  <div className={cx("dropdown-options")}>
-                    <input
-                      className={cx("filter-option")}
-                      type="radio"
-                      id="rate5"
-                      value="rate5"
-                    />
-                    <label htmlFor="rate5" className={cx("filter-label")}>
-                      <div className={cx("filter-label__rate")}>
-                        <span className="material-icons-round">star</span>
-                        <span className="material-icons-round">star</span>
-                        <span className="material-icons-round">star</span>
-                        <span className="material-icons-round">star</span>
-                        <span className="material-icons-round">star</span>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-                {/* Comment */}
-              </div>
-            </div>
-            <div className={cx("filter-dropdown__button")}>
-              <button className={cx("btn btn--outlined")} type="submit">
-                Hủy bộ lọc này
+              <button
+                type="button"
+                className={cx(
+                  "search-result__filter-normal__content",
+                  "search-result__filter-normal__content_cover"
+                )}
+                onClick={handleClickDiscount}>
+                Giảm giá
               </button>
-              <button className={cx("btn btn--filled")} type="submit">
-                Xem <strong>13</strong> sản phẩm
+
+              <button
+                type="button"
+                className={cx(
+                  "search-result__filter-normal__content",
+                  "search-result__filter-normal__content_cover",
+                  "search-result__filter-discount-hidden"
+                )}
+                onClick={handleClickDiscount}>
+                Giảm giá
+              </button>
+
+              <button
+                type="button"
+                className={cx(
+                  "search-result__filter-normal__content",
+                  "search-result__filter-normal__content_cover"
+                )}
+                onClick={(e: any) => handleFilterItemClick(e)}>
+                <p>Danh mục</p>
+                <span className={cx("material-icons-round", "dropdown-button")}>
+                  expand_more
+                </span>
+                <div
+                  className={cx("dropdown-content", "dropdown-content__cover")}>
+                  <div className={cx("filter-list")}>
+                    {categories.length > 0 && (
+                      <div className={cx("dropdown-options", "filter-options")}>
+                        {categories.map((category, index) => (
+                          <label
+                            onClick={handleChooseCategory}
+                            htmlFor="type1"
+                            className={cx("filter-label")}
+                            key={"category" + index}>
+                            {category.category_name}
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <div className={cx("filter-dropdown__button")}>
+              <button
+                className={cx("btn", "filter-cancel")}
+                type="submit"
+                onClick={handleResetFilter}>
+                Hủy bộ lọc
+              </button>
+
+              <button
+                className={cx("btn", "filter-apply")}
+                type="submit"
+                onClick={handleApplyFilter}>
+                Áp dụng bộ lọc
               </button>
             </div>
           </div>
@@ -457,31 +371,6 @@ export default function SearchResultPage({ itemFind, searchResults }) {
                 "dropdown-content--sort",
                 "dropdown-content--sort__cover"
               )}>
-              <div className={cx("dropdown-options")}>
-                <input
-                  className={cx("sort-option")}
-                  type="radio"
-                  id="hot"
-                  name="sort"
-                  value="hot"
-                />
-                <label htmlFor="hot" className={cx("sort-label")}>
-                  Nổi bật
-                </label>
-              </div>
-              <hr />
-              <div className={cx("dropdown-options")}>
-                <input
-                  className={cx("sort-option")}
-                  type="radio"
-                  id="sale"
-                  name="sort"
-                  value="sale"
-                />
-                <label htmlFor="hot" className={cx("sort-label")}>
-                  Bán chạy
-                </label>
-              </div>
               <hr />
               <div className={cx("dropdown-options")}>
                 <input

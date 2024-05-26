@@ -9,19 +9,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nhom10.forcat.dto.Product.ProductShortenPageDto;
-import com.nhom10.forcat.service.ProductService;
-import com.nhom10.forcat.service.SearchService;
+import com.nhom10.forcat.service.customer.CustomerProductService;
+import com.nhom10.forcat.service.customer.CustomerSearchService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/search")
-public class SearchController {
+public class CustomerSearchController {
 
     @Autowired
-    SearchService searchService;
+    CustomerSearchService searchService;
 
     @Autowired
-    ProductService productService;
+    CustomerProductService productService;
 
     @GetMapping("/products")
     public ResponseEntity<ProductShortenPageDto> getSearchProducts(

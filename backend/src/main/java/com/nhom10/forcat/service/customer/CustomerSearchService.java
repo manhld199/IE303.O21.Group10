@@ -1,4 +1,4 @@
-package com.nhom10.forcat.service;
+package com.nhom10.forcat.service.customer;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +18,7 @@ import com.nhom10.forcat.model.Product.Product;
 import com.nhom10.forcat.repository.Product.ProductRepository;
 
 @Service
-public class SearchService {
+public class CustomerSearchService {
 
     @Autowired
     ProductRepository productRepository;

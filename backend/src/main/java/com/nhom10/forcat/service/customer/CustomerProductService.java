@@ -1,4 +1,4 @@
-package com.nhom10.forcat.service;
+package com.nhom10.forcat.service.customer;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +23,7 @@ import com.nhom10.forcat.model.Product.Product;
 import com.nhom10.forcat.repository.Product.ProductRepository;
 
 @Service
-public class ProductService {
+public class CustomerProductService {
 
     @Autowired
     ProductRepository productRepository;

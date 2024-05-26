@@ -1,4 +1,4 @@
-package com.nhom10.forcat.service;
+package com.nhom10.forcat.service.customer;
 
 import com.nhom10.forcat.dto.CategoryDto;
 import com.nhom10.forcat.model.Category.Category;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CategoryService {
+public class CustomerCategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;

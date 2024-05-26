@@ -18,15 +18,15 @@ import com.nhom10.forcat.dto.Product.ProductShortenDto;
 import com.nhom10.forcat.dto.Product.ProductShortenPageDto;
 import com.nhom10.forcat.dto.Product.ProductSitemapDto;
 import com.nhom10.forcat.model.Product.Product;
-import com.nhom10.forcat.service.ProductService;
+import com.nhom10.forcat.service.customer.CustomerProductService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/products")
-public class ProductController {
+public class CustomerProductController {
 
     @Autowired
-    ProductService productService;
+    CustomerProductService productService;
 
     @GetMapping("/getProduct/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable String productId) {

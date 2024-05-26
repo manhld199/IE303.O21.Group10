@@ -19,8 +19,8 @@ import com.nhom10.forcat.dto.Product.ProductAdminAddDto;
 import com.nhom10.forcat.dto.Product.ProductAdminShortenPageDto;
 import com.nhom10.forcat.dto.Product.ProductAdminUpdateDto;
 import com.nhom10.forcat.model.Product.Product;
-import com.nhom10.forcat.service.Admin.AdminProductService;
-import com.nhom10.forcat.service.Admin.AdminSearchService;
+import com.nhom10.forcat.service.admin.AdminProductService;
+import com.nhom10.forcat.service.admin.AdminSearchService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController

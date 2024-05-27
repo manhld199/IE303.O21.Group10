@@ -16,34 +16,38 @@ import styles from "./header.module.css";
 
 const cx = classNames.bind(styles);
 
-const categoryProducts = async () => {
+const getCategoryProducts = async () => {
   try {
-    const response = await fetch(`${BACKEND_URL}/category/getCategory`, {
-      next: { revalidate: 60 },
-    });
+    const response = await fetch(
+      `${BACKEND_URL}/products/getCategoryProducts`,
+      {
+        next: { revalidate: 60 },
+      }
+    );
 
     const data = await response.json();
-    return data.data; // Return the entire data object
+
+    return data;
   } catch (error) {}
 };
 
-const headerLinks: IHeaderLinkProps[] = [
+const headerLinks = [
   {
     title: "Sản phẩm HOT",
     iconData: "local_fire_department",
-    url: "/search-result?r=1",
+    url: "/search?r=1",
     className: "menu__hot-product",
   },
   {
     title: "Khuyến mãi",
     iconData: "savings",
-    url: "/search-result?d=1",
+    url: "/search?d=1",
     className: "menu__promo",
   },
   {
     title: "Tin tức - Bài viết",
     iconData: "newspaper",
-    url: "/news",
+    url: "/articles",
     className: "menu__news",
   },
   {
@@ -55,7 +59,7 @@ const headerLinks: IHeaderLinkProps[] = [
 ];
 
 export default async function CustomerHeader() {
-  const headerCategories = await categoryProducts();
+  const categoryProducts = await getCategoryProducts();
 
   return (
     <header className={cx("header")}>
@@ -63,7 +67,7 @@ export default async function CustomerHeader() {
       <div className={cx("header__container")}>
         <CustomerHeaderMain />
         <CustomerHeaderMenu
-          categoryTypes={headerCategories}
+          categoryProducts={categoryProducts}
           links={headerLinks}
         />
       </div>

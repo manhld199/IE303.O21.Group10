@@ -38,9 +38,9 @@ public class CustomerSearchService {
                     .collect(Collectors.toList());
 
             if (s.equals("price-desc"))
-                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount).reversed());
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::calcPriceAfterDiscount).reversed());
             else if (s.equals("price-asc"))
-                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount));
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::calcPriceAfterDiscount));
 
             ProductShortenPageDto returnedProducts = new ProductShortenPageDto(shortenProducts, totalPages);
 

@@ -1,6 +1,6 @@
 package com.nhom10.forcat.service.customer;
 
-import com.nhom10.forcat.dto.CategoryDto;
+import com.nhom10.forcat.dto.Category.CategoryDto;
 import com.nhom10.forcat.model.Category.Category;
 import com.nhom10.forcat.repository.Category.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;

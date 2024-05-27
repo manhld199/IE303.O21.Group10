@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nhom10.forcat.dto.Product.ProductCartDto;
+import com.nhom10.forcat.dto.Product.ProductCategoryDto;
 import com.nhom10.forcat.dto.Product.ProductShortenDto;
 import com.nhom10.forcat.dto.Product.ProductShortenPageDto;
 import com.nhom10.forcat.dto.Product.ProductSitemapDto;
@@ -76,5 +77,10 @@ public class CustomerProductController {
     @GetMapping("/getSitemapProducts")
     public ResponseEntity<List<ProductSitemapDto>> getSitemapProducts() {
         return productService.getSitemapProducts();
+    }
+
+    @GetMapping("/getCategoryProducts")
+    public ResponseEntity<List<ProductCategoryDto>> getCategoryProducts() {
+        return productService.getCategoryProducts();
     }
 }

@@ -42,6 +42,9 @@ public class CustomerSearchController {
         if (q == null && c == null && d != null)
             return productService.getNDiscountedProducts(p, "", 20);
 
+        if (q == null && c != null && d == null)
+            return productService.getNProductsByCategoryName(c, p, "", 20);
+
         q = q == null ? "" : q;
         c = c == null ? "" : c;
         d = d == null ? "" : d;

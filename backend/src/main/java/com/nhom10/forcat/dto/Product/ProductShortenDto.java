@@ -62,7 +62,7 @@ public class ProductShortenDto {
         this.variantDiscountAmount = variant.getVariantDiscount().getDiscountAmount();
     }
 
-    public double getPriceAfterDiscount() {
+    public double calcPriceAfterDiscount() {
         return this.variantPrice * (100 - this.variantDiscountAmount) / 100;
     }
 }

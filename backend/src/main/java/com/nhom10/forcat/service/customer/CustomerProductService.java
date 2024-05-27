@@ -1,5 +1,6 @@
 package com.nhom10.forcat.service.customer;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -15,10 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.nhom10.forcat.dto.Product.ProductCartDto;
+import com.nhom10.forcat.dto.Product.ProductCategoryDto;
 import com.nhom10.forcat.dto.Product.ProductShortenDto;
 import com.nhom10.forcat.dto.Product.ProductShortenPageDto;
 import com.nhom10.forcat.dto.Product.ProductSitemapDto;
+import com.nhom10.forcat.model.Category.Category;
 import com.nhom10.forcat.model.Product.Product;
+import com.nhom10.forcat.repository.Category.CategoryRepository;
 import com.nhom10.forcat.repository.Product.ProductRepository;
 
 @Service
@@ -26,6 +30,9 @@ public class CustomerProductService {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 
     public ResponseEntity<Product> getProductByProductId(ObjectId productId) {
         try {
@@ -87,15 +94,16 @@ public class CustomerProductService {
             if (products.isEmpty())
                 return new ResponseEntity<>(new ProductShortenPageDto(), HttpStatus.NOT_FOUND);
 
-            List<ProductShortenDto> shortenProducts = products.stream().map(product -> new ProductShortenDto(product))
+            List<ProductShortenDto> shortenProducts = products.stream()
+                    .map(product -> new ProductShortenDto(product))
                     .collect(Collectors.toList());
 
             ProductShortenPageDto returnedProducts = new ProductShortenPageDto(shortenProducts, totalPages);
 
             if (s.equals("price-desc"))
-                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount).reversed());
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::calcPriceAfterDiscount).reversed());
             else if (s.equals("price-asc"))
-                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount));
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::calcPriceAfterDiscount));
 
             return new ResponseEntity<>(returnedProducts, HttpStatus.OK);
 
@@ -123,9 +131,9 @@ public class CustomerProductService {
                 return new ResponseEntity<>(new ProductShortenPageDto(), HttpStatus.NOT_FOUND);
 
             if (s.equals("price-desc"))
-                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount).reversed());
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::calcPriceAfterDiscount).reversed());
             else if (s.equals("price-asc"))
-                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount));
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::calcPriceAfterDiscount));
 
             ProductShortenPageDto returnedProducts = new ProductShortenPageDto(shortenProducts, totalPages);
 
@@ -153,9 +161,9 @@ public class CustomerProductService {
             ProductShortenPageDto returnedProducts = new ProductShortenPageDto(shortenProducts, totalPages);
 
             if (s.equals("price-desc"))
-                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount).reversed());
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::calcPriceAfterDiscount).reversed());
             else if (s.equals("price-asc"))
-                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount));
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::calcPriceAfterDiscount));
 
             return new ResponseEntity<>(returnedProducts, HttpStatus.OK);
         } catch (Exception e) {
@@ -178,9 +186,9 @@ public class CustomerProductService {
                     .collect(Collectors.toList());
 
             if (s.equals("price-desc"))
-                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount).reversed());
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::calcPriceAfterDiscount).reversed());
             else if (s.equals("price-asc"))
-                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount));
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::calcPriceAfterDiscount));
 
             ProductShortenPageDto returnedProducts = new ProductShortenPageDto(shortenProducts, totalPages);
 
@@ -225,6 +233,33 @@ public class CustomerProductService {
                     .collect(Collectors.toList());
 
             return new ResponseEntity<>(convertedProducts, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<List<ProductCategoryDto>> getCategoryProducts() {
+        try {
+            List<Category> categories = categoryRepository.findAll();
+
+            if (categories.size() == 0)
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            List<ProductCategoryDto> products = new ArrayList<>();
+            for (Category category : categories) {
+                List<ObjectId> categoryIds = new ArrayList<>();
+                categoryIds.add(category.getCategoryId());
+
+                List<Product> categoryProducts = productRepository.findProductsByCategories(categoryIds);
+                List<ProductShortenDto> shortenProducts = categoryProducts.stream()
+                        .map(product -> new ProductShortenDto(product))
+                        .collect(Collectors.toList());
+
+                products.add(new ProductCategoryDto(category, shortenProducts));
+            }
+
+            return new ResponseEntity<>(products, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

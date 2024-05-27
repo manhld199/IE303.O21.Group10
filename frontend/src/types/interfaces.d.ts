@@ -24,49 +24,6 @@ interface ILogoProps {
   white?: boolean;
 }
 
-interface IProductProps {
-  product_id_hashed: string;
-  product_name: string;
-  product_slug: string;
-  product_avg_rating: number;
-  product_img: {
-    url: string;
-    alt: string;
-  };
-  lowest_price?: number;
-  product_price: number;
-  highest_discount?: number;
-  price__discount?: number;
-  product_sold_quantity?: number;
-  category_name: string;
-}
-
-interface ISubCategoryProps {
-  // _id: string;
-  category_name: string;
-  category_img: string;
-  products: IProductProps[];
-}
-
-interface ICategoryTypeProps {
-  // id: string;
-  category_type: string;
-  subCategories: ISubCategoryProps[];
-}
-
-interface IHeaderLinkProps {
-  title: string;
-  url: string;
-  iconData?: string;
-  className?: string;
-  children?: React.ReactNode;
-}
-
-interface IHeaderMenuProps {
-  categoryTypes: ICategoryTypeProps[];
-  links: IHeaderLinkProps[];
-}
-
 interface IHeaderMenuProductItemProps {
   product_id_hashed: string;
   product_name: string;
@@ -80,12 +37,6 @@ interface IHeaderMenuProductItemProps {
   product_price: number;
   highest_discount?: number;
   category_name: string;
-}
-
-interface IHeaderMenuSubCategoryItemProps {
-  category_name: string;
-  category_img: string;
-  products: IProductProps[];
 }
 
 interface IHeaderMenuCategoryItemProps {

@@ -1,6 +1,7 @@
 "use client";
 
 // import libs
+import React from "react";
 import classNames from "classnames/bind";
 import Link from "next/link";
 import Image from "next/image";
@@ -14,100 +15,88 @@ import styles from "./header-menu.module.css";
 
 const cx = classNames.bind(styles);
 
-function CustomerHeaderMenuProductItem(
-  props: IHeaderMenuProductItemProps
-): JSX.Element {
+function CustomerHeaderMenuProductItem({ product }): JSX.Element {
   return (
     <Link
       className={cx("cate-dropdown__product-link")}
-      href={`/${props.product_slug}?pid=${props.product_id_hashed}`}
-      title={props.product_name}>
+      href={`/${product.product_slug}?pid=${product.product_id}`}
+      title={product.product_name}>
       <span className={cx("cate-dropdown__product-img-container")}>
         <CldImage
-          src={props.product_img.link}
-          alt={props.product_img.alt}
+          src={product.product_img.url}
+          alt={product.product_img.alt}
           fill
         />
       </span>
       <span className={cx("cate-dropdown__product-name")}>
-        {props.product_name}
+        {product.product_name}
       </span>
       <div>
-        {props.highest_discount > 0 ? (
+        {product.variant_discount_amount == 0 ? (
+          <span className={cx("cate-dropdown__product-price")}>
+            {convertNumberToMoney(product.variant_price)}
+          </span>
+        ) : (
           <>
             <span className={cx("cate-dropdown__product-price")}>
-              {convertNumberToMoney(props.lowest_price ?? 0)}
+              {convertNumberToMoney(
+                (product.variant_price *
+                  (100 - product.variant_discount_amount)) /
+                  100
+              )}
             </span>
             <del className={cx("cate-dropdown__product-price--discount")}>
-              {convertNumberToMoney(props.product_price)}
+              {convertNumberToMoney(product.variant_price)}
             </del>
           </>
-        ) : (
-          <span className={cx("cate-dropdown__product-price")}>
-            {convertNumberToMoney(props.product_price)}
-          </span>
         )}
       </div>
     </Link>
   );
 }
 
-function CustomerHeaderMenuSubCategoryItem(
-  props: IHeaderMenuSubCategoryItemProps
-): JSX.Element {
-  const { category_name, category_img, products } = props;
-  const hasProducts: boolean = products?.length > 0;
+function CustomerHeaderMenuSubCategoryItem({ subCategory }): JSX.Element {
+  const hasProducts: boolean = subCategory?.products.length > 0;
 
-  return (
+  return hasProducts ? (
     <li className={cx("cate-dropdown__wrapper")}>
       <Link
         className={cx("cate-dropdown__info")}
-        href={`/search-result?category=${props.category_name}`}>
+        href={`/search?c=${subCategory.category.category_name}`}>
         <span className={cx("cate-dropdown__img-container")}>
           <CldImage
-            src={category_img}
-            alt={`Hình đại cho phân loại ${category_name} của ForCat Shop`}
+            src={subCategory.category.category_img_url}
+            alt={`Hình đại cho phân loại ${subCategory.category.category_img_alt} của ForCat Shop`}
             fill
           />
         </span>
-        <span className={cx("cate-dropdown__sub-cate")}>{category_name}</span>{" "}
-        <span>({products?.length ?? 0})</span>
+        <span className={cx("cate-dropdown__sub-cate")}>
+          {subCategory.category.category_name}
+        </span>{" "}
+        <span>({subCategory?.products?.length ?? 0})</span>
       </Link>
+
       <div className={cx("cate-dropdown__content")}>
         <div className={cx("cate-dropdown__title")}>
           <span>Sản phẩm bán chạy nhất</span>
           <Link
             className={cx("cate-dropdown__title-link")}
-            href={`/search-result?category=${props.category_name}`}>
-            <span>Xem tất cả</span>
+            href={`/search?c=${subCategory.category.category_name}`}>
+            <span>Xem tất cả {subCategory.products.length} sản phẩm</span>
             <span className="material-icons-outlined">chevron_right</span>
           </Link>
         </div>
-        {hasProducts ? (
-          <div className={cx("cate-dropdown__products")}>
-            {(products ?? []).map((product: IProductProps, index: number) => (
-              <CustomerHeaderMenuProductItem key={index} {...product} />
-            ))}
-          </div>
-        ) : (
-          <div className={cx("cate-dropdown__products--not-found")}>
-            <span
-              className={cx(
-                "cate-dropdown__products--not-found__img-container"
-              )}>
-              <Image
-                src="/imgs/nothing-result.png"
-                alt="Not found result"
-                fill
-              />
-            </span>
-            <span className={cx("cate-dropdown__products--not-found__text")}>
-              Không tìm thấy sản phẩm!
-            </span>
-          </div>
-        )}
+        <div className={cx("cate-dropdown__products")}>
+          {(subCategory.products.slice(0, 4) ?? []).map((product, index) => (
+            <React.Fragment key={"category product" + index}>
+              <CustomerHeaderMenuProductItem product={product} />
+            </React.Fragment>
+          ))}
+        </div>
       </div>
     </li>
+  ) : (
+    <></>
   );
 }
 
@@ -127,33 +116,27 @@ function CustomerHeaderMenuCategoryItem(
   );
 }
 
-export default function CustomerHeaderMenu(
-  props: IHeaderMenuProps
-): JSX.Element {
-  const flatCategoryTypeProduct: ISubCategoryProps[] = (
-    props.categoryTypes ?? []
-  )
-    .map((categoryType) => categoryType.subCategories)
-    .flat(1);
-
+export default function CustomerHeaderMenu({
+  links,
+  categoryProducts,
+}): JSX.Element {
   return (
     <ul className={cx("header__menu")}>
       <CustomerHeaderMenuCategoryItem categoryType="Danh mục sản phẩm">
         <div className={cx("menu__cate-dropdown-container")}>
           <ul className={cx("menu__cate-dropdown")}>
-            {(flatCategoryTypeProduct ?? []).map(
-              (categoryName: ISubCategoryProps) => (
+            {(categoryProducts ?? []).map((categoryProduct, index) => (
+              <React.Fragment key={"sub-category" + index}>
                 <CustomerHeaderMenuSubCategoryItem
-                  key={categoryName.category_name}
-                  {...categoryName}
+                  subCategory={categoryProduct}
                 />
-              )
-            )}
+              </React.Fragment>
+            ))}
           </ul>
         </div>
       </CustomerHeaderMenuCategoryItem>
 
-      {(props.links ?? []).map((link: IHeaderLinkProps) => (
+      {(links ?? []).map((link) => (
         <li key={link.title} className={cx("menu__item")}>
           <Link className={cx("menu__cate")} href={link.url}>
             <span className={cx("menu__item-p")}>{link.title}</span>

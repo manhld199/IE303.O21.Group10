@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nhom10.forcat.dto.CategoryDto;
+import com.nhom10.forcat.dto.Category.CategoryDto;
 import com.nhom10.forcat.service.customer.CustomerCategoryService;
 
 import java.util.List;

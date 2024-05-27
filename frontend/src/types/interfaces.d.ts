@@ -30,7 +30,7 @@ interface IProductProps {
   product_slug: string;
   product_avg_rating: number;
   product_img: {
-    link: string;
+    url: string;
     alt: string;
   };
   lowest_price?: number;
@@ -124,20 +124,18 @@ interface IArticleDescriptionMediaPRops {
 }
 
 interface INewsItemProps {
-  article_id_hashed: string;
-  article_name: string;
-  article_avt?: {
-    link: string;
+  article_id: string;
+  article_slug: string;
+  article_title: string;
+  article_subtitle: string;
+  article_avt: {
+    url: string;
     alt: string;
   };
-  article_slug: string;
   article_type: string;
   article_short_description: string;
-  article_info: {
-    author: string;
-    published_date: string;
-  };
-  article_date: string;
+  article_author: string;
+  article_published_date: string;
 }
 
 interface IProductItemInOrderItemProps {
@@ -184,13 +182,17 @@ interface IResponseJSON {
   data?: Object;
 }
 
+interface IResponseNews {
+  articles: INewsItemProps[];
+}
+
 interface IReviewItem {
   product_id_hashed: string;
   product_name: string;
   product_slug: string;
   variant_name: string;
   variant_img: {
-    link: string;
+    url: string;
     alt: string;
   };
   quantity: number;

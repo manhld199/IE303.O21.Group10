@@ -5,7 +5,7 @@ import classNames from "classnames/bind";
 import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
-import { CustomerNewsItem } from "@/app/(default)/news/partials";
+import { CustomerNewsItem } from "@/app/(default)/articles/partials";
 // import components
 import { CustomerCarouselCard, LoadingSpinner } from "@/components";
 

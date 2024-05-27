@@ -6,7 +6,6 @@ import type { Metadata } from "next";
 
 // import partials, components
 import { CustomerNewsItem, CustomerSearchNewBar } from "./partials";
-import { CustomerPagination } from "@/components";
 
 // import utils
 import { BACKEND_URL_NEWS } from "@/utils/commonConst";
@@ -20,13 +19,12 @@ export const metadata: Metadata = {
     "Khám phá tin tức mới nhất về thế giới thú cưng tại ForCat Shop. Chúng tôi cập nhật những thông tin hữu ích về cách chăm sóc, nuôi dưỡng và yêu thương thú cưng của bạn. Duyệt qua bài viết về các sản phẩm mới, những mẹo hữu ích và các sự kiện đặc biệt. ForCat Shop luôn đồng hành cùng bạn trong hành trình chăm sóc và tạo niềm vui cho thú cưng của bạn!",
 };
 
-const getFullBackendArticleUrl = (page: string, limit: string): string => {
-  return `${BACKEND_URL_NEWS}?page=${page}&limit=${limit}`;
+const getFullBackendArticleUrl = (): string => {
+  return `${BACKEND_URL_NEWS}`;
 };
 
 interface IResponseNews {
   articles: INewsItemProps[];
-  maxPage: number;
 }
 
 const fetcher = async (url: string) => {
@@ -36,19 +34,27 @@ const fetcher = async (url: string) => {
 
   if (!res.ok) return notFound();
 
-  const json: IResponseJSON = await res.json();
-  return json.data as IResponseNews;
+  const json = await res.json();
+  return json;
 };
 
-export default async function NewsPage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | undefined };
-}) {
-  const page = searchParams?.page ?? "1";
-  const limit = searchParams?.limit ?? "6";
-  const fullURL: string = getFullBackendArticleUrl(page, limit);
+export default async function NewsPage() {
+  const fullURL: string = getFullBackendArticleUrl();
   const data: IResponseNews = await fetcher(fullURL);
+
+  if (!data || !Array.isArray(data)) {
+    return (
+      <main className="news-page__container">
+        <div className="news-page__top">
+          <h1>Tin tức</h1>
+          <CustomerSearchNewBar />
+        </div>
+        <section className="news__group-news-item">
+          <p>Không có bài viết nào.</p>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="news-page__container">
@@ -57,15 +63,12 @@ export default async function NewsPage({
         <CustomerSearchNewBar />
       </div>
       <section className="news__group-news-item">
-        {(data.articles ?? []).map((articleData: INewsItemProps) => (
-          <CustomerNewsItem
-            key={articleData.article_id_hashed}
-            {...articleData}
-          />
+        {data.map((articleData: INewsItemProps) => (
+          <CustomerNewsItem key={articleData.article_id} {...articleData} />
         ))}
       </section>
       <aside className="news__group-banner">
-        {(data.articles ?? []) && (data.articles.length > 4) && (
+        {data.length > 4 && (
           <Link
             href="/search-result?discount=True"
             className="news__banner-container">
@@ -76,7 +79,6 @@ export default async function NewsPage({
             />
           </Link>
         )}
-
         <Link
           href="/search-result?discount=True"
           className="news__banner-container">
@@ -87,7 +89,6 @@ export default async function NewsPage({
           />
         </Link>
       </aside>
-      <CustomerPagination className="news__pagination" maxPage={data.maxPage} />
     </main>
   );
 }

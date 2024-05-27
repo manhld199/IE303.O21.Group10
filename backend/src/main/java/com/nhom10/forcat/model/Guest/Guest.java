@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.Data;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Document(collection = "guests")
@@ -23,7 +24,7 @@ public class Guest {
 
     @Field(name = "guest_order")
     @JsonProperty("guest_order")
-    private String[] guestOrder;
+    private List<Object> guestOrders;
 
     @Field(name = "guest_total_spent")
     @JsonProperty("guest_total_spent")

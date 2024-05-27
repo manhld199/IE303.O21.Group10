@@ -18,10 +18,6 @@ public class Order {
     @JsonProperty("order_id")
     private ObjectId orderId;
 
-    @Field(name = "guest_id")
-    @JsonProperty("guest_id")
-    private ObjectId guestId;
-
     @Field(name = "order_note")
     @JsonProperty("order_note")
     private String orderNote;

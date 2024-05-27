@@ -60,12 +60,12 @@ public class CustomerProductController {
 
     @GetMapping("/getRecommendedProducts")
     public ResponseEntity<ProductShortenPageDto> getRecommendedProducts() {
-        return productService.getNRandomProducts(0, 10);
+        return productService.getNRandomProducts(0, "", 10);
     }
 
     @GetMapping("/getDiscountedProducts")
     public ResponseEntity<ProductShortenPageDto> getDiscountProducts() {
-        return productService.getNDiscountedProducts(0, 10);
+        return productService.getNDiscountedProducts(0, "", 10);
     }
 
     @GetMapping("/getNewestProducts")

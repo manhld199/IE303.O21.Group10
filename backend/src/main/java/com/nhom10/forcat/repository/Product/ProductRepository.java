@@ -17,6 +17,9 @@ public interface ProductRepository extends MongoRepository<Product, ObjectId>, C
     @Query("{ 'categories._id' : { $in: ?0 } }")
     List<Product> findProductsByCategories(List<ObjectId> categories);
 
+    @Query("{ 'categories.category_name' : ?0 }")
+    Page<Product> findProductsByCategoryName(String categoryName, Pageable pageable);
+
     @Query("{ '_id' : { $in: ?0 } }")
     List<Product> findProductsByIds(List<ObjectId> productIds);
 

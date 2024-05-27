@@ -1,5 +1,6 @@
 package com.nhom10.forcat.service.customer;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class CustomerSearchService {
     ProductRepository productRepository;
 
     public ResponseEntity<ProductShortenPageDto> getSearchProducts(String query, String category, String discount,
-            int p, int n) {
+            String s, int p, int n) {
         try {
             PageRequest pageable = PageRequest.of(p, n);
             Page<Product> page = productRepository.searchProducts(query, category, discount, pageable);
@@ -35,6 +36,11 @@ public class CustomerSearchService {
             List<ProductShortenDto> shortenProducts = products.stream()
                     .map(product -> new ProductShortenDto(product))
                     .collect(Collectors.toList());
+
+            if (s.equals("price-desc"))
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount).reversed());
+            else if (s.equals("price-asc"))
+                shortenProducts.sort(Comparator.comparing(ProductShortenDto::getPriceAfterDiscount));
 
             ProductShortenPageDto returnedProducts = new ProductShortenPageDto(shortenProducts, totalPages);
 

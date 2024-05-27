@@ -28,26 +28,37 @@ public class CustomerSearchController {
             @RequestParam(required = false) String q,
             @RequestParam(required = false) String c,
             @RequestParam(required = false) String d,
+            @RequestParam(required = false) String s,
             @RequestParam(required = false) String r,
             @RequestParam(required = false) String n,
             @RequestParam(required = true) Integer p) {
-
-        if (q == null && c == null && d == null && r == null && n == null)
-            return productService.getNRandomProducts(p, 20);
 
         if (n != null)
             return productService.getNNewestProducts(p, 20);
 
         if (r != null)
-            return productService.getNRandomProducts(p, 20);
+            return productService.getNRandomProducts(p, "", 20);
 
         if (q == null && c == null && d != null)
-            return productService.getNDiscountedProducts(p, 20);
+            return productService.getNDiscountedProducts(p, "", 20);
 
         q = q == null ? "" : q;
         c = c == null ? "" : c;
         d = d == null ? "" : d;
+        s = s == null ? "" : s;
 
-        return searchService.getSearchProducts(q, c, d, p, 20);
+        ResponseEntity<ProductShortenPageDto> products = searchService.getSearchProducts(q, c, d, s, p, 20);
+        if (products.getBody().getProducts().size() == 0) {
+            if (c == "" && d == "")
+                products = productService.getNRandomProducts(p, s, 20);
+            else if (c != "" && d == "")
+                products = productService.getNProductsByCategoryName(c, p, s, 20);
+            else if (c == "" && d != "")
+                products = productService.getNDiscountedProducts(p, s, 20);
+            else if (c != "" && d != "")
+                products = productService.getNProductsByCategoryNameAndDiscounted(c, p, s, 20);
+        }
+
+        return products;
     }
 }

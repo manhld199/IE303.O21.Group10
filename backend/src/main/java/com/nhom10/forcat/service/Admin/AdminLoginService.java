@@ -1,4 +1,4 @@
-package com.nhom10.forcat.service.Admin;
+package com.nhom10.forcat.service.admin;
 
 import com.nhom10.forcat.model.Admin.Admin;
 import com.nhom10.forcat.repository.Admin.AdminRepository;

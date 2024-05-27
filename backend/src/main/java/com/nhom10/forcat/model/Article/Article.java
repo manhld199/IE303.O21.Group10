@@ -41,6 +41,10 @@ public class Article {
     @JsonProperty("article_short_description")
     private String articleShortDescription;
 
+    @Field(name = "article_description")
+    @JsonProperty("article_description")
+    private String articleDescription;
+
     @Field(name = "article_author")
     @JsonProperty("article_author")
     private String articleAuthor;

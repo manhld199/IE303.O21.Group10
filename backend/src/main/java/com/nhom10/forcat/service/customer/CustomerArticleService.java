@@ -5,6 +5,7 @@ import com.nhom10.forcat.dto.Article.ArticleShortenPageDto;
 import com.nhom10.forcat.model.Article.Article;
 import com.nhom10.forcat.repository.Article.ArticleRepository;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +41,20 @@ public class CustomerArticleService {
             ArticleShortenPageDto returnedArticles = new ArticleShortenPageDto(shortenArticles, totalPages);
 
             return new ResponseEntity<>(returnedArticles, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<Article> getArticleByArticleId(ObjectId articleId) {
+        try {
+            Optional<Article> articleOptional = articleRepository.findById(articleId);
+
+            if (!articleOptional.isPresent())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            return new ResponseEntity<>(articleOptional.get(), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

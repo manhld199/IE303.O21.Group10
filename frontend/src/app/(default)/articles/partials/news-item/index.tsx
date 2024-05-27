@@ -12,7 +12,7 @@ export default function CustomerNewsItem({ article }) {
   return (
     <Link
       className={cx("news__link")}
-      href={`/news/${article.article_slug}?aid=${article.article_id}`}>
+      href={`/articles/${article.article_slug}?aid=${article.article_id}`}>
       <article className={cx("news__container")}>
         <div className={cx("news__content-container")}>
           <span className={cx("news__type")}>{article.article_type}</span>

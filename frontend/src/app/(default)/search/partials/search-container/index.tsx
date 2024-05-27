@@ -28,6 +28,7 @@ export default function SearchContainer({
   // console.log("Từ khóa tìm kiếm", searchResultsProducts);
 
   const products = searchResults.products;
+  const totalPages = searchResults.totalPages;
 
   const [selectedFilterItem, setSelectedFilterItem] =
     useState<HTMLDivElement | null>(null);
@@ -214,7 +215,6 @@ export default function SearchContainer({
   };
 
   const handleClickDiscount = (event: any) => {
-    console.log(isDiscount);
     if (isDiscount == "") {
       event.currentTarget.style.display = "none";
       event.currentTarget.nextElementSibling.style.display = "flex";
@@ -227,15 +227,24 @@ export default function SearchContainer({
   };
 
   const handleApplyFilter = () => {
-    router.replace(
-      `${pathName}?q=${searchParams.get("q") ?? ""}${
-        category != "" ? `&c=${category}` : ""
-      }${isDiscount != "" ? `&d=${isDiscount}` : ""}`
-    );
+    const params = [];
+
+    if (searchParams.get("q")) params.push(`q=${searchParams.get("q")}`);
+    if (category != "") params.push(`c=${category}`);
+    if (isDiscount != "") params.push(`d=${isDiscount}`);
+    if (searchParams.get("s")) params.push(`s=${searchParams.get("s")}`);
+
+    router.replace(`${pathName}?${params.join("&")}`, { scroll: false });
   };
 
   const handleResetFilter = (event: any) => {
-    router.replace(`${pathName}?q=${searchParams.get("q") ?? ""}`);
+    const params = [];
+
+    if (searchParams.get("q")) params.push(`q=${searchParams.get("q")}`);
+    if (searchParams.get("s")) params.push(`s=${searchParams.get("s")}`);
+
+    router.replace(`${pathName}?${params.join("&")}`, { scroll: false });
+
     const filters =
       event.currentTarget.parentElement.previousElementSibling.querySelectorAll(
         "button"
@@ -248,6 +257,35 @@ export default function SearchContainer({
 
     setCategory("");
     setIsDiscount("");
+  };
+
+  const handleChooseSort = (event: any) => {
+    const current = event.currentTarget;
+
+    const params = [];
+
+    if (searchParams.get("q")) params.push(`q=${searchParams.get("q")}`);
+    if (category != "") params.push(`c=${category}`);
+    if (isDiscount != "") params.push(`d=${isDiscount}`);
+
+    if (current.innerHTML == "Giá cao đến thấp") {
+      router.replace(`${pathName}?${params.join("&")}&s=price-desc`, {
+        scroll: false,
+      });
+    } else if (current.innerHTML == "Giá thấp đến cao") {
+      router.replace(`${pathName}?${params.join("&")}&s=price-asc`, {
+        scroll: false,
+      });
+    } else if ("Nổi bật") {
+      router.replace(`${pathName}?${params.join("&")}`, { scroll: false });
+    }
+
+    const sortTextEle =
+      current.parentElement.parentElement.previousElementSibling.querySelector(
+        "p"
+      ) as HTMLParagraphElement;
+
+    sortTextEle.innerHTML = current.innerHTML;
   };
 
   return (
@@ -341,8 +379,10 @@ export default function SearchContainer({
         </h1>
         <div className="search-result__main__heading">
           <p className="search-result__main__count">
-            Tìm thấy{" "}
-            <span className="search-result__highlight">{products.length}</span>{" "}
+            Tìm thấy{totalPages > 1 ? " khoảng " : " "}
+            <span className="search-result__highlight">
+              {totalPages > 1 ? products.length * totalPages : products.length}
+            </span>{" "}
             {itemFind === "discountTrue" ? (
               "sản phẩm khuyến mãi"
             ) : itemFind === "recommendTrue" ? (
@@ -373,27 +413,28 @@ export default function SearchContainer({
               )}>
               <hr />
               <div className={cx("dropdown-options")}>
-                <input
-                  className={cx("sort-option")}
-                  type="radio"
-                  id="price-z-to-a"
-                  name="sort"
-                  value="price-z-to-a"
-                />
-                <label htmlFor="hot" className={cx("sort-label")}>
+                <label
+                  htmlFor="hot"
+                  className={cx("sort-label")}
+                  onClick={handleChooseSort}>
+                  Nổi bật
+                </label>
+              </div>
+              <hr />
+              <div className={cx("dropdown-options")}>
+                <label
+                  htmlFor="hot"
+                  className={cx("sort-label")}
+                  onClick={handleChooseSort}>
                   Giá cao đến thấp
                 </label>
               </div>
               <hr />
               <div className={cx("dropdown-options")}>
-                <input
-                  className={cx("sort-option")}
-                  type="radio"
-                  id="price-a-to-z"
-                  name="sort"
-                  value="price-a-to-z"
-                />
-                <label htmlFor="hot" className={cx("sort-label")}>
+                <label
+                  htmlFor="hot"
+                  className={cx("sort-label")}
+                  onClick={handleChooseSort}>
                   Giá thấp đến cao
                 </label>
               </div>
@@ -412,7 +453,7 @@ export default function SearchContainer({
             ))}
         </div>
         <div className="pagination">
-          <CustomerPagination maxPage={searchResults.totalPages} />
+          <CustomerPagination maxPage={totalPages} />
         </div>
       </section>
     </main>

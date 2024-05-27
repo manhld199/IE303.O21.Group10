@@ -35,6 +35,10 @@ const getSearchProduct = async (searchParams: any) => {
       queryParams.push(`d=${searchParams.d}`);
     }
 
+    if (searchParams.s) {
+      queryParams.push(`s=${searchParams.s}`);
+    }
+
     if (searchParams.r) {
       queryParams = [`r=${searchParams.r}`];
     }

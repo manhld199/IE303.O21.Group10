@@ -74,21 +74,6 @@ interface IArticleDescriptionMediaPRops {
   caption: string;
 }
 
-interface INewsItemProps {
-  article_id: string;
-  article_slug: string;
-  article_title: string;
-  article_subtitle: string;
-  article_avt: {
-    url: string;
-    alt: string;
-  };
-  article_type: string;
-  article_short_description: string;
-  article_author: string;
-  article_published_date: string;
-}
-
 interface IProductItemInOrderItemProps {
   product_id_hashed: string;
   product_name?: string;

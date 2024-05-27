@@ -36,7 +36,7 @@ export default function ProductItemInOrderItem(
           </Link>
         </h5>
         <span>Phân loại hàng: {props.variant_name}</span>
-        <span>x{props.quantity}</span>
+        <span>x{props.product_quantity}</span>
       </div>
       <div className={cx("product-item__prices")}>
         {props.price_discount && (

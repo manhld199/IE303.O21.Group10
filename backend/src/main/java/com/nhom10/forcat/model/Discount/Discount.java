@@ -13,7 +13,7 @@ import lombok.Data;
 @Document(collection = "discounts")
 public class Discount {
     @Id
-    @Field(name = "discount_id")
+    @Field(name = "_id")
     @JsonProperty("discount_id")
     private ObjectId discountId;
 

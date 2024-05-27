@@ -114,6 +114,13 @@
   gap: 1rem;
 }
 
+.header__order-lookup {
+  margin-right: 0 !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .dropdown-noti {
   position: relative;
 

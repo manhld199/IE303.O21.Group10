@@ -23,7 +23,7 @@ export default function AdminPagination({ totalPages }: { totalPages: any }) {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
       router.replace(
-        `${pathName}?q=${searchParams.get("q")}&p=${currentPage - 1}`
+        `${pathName}?q=${searchParams.get("q") ?? ""}&p=${currentPage - 1}`
       );
     }
   };
@@ -32,7 +32,7 @@ export default function AdminPagination({ totalPages }: { totalPages: any }) {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
       router.replace(
-        `${pathName}?q=${searchParams.get("q")}&p=${currentPage + 1}`
+        `${pathName}?q=${searchParams.get("q") ?? ""}&p=${currentPage + 1}`
       );
     }
   };
@@ -66,7 +66,7 @@ export default function AdminPagination({ totalPages }: { totalPages: any }) {
               )}
               onClick={handleClickPagination}
               key={"pagination" + index}
-              href={`${pathName}?q=${searchParams.get("q")}&p=${index}`}>
+              href={`${pathName}?q=${searchParams.get("q") ?? ""}&p=${index}`}>
               {index + 1}
             </Link>
           );

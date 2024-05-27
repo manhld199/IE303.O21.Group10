@@ -14,7 +14,7 @@ import java.util.List;
 @Document(collection = "orders")
 public class Order {
     @Id
-    @Field(name = "order_id")
+    @Field(name = "_id")
     @JsonProperty("order_id")
     private ObjectId orderId;
 

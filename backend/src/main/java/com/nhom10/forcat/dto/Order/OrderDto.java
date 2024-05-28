@@ -1,6 +1,9 @@
 package com.nhom10.forcat.dto.Order;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nhom10.forcat.model.Order.OrderBuyer;
+import com.nhom10.forcat.model.Order.OrderDetail;
+
 import lombok.Data;
 
 import java.util.List;
@@ -11,22 +14,11 @@ public class OrderDto {
     private String orderNote;
 
     @JsonProperty("order_buyer")
-    private OrderBuyerDto orderBuyer;
+    private OrderBuyer orderBuyer;
 
-    @JsonProperty("order_detail")
-    private List<OrderDetailDto> orderDetailList;
-
-    @JsonProperty("order_shipping_cost")
-    private double orderShippingCost;
+    @JsonProperty("order_details")
+    private List<OrderDetail> orderDetails;
 
     @JsonProperty("order_total_cost")
     private double orderTotalCost;
-
-    public OrderDto(String orderNote, OrderBuyerDto orderBuyer, List<OrderDetailDto> orderDetailList, double orderShippingCost, double orderTotalCost) {
-        this.orderNote = orderNote;
-        this.orderBuyer = orderBuyer;
-        this.orderDetailList = orderDetailList;
-        this.orderShippingCost = orderShippingCost;
-        this.orderTotalCost = orderTotalCost;
-    }
 }

@@ -7,6 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.Data;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,8 +25,8 @@ public class Guest {
     private String guestPhoneNumber;
 
     @Field(name = "guest_order")
-    @JsonProperty("guest_order")
-    private List<Object> guestOrders;
+    @JsonProperty("guest_orders")
+    private List<ObjectId> guestOrders;
 
     @Field(name = "guest_total_spent")
     @JsonProperty("guest_total_spent")
@@ -40,4 +42,22 @@ public class Guest {
 
     public Guest() {
     }
+
+    public Guest(String guestPhoneNumber, ObjectId orderId, double orderTotalCost) {
+        this.guestId = new ObjectId();
+        this.guestPhoneNumber = guestPhoneNumber;
+
+        this.guestOrders = new ArrayList<>();
+        guestOrders.add(orderId);
+
+        this.guestTotalSpent = orderTotalCost;
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
+
+    public void updateOrder(ObjectId orderId, double orderTotalCost) {
+        this.guestOrders.add(orderId);
+        this.guestTotalSpent += orderTotalCost;
+    }
+
 }

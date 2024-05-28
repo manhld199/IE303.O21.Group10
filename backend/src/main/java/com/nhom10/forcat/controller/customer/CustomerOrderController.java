@@ -1,24 +1,27 @@
 package com.nhom10.forcat.controller.customer;
 
 import com.nhom10.forcat.dto.Order.OrderDto;
-import com.nhom10.forcat.model.Order.Order;
+import com.nhom10.forcat.dto.Order.OrderLookupDto;
 import com.nhom10.forcat.service.customer.CustomerOrderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/orders")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class CustomerOrderController {
     @Autowired
     private CustomerOrderService orderService;
 
-    @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody OrderDto orderDto) {
-        Order order = orderService.createOrder(orderDto);
+    @PostMapping("/createOrder")
+    public ResponseEntity<Object> createOrder(@RequestBody OrderDto order) {
+        return orderService.createOrder(order);
+    }
 
-        return ResponseEntity.status(201).body(order);
+    @GetMapping("/lookup/{phoneNumber}")
+    public ResponseEntity<OrderLookupDto> getLookupOrders(@PathVariable String phoneNumber) {
+        return orderService.lookupOrdersByPhoneNumber(phoneNumber);
     }
 }

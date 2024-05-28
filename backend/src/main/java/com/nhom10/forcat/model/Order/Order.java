@@ -1,6 +1,8 @@
 package com.nhom10.forcat.model.Order;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nhom10.forcat.dto.Order.OrderDto;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -52,4 +54,17 @@ public class Order {
 
     public Order() {
     }
+
+    public Order(OrderDto order) {
+        this.orderId = new ObjectId();
+        this.orderNote = order.getOrderNote();
+        this.orderBuyer = order.getOrderBuyer();
+        this.orderDetails = order.getOrderDetails();
+        this.orderShippingCost = 0;
+        this.orderTotalCost = order.getOrderTotalCost();
+        this.orderProcessInfo = "Chuẩn bị hàng";
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
+
 }

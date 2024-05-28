@@ -1,6 +1,8 @@
 package com.nhom10.forcat.model.Order;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nhom10.forcat.model.Product.ProductImg;
+
 import org.springframework.data.mongodb.core.mapping.Field;
 import lombok.Data;
 
@@ -26,9 +28,13 @@ public class OrderDetail {
     @JsonProperty("variant_name")
     private String variantName;
 
+    @Field(name = "variant_slug")
+    @JsonProperty("variant_slug")
+    private String variantSlug;
+
     @Field(name = "product_img")
     @JsonProperty("product_img")
-    private String productImg;
+    private ProductImg productImg;
 
     @Field(name = "quantity")
     @JsonProperty("quantity")

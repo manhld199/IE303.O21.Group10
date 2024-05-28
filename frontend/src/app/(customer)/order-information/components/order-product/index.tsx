@@ -44,12 +44,12 @@ export default function OrderProduct({ buyInfo }: { buyInfo: IBuyInfo }) {
         <h5 className={cx("order-product__price")}>
           {buyInfo.discount_amount > 0 && (
             <small className={cx("order-product__price--small")}>
-              {convertNumberToMoney(buyInfo.unit_price)}
+              {convertNumberToMoney(
+                (buyInfo.unit_price * (100 + buyInfo.discount_amount)) / 100
+              )}
             </small>
           )}
-          {convertNumberToMoney(
-            (buyInfo.unit_price * (100 - buyInfo.discount_amount)) / 100
-          )}
+          {convertNumberToMoney(buyInfo.unit_price)}
         </h5>
       </div>
       <hr />

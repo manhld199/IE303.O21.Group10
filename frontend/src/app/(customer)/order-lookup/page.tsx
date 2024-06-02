@@ -23,7 +23,15 @@ const getOrders = async (phoneNumber: string) => {
 
     const data = await response.json();
 
-    return data;
+    const returnedData = {
+      all_orders: data.all_orders.reverse(),
+      preparing_orders: data.preparing_orders.reverse(),
+      delivering_orders: data.delivering_orders.reverse(),
+      finished_orders: data.finished_orders.reverse(),
+      canceled_orders: data.canceled_orders.reverse(),
+    };
+
+    return returnedData;
   } catch (error) {
     console.error("Error fetching recommend products:", error);
   }
@@ -186,7 +194,7 @@ export default function OrderLookupPage() {
                           <Link
                             href={`/${item.product_slug}/${item.variant_slug}?pid=${item.product_id}`}
                             className="item-body__img-div">
-                            <Image
+                            <CldImage
                               className="item-body__img"
                               src={item.product_img.url}
                               alt={item.product_img.alt}

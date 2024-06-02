@@ -4,7 +4,38 @@
 import React, { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 
-export default function OrderChart() {
+function getLastThreeMonths() {
+  const currentDate = new Date();
+  const months = [];
+  const monthNames = [
+    "Tháng 1",
+    "Tháng 2",
+    "Tháng 3",
+    "Tháng 4",
+    "Tháng 5",
+    "Tháng 6",
+    "Tháng 7",
+    "Tháng 8",
+    "Tháng 9",
+    "Tháng 10",
+    "Tháng 11",
+    "Tháng 12",
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    const month = currentDate.getMonth(); // Lấy tháng hiện tại (0-11)
+
+    // Thêm tên tháng vào mảng
+    months.push(monthNames[month]);
+
+    // Trừ 1 tháng từ ngày hiện tại
+    currentDate.setMonth(currentDate.getMonth() - 1);
+  }
+
+  return months.reverse();
+}
+
+export default function OrderChart({ newOrders }: { newOrders: any }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
 
@@ -17,25 +48,25 @@ export default function OrderChart() {
 
       // Định nghĩa dữ liệu biểu đồ
       const data = {
-        labels: ["Tháng 1", "Tháng 2", "Tháng 3"], // Nhãn của các tháng
+        labels: getLastThreeMonths(), // Nhãn của các tháng
         datasets: [
           {
             label: "Đơn đặt mới",
-            data: [55, 30, 20], // Dữ liệu số đơn đặt mới theo tháng
+            data: newOrders.new_orders, // Dữ liệu số đơn đặt mới theo tháng
             backgroundColor: "rgba(75, 192, 192, 0.5)", // Màu nền của cột "Đơn đặt mới"
             borderColor: "rgba(75, 192, 192, 1)", // Màu viền của cột "Đơn đặt mới"
             borderWidth: 1,
           },
           {
             label: "Đã thanh toán",
-            data: [40, 50, 35], // Dữ liệu số đơn đã thanh toán theo tháng
+            data: newOrders.payed_orders, // Dữ liệu số đơn đã thanh toán theo tháng
             backgroundColor: "rgba(54, 162, 235, 0.5)", // Màu nền của cột "Đã thanh toán"
             borderColor: "rgba(54, 162, 235, 1)", // Màu viền của cột "Đã thanh toán"
             borderWidth: 1,
           },
           {
             label: "Đã hủy",
-            data: [10, 20, 15], // Dữ liệu số đơn đã hủy theo tháng
+            data: newOrders.canceled_orders, // Dữ liệu số đơn đã hủy theo tháng
             backgroundColor: "rgba(255, 99, 132, 0.5)", // Màu nền của cột "Đã hủy"
             borderColor: "rgba(255, 99, 132, 1)", // Màu viền của cột "Đã hủy"
             borderWidth: 1,

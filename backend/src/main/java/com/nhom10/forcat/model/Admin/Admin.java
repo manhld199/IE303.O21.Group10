@@ -33,6 +33,10 @@ public class Admin {
     @JsonProperty("admin_name")
     private String adminName;
 
+    @Field(name = "role")
+    @JsonProperty("role")
+    private String role;
+
     @Field(name = "admin_avatar")
     @JsonProperty("admin_avatar")
     private AdminAvatar adminAvatar;

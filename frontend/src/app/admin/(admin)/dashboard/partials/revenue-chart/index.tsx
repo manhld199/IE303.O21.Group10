@@ -4,7 +4,7 @@
 import React, { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 
-export default function RevenueChart() {
+export default function RevenueChart({ revenues }: { revenues: any }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
 
@@ -24,11 +24,17 @@ export default function RevenueChart() {
           "Tháng 4",
           "Tháng 5",
           "Tháng 6",
+          "Tháng 7",
+          "Tháng 8",
+          "Tháng 9",
+          "Tháng 10",
+          "Tháng 11",
+          "Tháng 12",
         ],
         datasets: [
           {
             label: "Doanh thu",
-            data: [1000, 1500, 1200, 2000, 1800, 2500],
+            data: revenues,
             backgroundColor: "rgba(75, 192, 192, 0.5)", // Màu nền của area
             borderColor: "rgba(75, 192, 192, 1)", // Màu viền của area
             borderWidth: 2,

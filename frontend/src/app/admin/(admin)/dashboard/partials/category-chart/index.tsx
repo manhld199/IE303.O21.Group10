@@ -4,9 +4,40 @@
 import React, { useEffect, useRef } from "react";
 import Chart, { TooltipItem } from "chart.js/auto";
 
-export default function RevenueChart() {
+function getRandomColor() {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+export default function RevenueChart({
+  categoryPercents,
+}: {
+  categoryPercents: any;
+}) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
+
+  const greaterThan1Percents = categoryPercents.filter(
+    (categoryPercent) => categoryPercent.category_percent >= 1
+  );
+
+  const lessThan1Percents = categoryPercents.filter(
+    (categoryPercent) => categoryPercent.category_percent < 1
+  );
+
+  const elseCategoryPercents = {
+    category_name: "Khác",
+    category_percent: lessThan1Percents.reduce(
+      (sum, categoryPercent) => sum + categoryPercent.category_percent,
+      0
+    ),
+  };
+
+  greaterThan1Percents.push(elseCategoryPercents);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -16,11 +47,15 @@ export default function RevenueChart() {
       const ctx = canvas.getContext("2d");
 
       const data = {
-        labels: ["Danh mục A", "Danh mục B", "Danh mục C"], // Nhãn của các danh mục
+        labels: greaterThan1Percents.map(
+          (categoryPercent) => categoryPercent.category_name
+        ), // Nhãn của các danh mục
         datasets: [
           {
-            data: [40, 30, 30], // Phần trăm doanh thu của các danh mục
-            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"], // Màu sắc cho các phần tử trong biểu đồ
+            data: greaterThan1Percents.map(
+              (categoryPercent) => categoryPercent.category_percent
+            ), // Phần trăm doanh thu của các danh mục
+            backgroundColor: greaterThan1Percents.map(() => getRandomColor()), // Màu sắc ngẫu nhiên cho các phần tử trong biểu đồ
           },
         ],
       };
@@ -57,11 +92,11 @@ export default function RevenueChart() {
         const chart = new Chart(ctx, {
           type: "doughnut",
           data: data,
-          options: options,
+          options: options as any,
         });
 
         // Lưu tham chiếu đến biểu đồ để tái sử dụng và hủy bỏ sau này
-        chartRef.current = chart;
+        (chartRef as any).current = chart;
       }
     }
   }, []);

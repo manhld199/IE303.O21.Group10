@@ -1,74 +1,125 @@
 package com.nhom10.forcat.config;
 
-import com.nhom10.forcat.service.admin.AdminLoginService;
+import com.nhom10.forcat.util.JwtTokenUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import javax.crypto.spec.SecretKeySpec;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    private final AdminLoginService adminLoginService;
-
-    public SecurityConfig(AdminLoginService adminLoginService) {
-        this.adminLoginService = adminLoginService;
-    }
-
-    
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager);
-        customAuthenticationFilter.setFilterProcessesUrl("/admin/auth/login");
-
-        http.csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers( "/**").permitAll()
-                    .requestMatchers("/admin/auth/login", "admin/login").permitAll()
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .permitAll()
-            )
-            .logout(logout -> logout.permitAll());
-
-        http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    private final String[] PUBLIC_ENDPOINTS = {
+            "/api/admin/auth/login",
+            // "/register",
+            // "/admin/register",
+            // "/admin/login",
+            // "/seller/register",
+            // "/seller/login",
+            // "/",
+            // "/product/add",
+            "/**"
+    };
+
+    // private final String[] CLIENT_ENDPOINTS = {
+    //         "/quantityCartItems",
+    //         "/getlogout",
+    // };
+    // private final String[] SELLER_ENDPOINTS = {
+    //         "/seller/logout",
+    // };
+    private final String[] ADMIN_ENDPOINTS = {
+//            "/",
+            "/api/admin/auth/logout",
+            "/api/admin/**"
+    };
+
+    // Cấu hình filterchian cho các public endpoints, đặt oder cao nhất
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
-            }
-        };
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    SecurityFilterChain unsecuredFilterChain(HttpSecurity httpSecurity) throws Exception {
+        List<RequestMatcher> matchers = Arrays.stream(PUBLIC_ENDPOINTS)
+                .map(AntPathRequestMatcher::new)
+                .collect(Collectors.toList());
+
+        return httpSecurity
+                .securityMatcher(new OrRequestMatcher(matchers))
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
+                    authorizationManagerRequestMatcherRegistry.requestMatchers("/**").permitAll();
+                })
+                .build();
     }
+
+
+    // Cấu hình filterchian cho các authenticate endpoints, đặt oder cao nhì
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE + 1)
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+        httpSecurity.oauth2ResourceServer(oauth2 ->
+                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+        );
+        httpSecurity.authorizeHttpRequests(request ->
+                request
+                        // .requestMatchers(CLIENT_ENDPOINTS).hasRole("client")
+                        // .requestMatchers(SELLER_ENDPOINTS).hasRole("seller")
+                        .requestMatchers(ADMIN_ENDPOINTS).hasRole("ADMIN")
+                        .anyRequest().authenticated());
+        return httpSecurity.build();
+    }
+
+    // Cấu hình AuthoritiesClaimName và setAuthorityPrefix
+    @Bean
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("user_type");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+
+        return jwtAuthenticationConverter;
+
+    }
+
+    //Cấu hình decoder cho việc decode token và xác thực ROLE để phân quyền
+    @Bean
+    JwtDecoder jwtDecoder() {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(JwtTokenUtil.getSecretKey().getBytes(), "HS512");
+        return NimbusJwtDecoder
+                .withSecretKey(secretKeySpec)
+                .macAlgorithm(MacAlgorithm.HS512)
+                .build();
+    }
+
+
 }

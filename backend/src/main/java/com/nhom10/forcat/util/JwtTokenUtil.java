@@ -1,0 +1,75 @@
+package com.nhom10.forcat.util;
+
+import com.nhom10.forcat.dto.User.requests.UserInfoRequest;
+// import com.nhom10.forcat.dto.User.responses.UserInfoResponse;
+import com.nhom10.forcat.model.User.Users;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+
+import org.bson.types.ObjectId;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+
+@Component
+public class JwtTokenUtil {
+    private static final String SECRET_KEY = "cH3lXJt1vPdulcO3cLjZgG9vxPHdWJuUJa7/rA6T1oJ5d6Mg5ISlqX3AOhN9yTlljZQWzoXHDa+x0VLJmdnEug==";
+    private static final long EXPIRATION_TIME = 86400000;
+
+    public static String getSecretKey(){
+        return SECRET_KEY;
+    }
+    public static String generateToken(Users user){
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
+
+        String token = Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("id", user.getId())
+                .claim("name", user.getName())
+                .claim("email", user.getEmail())
+                .claim("user_type", user.getUserType())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS512)
+                .compact();
+        return token;
+    }
+//    public int getUserIdFromToken(String token) {
+//        Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
+//        String userId = claims.getBody().getSubject();
+//        return Integer.parseInt(userId);
+//    }
+    @SuppressWarnings("deprecation")
+    public static ObjectId getUserIdFromToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SECRET_KEY.getBytes())
+                    .parseClaimsJws(token)
+                    .getBody();
+            return new ObjectId(claims.get("id").toString());
+        } catch (Exception e) {
+            // Handle parsing or token validation errors
+            return null;
+        }
+    }
+    @SuppressWarnings("deprecation")
+    public static UserInfoRequest getUserInfoFromTokenHeader(String tokenHeader) {
+        try {
+            String token = tokenHeader.substring(7);
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SECRET_KEY.getBytes())
+                    .parseClaimsJws(token)
+                    .getBody();
+            ObjectId id = new ObjectId(claims.get("id").toString());
+            String name = claims.get("name").toString();
+            String email = claims.get("email").toString();
+            String user_type = claims.get("user_type").toString();
+            UserInfoRequest userInToken = new UserInfoRequest(id, name, email, user_type);
+            return userInToken;
+        } catch (Exception e) {
+            // Handle parsing or token validation errors
+            return null;
+        }
+    }
+}

@@ -113,11 +113,11 @@
   position: relative;
 }
 
-.form-error {
+/* .form-error {
   position: absolute;
   bottom: -10px;
   left: 0;
-}
+} */
 
 .align-right {
   display: flex;

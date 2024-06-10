@@ -57,6 +57,7 @@ export default async function AdminProductsPage({
   const userToken = cookieStore.get("user-token")?.value;
 
   const data = await getAllProducts(q, p, userToken);
+  console.log(data);
 
   const products = data?.products ?? [];
   const totalPages = data?.totalPages ?? 0;

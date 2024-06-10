@@ -10,7 +10,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-@Document(collection = "admins")
+@Document(collection = "admin")
 public class Admin {
     @Id
     @Field(name = "_id")

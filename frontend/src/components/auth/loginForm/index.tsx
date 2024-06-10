@@ -64,26 +64,26 @@ const LoginForm = () => {
     if (isValid) {
       try {
         setLoading(true);
-        const res = await fetch(`${BACKEND_URL}/auth/login`, {
+        const res = await fetch(`${BACKEND_URL}/admin/auth/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            username: formData.user_name,
+            email: formData.user_name,
             password: formData.user_password,
           }),
           credentials: "include",
         });
 
-        const data = await res.json();
+        const data = await res.text();
         setLoading(false);
 
         if (res.status === 200) {
           window.alert("Login successful");
           // localStorage.setItem("user-token", JSON.stringify(data));
-          Cookies.set("user-token", data.token, { expires: 7 });
-          // router.push("/admin/dashboard"); // Điều hướng đến trang /admin/dashboard
+          Cookies.set("user-token", data, { expires: 7 });
+          location.href = "/admin/dashboard"; // Điều hướng đến trang /admin/dashboard
         } else if (res.status === 404) {
           setErrors({ user_name: "Tài khoản không tồn tại!" });
         } else if (res.status === 401) {

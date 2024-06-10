@@ -16,7 +16,7 @@ import com.nhom10.forcat.service.admin.AdminStatisticalService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/api/admin/statistic")
+@RequestMapping("/api/admin/statistics")
 public class AdminStatisticalController {
 
     @Autowired

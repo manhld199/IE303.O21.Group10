@@ -5,6 +5,7 @@ import classNames from "classnames/bind";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Cookies from "js-cookie";
 
 // use scss
 import styles from "./styles.module.css";
@@ -38,6 +39,11 @@ const appBarData = [
     text: "Tài khoản",
   },
 ];
+
+const handleLogOut = () => {
+  Cookies.remove("user-token");
+  location.href = "/admin/login";
+};
 
 export default function AdminSideBar(props: ILogoProps) {
   const pathName = usePathname();
@@ -78,7 +84,7 @@ export default function AdminSideBar(props: ILogoProps) {
 
           <Link
             className={cx("admin-sidebar__list-item")}
-            href="/admin/category">
+            href="/admin/categories">
             <span className={"material-icons-round"}>category</span>
             <p>Danh mục</p>
           </Link>
@@ -90,7 +96,7 @@ export default function AdminSideBar(props: ILogoProps) {
             <p>Sản phẩm</p>
           </Link>
 
-          <Link className={cx("admin-sidebar__list-item")} href="/admin/order">
+          <Link className={cx("admin-sidebar__list-item")} href="/admin/orders">
             <span className="material-icons-round">shopping_bag</span>
             <p>Đơn hàng</p>
           </Link>
@@ -130,7 +136,10 @@ export default function AdminSideBar(props: ILogoProps) {
             <p>Cài đặt</p>
           </Link>
 
-          <Link className={cx("admin-sidebar__list-item")} href="/admin/logout">
+          <Link
+            className={cx("admin-sidebar__list-item")}
+            href="#"
+            onClick={handleLogOut}>
             <span className="material-icons-round">logout</span>
             <p>Đăng xuất</p>
           </Link>

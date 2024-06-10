@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
@@ -146,7 +147,11 @@ public class AdminStatisticalService {
 
                 for (OrderDetail orderDetail : order.getOrderDetails()) {
                     ObjectId productId = new ObjectId(orderDetail.getProductId());
-                    Product product = productRepository.findById(productId).get();
+
+                    Optional<Product> productOptional = productRepository.findById(productId);
+                    if (!productOptional.isPresent())
+                        continue;
+                    Product product = productOptional.get();
 
                     for (ProductCategory productCategory : product.getCategories()) {
                         int categoryIndex = categoryNames.indexOf(productCategory.getCategoryName());

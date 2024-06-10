@@ -37,30 +37,16 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {
             "/api/admin/auth/login",
-            // "/register",
-            // "/admin/register",
-            // "/admin/login",
-            // "/seller/register",
-            // "/seller/login",
-            // "/",
-            // "/product/add",
             "/**"
     };
 
-    // private final String[] CLIENT_ENDPOINTS = {
-    //         "/quantityCartItems",
-    //         "/getlogout",
-    // };
-    // private final String[] SELLER_ENDPOINTS = {
-    //         "/seller/logout",
-    // };
     private final String[] ADMIN_ENDPOINTS = {
-//            "/",
+            // "/",
             "/api/admin/auth/logout",
             "/api/admin/**"
     };
 
-    // Cấu hình filterchian cho các public endpoints, đặt oder cao nhất
+    // Cấu hình filterchian cho các public endpoints
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     SecurityFilterChain unsecuredFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -78,22 +64,18 @@ public class SecurityConfig {
                 .build();
     }
 
-
-    // Cấu hình filterchian cho các authenticate endpoints, đặt oder cao nhì
+    // Cấu hình filterchian cho các authenticate endpoints
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE + 1)
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
-        httpSecurity.oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-        );
-        httpSecurity.authorizeHttpRequests(request ->
-                request
-                        // .requestMatchers(CLIENT_ENDPOINTS).hasRole("client")
-                        // .requestMatchers(SELLER_ENDPOINTS).hasRole("seller")
-                        .requestMatchers(ADMIN_ENDPOINTS).hasRole("ADMIN")
-                        .anyRequest().authenticated());
+        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+                .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+        httpSecurity.authorizeHttpRequests(request -> request
+                // .requestMatchers(CLIENT_ENDPOINTS).hasRole("client")
+                // .requestMatchers(SELLER_ENDPOINTS).hasRole("seller")
+                .requestMatchers(ADMIN_ENDPOINTS).hasRole("ADMIN")
+                .anyRequest().authenticated());
         return httpSecurity.build();
     }
 
@@ -111,7 +93,7 @@ public class SecurityConfig {
 
     }
 
-    //Cấu hình decoder cho việc decode token và xác thực ROLE để phân quyền
+    // Cấu hình decoder cho việc decode token và xác thực ROLE để phân quyền
     @Bean
     JwtDecoder jwtDecoder() {
         SecretKeySpec secretKeySpec = new SecretKeySpec(JwtTokenUtil.getSecretKey().getBytes(), "HS512");
@@ -120,6 +102,5 @@ public class SecurityConfig {
                 .macAlgorithm(MacAlgorithm.HS512)
                 .build();
     }
-
 
 }

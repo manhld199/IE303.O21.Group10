@@ -16,9 +16,12 @@ import "./page.css";
 
 const getRevenues = async () => {
   try {
-    const response = await fetch(`${BACKEND_URL}/admin/statistic/getRevenues`, {
-      next: { revalidate: 60 },
-    });
+    const response = await fetch(
+      `${BACKEND_URL}/admin/statistics/getRevenues`,
+      {
+        next: { revalidate: 60 },
+      }
+    );
 
     const data = await response.json();
 
@@ -31,7 +34,7 @@ const getRevenues = async () => {
 const getNewOders = async () => {
   try {
     const response = await fetch(
-      `${BACKEND_URL}/admin/statistic/getNewOrders`,
+      `${BACKEND_URL}/admin/statistics/getNewOrders`,
       {
         next: { revalidate: 60 },
       }
@@ -54,7 +57,7 @@ const getNewOders = async () => {
 const getCategoryPercents = async () => {
   try {
     const response = await fetch(
-      `${BACKEND_URL}/admin/statistic/getCategoryPercents`,
+      `${BACKEND_URL}/admin/statistics/getCategoryPercents`,
       {
         next: { revalidate: 60 },
       }
@@ -70,7 +73,7 @@ const getCategoryPercents = async () => {
 
 const getSummary = async () => {
   try {
-    const response = await fetch(`${BACKEND_URL}/admin/statistic/getSummary`, {
+    const response = await fetch(`${BACKEND_URL}/admin/statistics/getSummary`, {
       next: { revalidate: 60 },
     });
 

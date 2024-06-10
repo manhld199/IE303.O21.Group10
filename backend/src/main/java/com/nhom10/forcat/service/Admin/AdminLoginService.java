@@ -15,22 +15,22 @@ public class AdminLoginService implements UserDetailsService {
     @Autowired
     private AdminRepository adminRepository;
 
-    // @Autowired
-    // private PasswordEncoder passwordEncoder;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Admin admin = adminRepository.findByAdminLoginName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Admin not found with username: " + username));
-        return new AdminPrincipal(admin);
+        // Admin admin = adminRepository.findByAdminLoginName(username)
+        // .orElseThrow(() -> new UsernameNotFoundException("Admin not found with
+        // username: " + username));
+        // return new AdminPrincipal(admin);
+        return null;
     }
 
     public Admin authenticate(String username, String password) {
-        Admin admin = adminRepository.findByAdminLoginName(username)
-                .orElse(null);
-        if (admin != null) {
-            return admin;
-        }
+        // Admin admin = adminRepository.findByAdminLoginName(username)
+        // .orElse(null);
+        // if (admin != null) {
+        // return admin;
+        // }
         return null;
     }
+
 }

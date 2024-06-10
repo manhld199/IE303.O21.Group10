@@ -1,6 +1,8 @@
 // import libs
 import React from "react";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 // import components
 import { AdminPagination } from "@/components";
@@ -20,13 +22,21 @@ import { convertNumberToMoney } from "@/utils";
 // import css
 import "./page.css";
 
-const getAllProducts = async (query: String, page: String) => {
+const getAllProducts = async (query: String, page: String, userToken: any) => {
+  if (!userToken) redirect("/admin/login");
+
   try {
     const response = await fetch(
       `${BACKEND_URL}/admin/products/getProducts?q=${query}&p=${page}`,
-      { next: { revalidate: 60 } }
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        next: { revalidate: 60 },
+      }
     );
-
     const data = await response.json();
 
     return data;
@@ -42,7 +52,12 @@ export default async function AdminProductsPage({
 }) {
   const q = searchParams.q ?? "";
   const p = searchParams.p ?? "0";
-  const data = await getAllProducts(q, p);
+
+  const cookieStore = cookies();
+  const userToken = cookieStore.get("user-token")?.value;
+
+  const data = await getAllProducts(q, p, userToken);
+  console.log(data);
 
   const products = data?.products ?? [];
   const totalPages = data?.totalPages ?? 0;

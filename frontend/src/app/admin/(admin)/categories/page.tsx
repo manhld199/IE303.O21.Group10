@@ -19,12 +19,24 @@ import { convertNumberToMoney } from "@/utils";
 
 // import css
 import "./page.css";
+import { cookies } from "next/headers";
 
-const getAllCategories = async (query: String, page: String) => {
+const getAllCategories = async (
+  query: String,
+  page: String,
+  userToken: any
+) => {
   try {
     const response = await fetch(
       `${BACKEND_URL}/admin/categories/getAllCategories?q=${query}&p=${page}`,
-      { next: { revalidate: 60 } }
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        next: { revalidate: 60 },
+      }
     );
 
     const data = await response.json();
@@ -42,7 +54,10 @@ export default async function AdminProductsPage({
 }) {
   const q = searchParams.q ?? "";
   const p = searchParams.p ?? "0";
-  const data = await getAllCategories(q, p);
+  const cookieStore = cookies();
+  const userToken = cookieStore.get("user-token")?.value;
+
+  const data = await getAllCategories(q, p, userToken);
 
   const categories = data?.categories ?? [];
   const totalPages = data?.totalPages ?? 0;

@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 
 // import global components
 import { CustomerCarouselSlider } from "@/components";
-import { CustomerNewsCarouselSlider } from "@/components";
 import { CustomerProductCard } from "@/components";
 import { CustomerSlider } from "@/components";
 import { CustomerCategories } from "@/components";
@@ -68,11 +67,6 @@ const getDiscountedProducts = async () => {
     console.error("Error fetching discount products:", error);
   }
 };
-
-// interface IResponseNews {
-//   articles: INewsItemProps[];
-//   maxPage: number;
-// }
 
 const fetchArticles = async () => {
   const response = await fetch(
@@ -217,18 +211,6 @@ export default async function Home() {
             </div>
           </div>
         </section>
-        {/* <div className="wrapper color padding-bottom">
-          <div className="content-container">
-            <h2 className="tip-products__label">
-              <Link href="/news" className="tip-products__title">
-                Tin tức hằng ngày
-                <p> Xem tất cả </p>
-              </Link>
-              <span className="tip-products__title-after"></span>
-            </h2>
-            <CustomerNewsCarouselSlider newList={articles} />
-          </div>
-        </div> */}
       </main>
       <CustomerFooter />
       <CustomerAppBar />

@@ -2,6 +2,7 @@
 
 // import libs
 import React, { useRef, useState } from "react";
+import Cookies from "js-cookie";
 
 // import utils
 import { BACKEND_URL } from "@/utils/commonConst";
@@ -413,6 +414,9 @@ const handleSubmitForm = async (event: any) => {
 };
 
 export default function AdminAddProductPage() {
+  const userToken = Cookies.get("user-token");
+  if (!userToken) location.href = "/admin/login";
+
   return (
     <main className="add-product-container">
       <section className="add-product-head">

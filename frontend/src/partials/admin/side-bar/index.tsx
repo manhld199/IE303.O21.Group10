@@ -84,7 +84,7 @@ export default function AdminSideBar(props: ILogoProps) {
 
           <Link
             className={cx("admin-sidebar__list-item")}
-            href="/admin/category">
+            href="/admin/categories">
             <span className={"material-icons-round"}>category</span>
             <p>Danh mục</p>
           </Link>
@@ -96,7 +96,7 @@ export default function AdminSideBar(props: ILogoProps) {
             <p>Sản phẩm</p>
           </Link>
 
-          <Link className={cx("admin-sidebar__list-item")} href="/admin/order">
+          <Link className={cx("admin-sidebar__list-item")} href="/admin/orders">
             <span className="material-icons-round">shopping_bag</span>
             <p>Đơn hàng</p>
           </Link>

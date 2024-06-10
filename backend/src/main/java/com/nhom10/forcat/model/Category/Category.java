@@ -1,11 +1,13 @@
 package com.nhom10.forcat.model.Category;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nhom10.forcat.dto.Category.CategoryAdminAddDto;
+import com.nhom10.forcat.dto.Category.CategoryAdminUpdateDto;
+import com.nhom10.forcat.util.Util;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-
 import lombok.Data;
 import java.util.Date;
 
@@ -42,5 +44,25 @@ public class Category {
     private Date updatedAt;
 
     public Category() {
+    };
+
+    public Category(CategoryAdminAddDto category) {
+        this.categoryId = new ObjectId();
+        this.categoryName = category.getCategoryName();
+        this.categorySlug = Util.createSlug(category.getCategoryName());
+        this.categoryImg = category.getCategoryImg();
+        this.categoryShortDescription = category.getCategoryShortDescription();
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
+
+    public Category(CategoryAdminUpdateDto category) {
+        this.categoryId = new ObjectId(category.getCategoryId());
+        this.categoryName = category.getCategoryName();
+        this.categorySlug = Util.createSlug(category.getCategoryName());
+        this.categoryImg = category.getCategoryImg();
+        this.categoryShortDescription = category.getCategoryShortDescription();
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
     }
 }

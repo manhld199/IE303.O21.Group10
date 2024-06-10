@@ -3,6 +3,7 @@
 // import libs
 import React, { useEffect, useRef, useState } from "react";
 import { CldImage } from "next-cloudinary";
+import Cookies from "js-cookie";
 
 // import utils
 import { BACKEND_URL } from "@/utils/commonConst";
@@ -216,8 +217,18 @@ const handleAddSpecification = () => {
 
 const getProduct = async (productId: string) => {
   try {
+    const userToken = Cookies.get("user-token");
+    if (!userToken) location.href = "/admin/login";
+
     const res = await fetch(
-      `${BACKEND_URL}/admin/products/getProduct/${productId}`
+      `${BACKEND_URL}/admin/products/getProduct/${productId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
     );
 
     if (res.ok) {

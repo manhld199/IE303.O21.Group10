@@ -4,6 +4,7 @@
 import useSWR, { Fetcher } from "swr";
 import { notFound } from "next/navigation";
 import Skeleton from "react-loading-skeleton";
+import Cookies from "js-cookie";
 
 // import utils
 import { BACKEND_URL_ORDERS } from "@/utils/commonConst";
@@ -71,6 +72,9 @@ export default function PurchaseDetailPage({
 }: {
   params: { orderId: string };
 }) {
+  const userToken = Cookies.get("user-token");
+  if (!userToken) location.href = "/admin/login";
+
   const { data, error, isLoading } = {
     data: demoData,
     error: null,

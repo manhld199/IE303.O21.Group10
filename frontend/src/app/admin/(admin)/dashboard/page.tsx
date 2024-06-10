@@ -1,5 +1,7 @@
 // import libs
 import React from "react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 // import partials
 import {
@@ -14,11 +16,16 @@ import { BACKEND_URL } from "@/utils/commonConst";
 // import css
 import "./page.css";
 
-const getRevenues = async () => {
+const getRevenues = async (userToken: any) => {
   try {
     const response = await fetch(
       `${BACKEND_URL}/admin/statistics/getRevenues`,
       {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
         next: { revalidate: 60 },
       }
     );
@@ -31,11 +38,16 @@ const getRevenues = async () => {
   }
 };
 
-const getNewOders = async () => {
+const getNewOders = async (userToken: any) => {
   try {
     const response = await fetch(
       `${BACKEND_URL}/admin/statistics/getNewOrders`,
       {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
         next: { revalidate: 60 },
       }
     );
@@ -54,11 +66,16 @@ const getNewOders = async () => {
   }
 };
 
-const getCategoryPercents = async () => {
+const getCategoryPercents = async (userToken: any) => {
   try {
     const response = await fetch(
       `${BACKEND_URL}/admin/statistics/getCategoryPercents`,
       {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
         next: { revalidate: 60 },
       }
     );
@@ -71,9 +88,14 @@ const getCategoryPercents = async () => {
   }
 };
 
-const getSummary = async () => {
+const getSummary = async (userToken: any) => {
   try {
     const response = await fetch(`${BACKEND_URL}/admin/statistics/getSummary`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
       next: { revalidate: 60 },
     });
 
@@ -86,16 +108,21 @@ const getSummary = async () => {
 };
 
 export default async function AdminDashboardPage() {
-  const revenues = await getRevenues();
+  const cookieStore = cookies();
+  const userToken = cookieStore.get("user-token")?.value;
+
+  if (!userToken) redirect("/admin/login");
+
+  const revenues = await getRevenues(userToken);
   // console.log(revenues);
 
-  const newOrders = await getNewOders();
+  const newOrders = await getNewOders(userToken);
   // console.log(newOrders);
 
-  const categoryPercents = await getCategoryPercents();
+  const categoryPercents = await getCategoryPercents(userToken);
   // console.log(categoryPercents);
 
-  const summary = await getSummary();
+  const summary = await getSummary(userToken);
   // console.log(summary);
 
   return (

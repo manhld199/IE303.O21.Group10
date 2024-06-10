@@ -1,11 +1,18 @@
 // import libs
 import React from "react";
 import Image from "next/image";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 // import css
 import "./page.css";
 
 export default async function AdminOrderPage() {
+  const cookieStore = cookies();
+  const userToken = cookieStore.get("user-token")?.value;
+
+  if (!userToken) redirect("/admin/login");
+
   return (
     <section className="order-page-content">
       <h3>Danh sách đơn hàng</h3>
